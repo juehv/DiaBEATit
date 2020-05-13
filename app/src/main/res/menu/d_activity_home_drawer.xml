@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+
+        <item android:title="@string/nav_navigation_title" >
+
+            <menu>
+
+                <item
+                    android:id="@+id/nav_assistant"
+                    android:icon="@drawable/d_ic_home"
+                    android:title="@string/nav_navigation_assistant" />
+
+                <item
+                    android:id="@+id/nav_settings"
+                    android:icon="@drawable/d_ic_settings_alt"
+                    android:title="@string/nav_navigation_settings" />
+
+                <item
+                    android:id="@+id/nav_setup"
+                    android:icon="@drawable/d_ic_settings"
+                    android:title="@string/nav_navigation_setup" />
+
+                <item android:id="@+id/nav_log"
+                    android:icon="@drawable/ic_history"
+                    android:title="@string/nav_navigation_log" />
+
+            </menu>
+
+        </item>
+
+        <item android:title="@string/nav_help_title" >
+
+            <menu>
+
+                <item
+                    android:id="@+id/nav_help_guide"
+                    android:icon="@drawable/ic_help"
+                    android:title="@string/nav_help_guide" />
+
+                <item
+                    android:id="@+id/nav_help_contact_us"
+                    android:icon="@drawable/ic_contact_us"
+                    android:title="@string/nav_help_contact_us" />
+
+            </menu>
+
+        </item>
+
+    </group>
+
+</menu>

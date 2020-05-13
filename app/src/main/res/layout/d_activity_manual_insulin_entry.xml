@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/diabeatit.Container" >
+
+    <TextView
+        android:id="@+id/mi_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:gravity="center_horizontal"
+        android:layout_margin="8dp"
+        android:textSize="24sp"
+        android:textColor="@color/colorFont"
+        android:text="@string/mi_title" />
+
+    <EditText
+        android:id="@+id/mi_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mi_title"
+        android:gravity="center_horizontal"
+        android:layout_marginHorizontal="16dp"
+        style="@style/diabeatit.EditText"
+        android:inputType="numberDecimal"
+        android:textColor="@color/colorFont"
+        android:textColorHint="#777777"
+        android:hint="@string/mi_input_hint" />
+
+    <EditText
+        android:id="@+id/mi_notes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mi_input"
+        android:gravity="center_horizontal"
+        android:layout_marginHorizontal="16dp"
+        style="@style/diabeatit.EditText"
+        android:textColor="@color/colorFont"
+        android:textColorHint="#777777"
+        android:hint="@string/mi_notes_hint" />
+
+    <LinearLayout
+        android:id="@+id/mi_datetime_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/mi_notes"
+        android:gravity="center_horizontal"
+        android:layout_marginVertical="8dp" >
+
+        <Button
+            android:id="@+id/mi_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
+            android:padding="8dp"
+            android:background="#EFEFEF"
+            android:drawableStart="@drawable/ic_date"
+            android:drawableTint="#777777"
+            android:drawablePadding="8dp"
+            android:textColor="#777777"
+            android:textStyle="bold"
+            android:text="--.--.----" />
+
+        <Button
+            android:id="@+id/mi_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="4dp"
+            android:padding="8dp"
+            android:background="#EFEFEF"
+            android:drawableStart="@drawable/ic_time"
+            android:drawableTint="#777777"
+            android:drawablePadding="8dp"
+            android:textColor="#777777"
+            android:textStyle="bold"
+            android:text="--:--" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/mi_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="8dp"
+        android:background="#EFEFEF"
+        android:textColor="#777777"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        android:text="@string/mi_save" />
+
+</RelativeLayout>

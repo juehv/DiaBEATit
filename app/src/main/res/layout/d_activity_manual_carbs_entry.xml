@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/diabeatit.Container" >
+
+    <TextView
+        android:id="@+id/mc_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:gravity="center_horizontal"
+        android:layout_margin="8dp"
+        android:textSize="24sp"
+        android:textColor="@color/colorFont"
+        android:text="@string/mc_title" />
+
+    <EditText
+        android:id="@+id/mc_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mc_title"
+        android:gravity="center_horizontal"
+        android:layout_marginHorizontal="16dp"
+        style="@style/diabeatit.EditText"
+        android:inputType="number"
+        android:textColor="@color/colorFont"
+        android:textColorHint="#777777"
+        android:hint="@string/mc_input_hint" />
+
+    <EditText
+        android:id="@+id/mc_notes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mc_input"
+        android:gravity="center_horizontal"
+        android:layout_marginHorizontal="16dp"
+        style="@style/diabeatit.EditText"
+        android:textColor="@color/colorFont"
+        android:textColorHint="#777777"
+        android:hint="@string/mc_notes_hint" />
+
+    <LinearLayout
+        android:id="@+id/mc_datetime_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/mc_notes"
+        android:gravity="center_horizontal"
+        android:layout_marginVertical="8dp" >
+
+        <Button
+            android:id="@+id/mc_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
+            android:padding="8dp"
+            android:background="#EFEFEF"
+            android:drawableStart="@drawable/ic_date"
+            android:drawableTint="#777777"
+            android:drawablePadding="8dp"
+            android:textColor="#777777"
+            android:textStyle="bold"
+            android:text="--.--.----" />
+
+        <Button
+            android:id="@+id/mc_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="4dp"
+            android:padding="8dp"
+            android:background="#EFEFEF"
+            android:drawableStart="@drawable/ic_time"
+            android:drawableTint="#777777"
+            android:drawablePadding="8dp"
+            android:textColor="#777777"
+            android:textStyle="bold"
+            android:text="--:--" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/mc_picture_set"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mc_datetime_layout"
+        android:layout_centerHorizontal="true"
+        android:padding="8dp"
+        android:background="#EFEFEF"
+        android:drawableStart="@drawable/ic_camera"
+        android:drawableTint="#777777"
+        android:drawablePadding="8dp"
+        android:textColor="#777777"
+        android:textStyle="bold"
+        android:text="@string/mc_picture_attach" />
+
+    <ImageView
+        android:visibility="gone"
+        android:id="@+id/mc_picture_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/mc_picture_set"
+        android:layout_above="@id/mc_save"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="16dp" />
+
+    <ImageButton
+        android:visibility="gone"
+        android:id="@+id/mc_picture_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/mc_picture_preview"
+        android:layout_alignBottom="@id/mc_picture_preview"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="4dp"
+        android:background="@android:color/transparent"
+        android:tint="#FF0000"
+        android:src="@drawable/ic_delete" />
+
+    <Button
+        android:id="@+id/mc_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="8dp"
+        android:background="#EFEFEF"
+        android:textColor="#777777"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        android:text="@string/mc_save" />
+    
+</RelativeLayout>

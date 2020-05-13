@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.getbase.floatingactionbutton.FloatingActionsMenu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/manual_entry_fab_menu"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true"
+    android:layout_gravity="bottom|right"
+    android:layout_marginLeft="16dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginBottom="?attr/actionBarSize"
+    fab:fab_addButtonColorNormal="@android:color/background_light"
+    fab:fab_addButtonColorPressed="@android:color/background_light"
+    fab:fab_addButtonPlusIconColor="#E65100"
+    fab:fab_addButtonSize="normal"
+    fab:fab_labelStyle="@style/menu_labels_style"
+    fab:fab_labelsPosition="left" >
+
+    <com.getbase.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_note"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        fab:fab_colorNormal="@android:color/background_light"
+        fab:fab_size="mini"
+        fab:fab_title="@string/mn_event_title"
+        fab:fab_colorPressed="@android:color/background_light"
+        fab:fab_icon="@drawable/ic_fab_note" />
+
+    <com.getbase.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_manual_insulin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        fab:fab_colorNormal="@android:color/background_light"
+        fab:fab_size="mini"
+        fab:fab_title="@string/mi_event_title"
+        fab:fab_colorPressed="@android:color/background_light"
+        fab:fab_icon="@drawable/ic_fab_insulin" />
+
+    <com.getbase.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_manual_carbs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        fab:fab_colorNormal="@android:color/background_light"
+        fab:fab_size="mini"
+        fab:fab_title="@string/mc_event_title"
+        fab:fab_colorPressed="@android:color/background_light"
+        fab:fab_icon="@drawable/ic_fab_carbs" />
+
+    <com.getbase.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_manual_sports"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        fab:fab_colorNormal="@android:color/background_light"
+        fab:fab_size="mini"
+        fab:fab_title="@string/ms_event_title"
+        fab:fab_colorPressed="@android:color/background_light"
+        fab:fab_icon="@drawable/ic_fab_sports" />
+
+</com.getbase.floatingactionbutton.FloatingActionsMenu>

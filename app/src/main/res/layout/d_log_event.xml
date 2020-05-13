@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="4dp"
+    android:layout_marginTop="4dp"
+    android:padding="8dp"
+    android:background="@drawable/log_event_background"
+    android:foreground="?android:attr/selectableItemBackground" >
+
+    <TextView
+        android:id="@+id/log_event_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:textStyle="bold"
+        android:textAllCaps="true"
+        android:textColor="#535353"
+        android:text="--.--.---- --:--" />
+
+    <ImageView
+        android:id="@+id/log_event_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/ic_delete" />
+
+    <TextView
+        android:id="@+id/log_event_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold"
+        android:textAllCaps="true"
+        android:textColor="#535353"
+        android:text="Test Entry" />
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/log_event_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/log_event_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="2dp"
+        android:textAlignment="center"
+        android:textColor="#858585"
+        android:textStyle="bold"
+        android:text="Lorem Ipsum Dolor Sit Amet\nThe Text Ends Here" />
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/log_event_note"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/log_event_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="4dp"
+        android:textAlignment="center"
+        android:textColor="#535353"
+        android:textStyle="italic"
+        android:text="Lorem Ipsum Dolor Sit Amet\nThe Text Ends Here" />
+
+    <ImageView
+        android:visibility="gone"
+        android:id="@+id/log_event_picture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/log_event_note"
+        android:layout_margin="8dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/log_event_picture_border" />
+
+</RelativeLayout>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    style="@style/diabeatit"
+    android:theme="@style/diabeatit"
+    android:background="#ECECEC" >
+
+    <TextView
+        android:id="@+id/event_log_empty_notice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:layout_margin="16dp"
+        android:textStyle="italic"
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:text="@string/event_log_no_entries" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/event_log_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

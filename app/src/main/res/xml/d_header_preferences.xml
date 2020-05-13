@@ -1,0 +1,10 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        android:fragment="de.heoegbr.diabeatit.ui.SettingsActivity$PredictionsFragment"
+        app:icon="@drawable/d_ic_settings_alt"
+        app:key="model_settings_header"
+        app:title="@string/settings_prediction" />
+
+</PreferenceScreen>
