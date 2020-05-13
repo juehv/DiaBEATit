@@ -1,4 +1,4 @@
-package de.heoegbr.diabeatit.assistant.alert;
+package de.heoegbr.diabeatit.db.repository;
 
 import androidx.annotation.NonNull;
 import androidx.room.Room;
@@ -9,7 +9,11 @@ import java.util.List;
 
 import de.heoegbr.diabeatit.DiaBEATitApp;
 import de.heoegbr.diabeatit.StaticData;
+import de.heoegbr.diabeatit.assistant.alert.AlertStoreListener;
+import de.heoegbr.diabeatit.assistant.alert.AlertsManager;
+import de.heoegbr.diabeatit.assistant.alert.DismissedAlertsManager;
 import de.heoegbr.diabeatit.db.DiabeatitDatabase;
+import de.heoegbr.diabeatit.db.container.Alert;
 
 public class AlertStore {
 
@@ -54,8 +58,7 @@ public class AlertStore {
    */
   public static void detachListener(AlertStoreListener listener) {
 
-    if (listeners.contains(listener))
-      listeners.remove(listener);
+    listeners.remove(listener);
 
   }
 

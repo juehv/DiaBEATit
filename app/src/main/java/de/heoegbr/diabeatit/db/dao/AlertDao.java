@@ -1,4 +1,4 @@
-package de.heoegbr.diabeatit.db;
+package de.heoegbr.diabeatit.db.dao;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -8,7 +8,7 @@ import androidx.room.Update;
 
 import java.util.List;
 
-import de.heoegbr.diabeatit.assistant.alert.Alert;
+import de.heoegbr.diabeatit.db.container.Alert;
 
 /** Data Access Object to access the {@link Alert}s stored in the database */
 @Dao

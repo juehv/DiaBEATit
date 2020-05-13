@@ -36,13 +36,12 @@ import java.util.Arrays;
 
 import de.heoegbr.diabeatit.R;
 import de.heoegbr.diabeatit.StaticData;
-import de.heoegbr.diabeatit.assistant.alert.Alert;
-import de.heoegbr.diabeatit.assistant.alert.AlertStore;
 import de.heoegbr.diabeatit.assistant.alert.AlertStoreListener;
 import de.heoegbr.diabeatit.assistant.alert.AlertsManager;
-import de.heoegbr.diabeatit.assistant.notification.NotificationStore;
-import de.heoegbr.diabeatit.log.LogActivity;
+import de.heoegbr.diabeatit.db.container.Alert;
+import de.heoegbr.diabeatit.db.repository.AlertStore;
 import de.heoegbr.diabeatit.service.ForegroundService;
+import de.heoegbr.diabeatit.ui.notification.NotificationStore;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -296,7 +295,7 @@ public class HomeActivity extends AppCompatActivity {
 					break;
 
 				case R.id.nav_log:
-					startActivity(new Intent(HomeActivity.this, LogActivity.class));
+                    startActivity(new Intent(HomeActivity.this, DiaryActivity.class));
 					break;
 
 				case R.id.nav_help_guide:

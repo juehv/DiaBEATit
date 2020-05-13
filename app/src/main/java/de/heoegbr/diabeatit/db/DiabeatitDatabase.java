@@ -1,14 +1,27 @@
 package de.heoegbr.diabeatit.db;
 
+import android.content.Context;
+
 import androidx.room.Database;
+import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
-import de.heoegbr.diabeatit.assistant.alert.Alert;
-import de.heoegbr.diabeatit.log.event.BolusEvent;
-import de.heoegbr.diabeatit.log.event.CarbsEvent;
-import de.heoegbr.diabeatit.log.event.NoteEvent;
-import de.heoegbr.diabeatit.log.event.SportsEvent;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import de.heoegbr.diabeatit.db.container.Alert;
+import de.heoegbr.diabeatit.db.container.BgReading;
+import de.heoegbr.diabeatit.db.container.event.BolusEvent;
+import de.heoegbr.diabeatit.db.container.event.CarbsEvent;
+import de.heoegbr.diabeatit.db.container.event.NoteEvent;
+import de.heoegbr.diabeatit.db.container.event.SportsEvent;
+import de.heoegbr.diabeatit.db.dao.AlertDao;
+import de.heoegbr.diabeatit.db.dao.BgReadingDao;
+import de.heoegbr.diabeatit.db.dao.BolusEventDao;
+import de.heoegbr.diabeatit.db.dao.CarbsEventDao;
+import de.heoegbr.diabeatit.db.dao.NoteEventDao;
+import de.heoegbr.diabeatit.db.dao.SportsEventDao;
 
 /** Application database for the objects managed by the DiaBEATit project. */
 @Database(entities = {
@@ -16,10 +29,30 @@ import de.heoegbr.diabeatit.log.event.SportsEvent;
             BolusEvent.class,
             CarbsEvent.class,
             SportsEvent.class,
-            NoteEvent.class
+        NoteEvent.class,
+        BgReading.class
         }, version = 1, exportSchema = false)
 @TypeConverters({de.heoegbr.diabeatit.db.TypeConverters.class})
 public abstract class DiabeatitDatabase extends RoomDatabase {
+
+    private static final int NUMBER_OF_THREADS = 2;
+    static final ExecutorService databaseWriteExecutor =
+            Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+    private static volatile DiabeatitDatabase INSTANCE;
+
+    public static DiabeatitDatabase getDatabase(final Context context) {
+        if (INSTANCE == null) {
+            synchronized (DiabeatitDatabase.class) {
+                if (INSTANCE == null) {
+                    // TODO multi table update
+                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
+                            DiabeatitDatabase.class, "diabeatit_database")
+                            .build();
+                }
+            }
+        }
+        return INSTANCE;
+    }
 
     /** Get a data access object for {@link Alert}s */
     public abstract AlertDao alertDao();
@@ -31,5 +64,10 @@ public abstract class DiabeatitDatabase extends RoomDatabase {
     public abstract SportsEventDao sportsEventDao();
     /** Get a data access object for {@link NoteEvent} */
     public abstract NoteEventDao noteEventDao();
+
+    /**
+     * Get a data access object for {@link BgReading}
+     */
+    public abstract BgReadingDao bgReadingDao();
 
 }

@@ -9,7 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.time.Instant;
 import java.util.Date;
 
-import de.heoegbr.diabeatit.assistant.alert.Alert;
+import de.heoegbr.diabeatit.db.container.Alert;
 
 /**
  * Collection of methods to convert types from and to objects that Room knows how to store in the
@@ -40,7 +40,7 @@ public class TypeConverters {
         return date == null ? null : date.getTime();
     }
 
-    /** Convert an {@link de.heoegbr.diabeatit.assistant.alert.Alert.Urgency} into
+    /** Convert an {@link Alert.Urgency} into
      * an {@link Integer} representing its ordinal
      *
      * @param value     Urgency to convert
@@ -51,12 +51,12 @@ public class TypeConverters {
         return value == null ? null : value.ordinal();
     }
 
-    /** Convert an {@link Integer} representing the ordinal of an {@link de.heoegbr.diabeatit.assistant.alert.Alert.Urgency}
-     * into the {@link de.heoegbr.diabeatit.assistant.alert.Alert.Urgency} object
+    /** Convert an {@link Integer} representing the ordinal of an {@link Alert.Urgency}
+     * into the {@link Alert.Urgency} object
      *
-     * @param value     An {@link Integer} representing the ordinal of an {@link de.heoegbr.diabeatit.assistant.alert.Alert.Urgency}
+     * @param value     An {@link Integer} representing the ordinal of an {@link Alert.Urgency}
      *                  value
-     * @return          An {@link de.heoegbr.diabeatit.assistant.alert.Alert.Urgency}
+     * @return An {@link Alert.Urgency}
      *                  object with the given ordinal
      */
     @TypeConverter

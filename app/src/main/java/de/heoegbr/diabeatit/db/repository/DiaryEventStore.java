@@ -1,4 +1,4 @@
-package de.heoegbr.diabeatit.log;
+package de.heoegbr.diabeatit.db.repository;
 
 import androidx.room.Room;
 
@@ -8,19 +8,20 @@ import java.util.List;
 import de.heoegbr.diabeatit.DiaBEATitApp;
 import de.heoegbr.diabeatit.StaticData;
 import de.heoegbr.diabeatit.db.DiabeatitDatabase;
-import de.heoegbr.diabeatit.log.event.BolusEvent;
-import de.heoegbr.diabeatit.log.event.CarbsEvent;
-import de.heoegbr.diabeatit.log.event.NoteEvent;
-import de.heoegbr.diabeatit.log.event.SportsEvent;
+import de.heoegbr.diabeatit.db.container.event.BolusEvent;
+import de.heoegbr.diabeatit.db.container.event.CarbsEvent;
+import de.heoegbr.diabeatit.db.container.event.DiaryEvent;
+import de.heoegbr.diabeatit.db.container.event.NoteEvent;
+import de.heoegbr.diabeatit.db.container.event.SportsEvent;
 
 /**
- * Manages {@link LogEvent}s. Provides an interface to listen for changes as well as keeps the
+ * Manages {@link DiaryEvent}s. Provides an interface to listen for changes as well as keeps the
  * events in the Database up to date.
  */
-public class LogEventStore {
+public class DiaryEventStore {
 
 	private static List<LogEventStoreListener> listeners = new ArrayList<>();
-	private static List<LogEvent> events = new ArrayList<>();
+	private static List<DiaryEvent> events = new ArrayList<>();
 
 	static {
 		// Initialization: Load the events from the database
@@ -43,39 +44,16 @@ public class LogEventStore {
 		// almost all cases, however since we might attach internal listeners in this static block
 		// it still gets called, just in case.
 		for (LogEventStoreListener l : listeners)
-			l.onDatasetChange((LogEvent[]) events.toArray());
+			l.onDatasetChange((DiaryEvent[]) events.toArray());
 
 	}
 
 	/**
-	 * Interface to listen for changes in {@link LogEvent}s
-	 */
-	public interface LogEventStoreListener {
-
-		/**
-		 * Called when the dataset changes
-		 * @param e		List of events that changed
-		 */
-		void onDatasetChange(LogEvent... e);
-
-	}
-
-	/**
-	 * Attach a new listener that gets called whenever the dataset changes
-	 * @param listener	Listener to attach
-	 */
-	public static void attachListener(LogEventStoreListener listener) {
-
-		listeners.add(listener);
-
-	}
-
-	/**
-	 * Add a new {@link LogEvent}. This also inserts it into the database and notifies any attached
+	 * Add a new {@link DiaryEvent}. This also inserts it into the database and notifies any attached
 	 * {@link LogEventStoreListener}
 	 * @param event		Event to add
 	 */
-	public static void addEvent(LogEvent event) {
+	public static void addEvent(DiaryEvent event) {
 
 		events.add(event);
 		events.sort((a, b) -> b.TIMESTAMP.compareTo(a.TIMESTAMP));
@@ -105,11 +83,22 @@ public class LogEventStore {
 	}
 
 	/**
+	 * Attach a new listener that gets called whenever the dataset changes
+	 *
+	 * @param listener Listener to attach
+	 */
+	public static void attachListener(LogEventStoreListener listener) {
+
+		listeners.add(listener);
+
+	}
+
+	/**
 	 * Remove an event. This also removes it from the database and notifes any attached
 	 * {@link LogEventStoreListener}
 	 * @param event		Event to remove
 	 */
-	public static void removeEvent(LogEvent event) {
+	public static void removeEvent(DiaryEvent event) {
 
 		events.remove(event);
 
@@ -139,11 +128,24 @@ public class LogEventStore {
 	/**
 	 * Get a list of all stored events. This might not be an exhaustive list, since there is a limit
 	 * on how many events get loaded from the database on start up.
-	 * @return	A list containing all stored {@link LogEvent}s
+	 * @return A list containing all stored {@link DiaryEvent}s
 	 */
-	public static List<LogEvent> getEvents() {
+	public static List<DiaryEvent> getEvents() {
 
 		return new ArrayList<>(events);
+
+	}
+
+	/**
+	 * Interface to listen for changes in {@link DiaryEvent}s
+	 */
+	public interface LogEventStoreListener {
+
+		/**
+		 * Called when the dataset changes
+		 * @param e        List of events that changed
+		 */
+		void onDatasetChange(DiaryEvent... e);
 
 	}
 

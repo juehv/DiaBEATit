@@ -1,4 +1,4 @@
-package de.heoegbr.diabeatit.log.event;
+package de.heoegbr.diabeatit.db.container.event;
 
 import android.content.Context;
 import android.view.View;
@@ -15,13 +15,12 @@ import java.time.Instant;
 import java.util.Locale;
 
 import de.heoegbr.diabeatit.R;
-import de.heoegbr.diabeatit.log.LogEvent;
 
 /**
  * Event representing an exercise event
  */
 @Entity
-public class SportsEvent extends LogEvent {
+public class SportsEvent extends DiaryEvent {
 
 	/** Duration of the exercise */
 	@ColumnInfo(name = "duration")

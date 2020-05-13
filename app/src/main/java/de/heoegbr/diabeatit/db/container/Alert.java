@@ -1,7 +1,6 @@
-package de.heoegbr.diabeatit.assistant.alert;
+package de.heoegbr.diabeatit.db.container;
 
 import android.app.NotificationManager;
-import android.graphics.drawable.Drawable;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -11,7 +10,7 @@ import androidx.room.PrimaryKey;
 import java.util.Date;
 
 import de.heoegbr.diabeatit.R;
-import de.heoegbr.diabeatit.assistant.notification.NotificationStore;
+import de.heoegbr.diabeatit.ui.notification.NotificationStore;
 
 @Entity
 public class Alert {

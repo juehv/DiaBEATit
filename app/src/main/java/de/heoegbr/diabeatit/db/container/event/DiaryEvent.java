@@ -1,4 +1,4 @@
-package de.heoegbr.diabeatit.log;
+package de.heoegbr.diabeatit.db.container.event;
 
 import android.content.Context;
 import android.widget.RelativeLayout;
@@ -11,7 +11,7 @@ import java.time.Instant;
 /**
  * Parent class for any loggable events, such as inserting a manual bolus.
  */
-public abstract class LogEvent {
+public abstract class DiaryEvent {
 
 	/** Unique ID for each event -- used in the database */
 	@PrimaryKey(autoGenerate = true)
@@ -27,7 +27,7 @@ public abstract class LogEvent {
 	public final Instant TIMESTAMP;
 
 	/**
-	 * 	Initialize the shared fields on this {@link LogEvent}. T
+	 * 	Initialize the shared fields on this {@link DiaryEvent}. T
 	 *
 	 * 	This method is mostly used by the subclasses to initalize the fields when loading an object
 	 * 	from the database.
@@ -36,7 +36,7 @@ public abstract class LogEvent {
 	 * @param ICON			Resource ID of an icon that might be displayed for this event
 	 * @param TIMESTAMP		Timestamp of creation
 	 */
-	public LogEvent(long logEventId, int TITLE, int ICON, Instant TIMESTAMP) {
+	public DiaryEvent(long logEventId, int TITLE, int ICON, Instant TIMESTAMP) {
 		this(TITLE, ICON, TIMESTAMP);
 		this.logEventId = logEventId;
 	}
@@ -47,7 +47,7 @@ public abstract class LogEvent {
 	 * @param icon			Resource ID of an icon that may be displayed for this event
 	 * @param timestamp		Timestamp of creation of this event
 	 */
-	public LogEvent(int title, int icon, Instant timestamp) {
+	public DiaryEvent(int title, int icon, Instant timestamp) {
 
 		TITLE = title;
 		ICON = icon;

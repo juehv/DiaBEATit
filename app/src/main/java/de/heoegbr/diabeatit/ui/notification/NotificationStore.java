@@ -1,4 +1,4 @@
-package de.heoegbr.diabeatit.assistant.notification;
+package de.heoegbr.diabeatit.ui.notification;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -15,12 +15,13 @@ import javax.annotation.Nullable;
 
 import de.heoegbr.diabeatit.DiaBEATitApp;
 import de.heoegbr.diabeatit.StaticData;
-import de.heoegbr.diabeatit.assistant.alert.Alert;
+import de.heoegbr.diabeatit.db.container.Alert;
 import de.heoegbr.diabeatit.ui.HomeActivity;
 
 /**
  * Manages log events and database connection.
  */
+@Deprecated
 public class NotificationStore {
 
 	public static final String DEFAULT_CHANNEL_ID = "default";

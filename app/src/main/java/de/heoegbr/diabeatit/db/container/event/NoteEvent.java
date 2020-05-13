@@ -1,4 +1,4 @@
-package de.heoegbr.diabeatit.log.event;
+package de.heoegbr.diabeatit.db.container.event;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -16,13 +16,12 @@ import java.time.Instant;
 import java.util.Locale;
 
 import de.heoegbr.diabeatit.R;
-import de.heoegbr.diabeatit.log.LogEvent;
 
 /**
  * Event representing a note from the user
  */
 @Entity
-public class NoteEvent extends LogEvent {
+public class NoteEvent extends DiaryEvent {
 
 	/** Image attached */
 	@ColumnInfo(name = "image")

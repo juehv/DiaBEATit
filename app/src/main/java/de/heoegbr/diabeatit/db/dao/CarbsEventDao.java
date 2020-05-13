@@ -1,4 +1,4 @@
-package de.heoegbr.diabeatit.db;
+package de.heoegbr.diabeatit.db.dao;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -7,7 +7,7 @@ import androidx.room.Query;
 
 import java.util.List;
 
-import de.heoegbr.diabeatit.log.event.CarbsEvent;
+import de.heoegbr.diabeatit.db.container.event.CarbsEvent;
 
 /** Data Access Object used to access the {@link CarbsEvent}s stored in the database */
 @Dao

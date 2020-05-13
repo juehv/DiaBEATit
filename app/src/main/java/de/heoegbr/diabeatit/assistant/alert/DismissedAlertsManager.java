@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.heoegbr.diabeatit.R;
+import de.heoegbr.diabeatit.db.container.Alert;
+import de.heoegbr.diabeatit.db.repository.AlertStore;
 
 public class DismissedAlertsManager {
 

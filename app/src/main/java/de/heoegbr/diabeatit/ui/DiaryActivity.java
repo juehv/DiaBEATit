@@ -1,4 +1,4 @@
-package de.heoegbr.diabeatit.log;
+package de.heoegbr.diabeatit.ui;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -25,10 +25,12 @@ import java.util.Comparator;
 import java.util.List;
 
 import de.heoegbr.diabeatit.R;
+import de.heoegbr.diabeatit.db.container.event.DiaryEvent;
+import de.heoegbr.diabeatit.db.repository.DiaryEventStore;
 
-public class LogActivity extends AppCompatActivity implements LogEventAdapter.LogEventViewHolder.ClickListener {
+public class DiaryActivity extends AppCompatActivity implements DiaryEventAdapter.LogEventViewHolder.ClickListener {
 
-    private LogEventAdapter adapter;
+    private DiaryEventAdapter adapter;
 
     private ActionModeCallback actionModeCallback = new ActionModeCallback();
     private ActionMode actionMode;
@@ -43,7 +45,7 @@ public class LogActivity extends AppCompatActivity implements LogEventAdapter.Lo
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        adapter = new LogEventAdapter(this, this, LogEventStore.getEvents());
+        adapter = new DiaryEventAdapter(this, this, DiaryEventStore.getEvents());
 
         RecyclerView recycler = findViewById(R.id.event_log_layout);
         recycler.setLayoutManager(new LinearLayoutManager(this));
@@ -52,11 +54,11 @@ public class LogActivity extends AppCompatActivity implements LogEventAdapter.Lo
 
         findViewById(R.id.event_log_empty_notice).setVisibility(adapter.events.isEmpty() ? View.VISIBLE : View.GONE);
 
-        LogEventStore.attachListener(this::change);
+        DiaryEventStore.attachListener(this::change);
 
     }
 
-    private void change(LogEvent... e) {
+    private void change(DiaryEvent... e) {
 
         if (e.length != 0) {
 
@@ -228,59 +230,14 @@ abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder> extends Rec
     }
 }
 
-class LogEventAdapter extends SelectableAdapter<LogEventAdapter.LogEventViewHolder> {
+class DiaryEventAdapter extends SelectableAdapter<DiaryEventAdapter.LogEventViewHolder> {
 
     private final Context CONTEXT;
-    public List<LogEvent> events;
+    public List<DiaryEvent> events;
 
     private LogEventViewHolder.ClickListener clickListener;
 
-    public static class LogEventViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-
-        public RelativeLayout view;
-
-        private ClickListener listener;
-
-        public LogEventViewHolder(RelativeLayout view, ClickListener listener) {
-
-            super(view);
-            this.view = view;
-
-            this.listener = listener;
-
-            view.setOnClickListener(this);
-            view.setOnLongClickListener(this);
-
-        }
-
-        @Override
-        public void onClick(View v) {
-
-            if (listener != null)
-                listener.onItemClicked(getPosition());
-
-        }
-
-        @Override
-        public boolean onLongClick(View v) {
-
-            if (listener != null)
-                return listener.onItemLongClicked(getPosition());
-
-            return false;
-
-        }
-
-        public interface ClickListener {
-
-            public void onItemClicked(int position);
-            public boolean onItemLongClicked(int position);
-
-        }
-
-    }
-
-    public LogEventAdapter(Context context, LogEventViewHolder.ClickListener clickListener, List<LogEvent> events) {
+    public DiaryEventAdapter(Context context, LogEventViewHolder.ClickListener clickListener, List<DiaryEvent> events) {
 
         CONTEXT = context;
         this.clickListener = clickListener;
@@ -288,13 +245,11 @@ class LogEventAdapter extends SelectableAdapter<LogEventAdapter.LogEventViewHold
 
     }
 
-    private boolean multi_mode;
-
     public void removeItem(int position) {
 
         if (multi_mode) {
 
-            LogEventStore.removeEvent(events.get(position));
+            DiaryEventStore.removeEvent(events.get(position));
             events.remove(position);
             notifyDataSetChanged();
 
@@ -306,13 +261,25 @@ class LogEventAdapter extends SelectableAdapter<LogEventAdapter.LogEventViewHold
         builder.setTitle(CONTEXT.getString(R.string.event_log_hide_alert_title));
         builder.setMessage(CONTEXT.getString(R.string.event_log_hide_alert_message));
         builder.setPositiveButton(CONTEXT.getString(R.string.event_log_hide_alert_ok), (dialogInterface, i) -> {
-            LogEventStore.removeEvent(events.get(position));
+            DiaryEventStore.removeEvent(events.get(position));
             events.remove(position);
             notifyDataSetChanged();
         });
         builder.setNegativeButton(CONTEXT.getString(R.string.event_log_hide_alert_cancel), (dialogInterface, i) -> {
         });
         builder.create().show();
+
+    }
+
+    private boolean multi_mode;
+
+    @Override
+    public void onBindViewHolder(LogEventViewHolder holder, int position) {
+
+        DiaryEvent event = events.get(position);
+        event.createLayout(CONTEXT, holder.view, isSelected(position));
+
+        Log.i("LOGAC", isSelected(position) ? "vis" : "invis");
 
     }
 
@@ -387,13 +354,49 @@ class LogEventAdapter extends SelectableAdapter<LogEventAdapter.LogEventViewHold
 
     }
 
-    @Override
-    public void onBindViewHolder(LogEventViewHolder holder, int position) {
+    public static class LogEventViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
-        LogEvent event = events.get(position);
-        event.createLayout(CONTEXT, holder.view, isSelected(position));
+        public RelativeLayout view;
 
-        Log.i("LOGAC", isSelected(position) ? "vis" : "invis");
+        private ClickListener listener;
+
+        public LogEventViewHolder(RelativeLayout view, ClickListener listener) {
+
+            super(view);
+            this.view = view;
+
+            this.listener = listener;
+
+            view.setOnClickListener(this);
+            view.setOnLongClickListener(this);
+
+        }
+
+        @Override
+        public void onClick(View v) {
+
+            if (listener != null)
+                listener.onItemClicked(getPosition());
+
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+
+            if (listener != null)
+                return listener.onItemLongClicked(getPosition());
+
+            return false;
+
+        }
+
+        public interface ClickListener {
+
+            void onItemClicked(int position);
+
+            boolean onItemLongClicked(int position);
+
+        }
 
     }
 

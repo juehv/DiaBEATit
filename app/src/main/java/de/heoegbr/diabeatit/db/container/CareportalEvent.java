@@ -1,4 +1,4 @@
-package de.heoegbr.diabeatit.data;
+package de.heoegbr.diabeatit.db.container;
 
 @Deprecated
 public class CareportalEvent  {

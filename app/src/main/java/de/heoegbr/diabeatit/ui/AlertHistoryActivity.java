@@ -7,10 +7,10 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import de.heoegbr.diabeatit.R;
-import de.heoegbr.diabeatit.assistant.alert.Alert;
-import de.heoegbr.diabeatit.assistant.alert.AlertStore;
 import de.heoegbr.diabeatit.assistant.alert.AlertStoreListener;
 import de.heoegbr.diabeatit.assistant.alert.DismissedAlertsManager;
+import de.heoegbr.diabeatit.db.container.Alert;
+import de.heoegbr.diabeatit.db.repository.AlertStore;
 
 public class AlertHistoryActivity extends AppCompatActivity {
 

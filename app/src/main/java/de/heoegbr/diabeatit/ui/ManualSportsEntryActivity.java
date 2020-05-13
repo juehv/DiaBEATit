@@ -18,8 +18,8 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import de.heoegbr.diabeatit.R;
-import de.heoegbr.diabeatit.log.LogEventStore;
-import de.heoegbr.diabeatit.log.event.SportsEvent;
+import de.heoegbr.diabeatit.db.container.event.SportsEvent;
+import de.heoegbr.diabeatit.db.repository.DiaryEventStore;
 
 public class ManualSportsEntryActivity extends AppCompatActivity {
 
@@ -119,7 +119,7 @@ public class ManualSportsEntryActivity extends AppCompatActivity {
 
         }
 
-        LogEventStore.addEvent(new SportsEvent(timestamp.toInstant(), durationMinutes, descriptionInput.getText().toString()));
+        DiaryEventStore.addEvent(new SportsEvent(timestamp.toInstant(), durationMinutes, descriptionInput.getText().toString()));
 
         finish();
 

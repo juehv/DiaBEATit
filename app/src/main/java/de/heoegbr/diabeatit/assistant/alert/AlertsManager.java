@@ -24,6 +24,8 @@ import java.util.List;
 
 import de.heoegbr.diabeatit.DiaBEATitApp;
 import de.heoegbr.diabeatit.R;
+import de.heoegbr.diabeatit.db.container.Alert;
+import de.heoegbr.diabeatit.db.repository.AlertStore;
 import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
 public class AlertsManager {

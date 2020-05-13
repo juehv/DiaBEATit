@@ -7,8 +7,8 @@ import android.os.IBinder;
 
 import de.heoegbr.diabeatit.R;
 import de.heoegbr.diabeatit.StaticData;
-import de.heoegbr.diabeatit.assistant.alert.Alert;
-import de.heoegbr.diabeatit.assistant.notification.NotificationStore;
+import de.heoegbr.diabeatit.db.container.Alert;
+import de.heoegbr.diabeatit.ui.notification.NotificationStore;
 
 /**
  * Foreground services that allows the app to run continuously without being automatically terminated
