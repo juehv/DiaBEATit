@@ -32,7 +32,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.navigation.NavigationView;
 
 import java.lang.ref.WeakReference;
-import java.util.Arrays;
 
 import de.heoegbr.diabeatit.R;
 import de.heoegbr.diabeatit.StaticData;
@@ -52,10 +51,13 @@ public class HomeActivity extends AppCompatActivity {
 	private AppBarConfiguration mAppBarConfiguration;
 	private FloatingActionsMenu entryMenu;
 
+	private AlertStore mAlertStore;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-
 		super.onCreate(savedInstanceState);
+		mAlertStore = AlertStore.getRepository(getApplicationContext());
+
 		setContentView(R.layout.d_activity_home);
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		toolbar.setTitle(getResources().getString(R.string.title_activity_home));
@@ -127,7 +129,6 @@ public class HomeActivity extends AppCompatActivity {
 	}
 
 	private void setupAssistant() {
-
 		final View nestedScrollView = findViewById(R.id.assistant_scrollview);
 		final BottomSheetBehavior assistant = BottomSheetBehavior.from(nestedScrollView);
 		final RelativeLayout assistantPeek = findViewById(R.id.assistant_peek);
@@ -135,10 +136,8 @@ public class HomeActivity extends AppCompatActivity {
 		final TextView assistantCloseHint = findViewById(R.id.assistant_close_hint);
 
 		assistant.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-
 			@Override
 			public void onStateChanged(@NonNull View bottomSheet, int newState) {
-
 				entryMenu.setVisibility(newState == BottomSheetBehavior.STATE_COLLAPSED ? View.VISIBLE : View.GONE);
 				entryMenu.collapseImmediately();
 
@@ -150,91 +149,77 @@ public class HomeActivity extends AppCompatActivity {
 					assistant.setState(BottomSheetBehavior.STATE_EXPANDED);
 
 				StaticData.assistantInhibitClose = false;
-
 			}
 
 			@Override
 			public void onSlide(@NonNull View view, float v) {}
-
 		});
 
 		assistantPeek.setOnClickListener(view -> assistant.setState(BottomSheetBehavior.STATE_EXPANDED));
 
-		AlertStore.activeAlerts = new AlertsManager(this, findViewById(R.id.assistant_card_list), findViewById(R.id.alert_cardview));
+		mAlertStore.alertsManager = new AlertsManager(getApplicationContext(), findViewById(R.id.assistant_card_list), findViewById(R.id.alert_cardview));
 
 		Button alertClearB = findViewById(R.id.alert_clear_all);
 		TextView alertEmptyT = findViewById(R.id.alert_empty_notice);
 
-		alertClearB.setOnClickListener(view -> AlertStore.clearAlerts());
+		alertClearB.setOnClickListener(view -> mAlertStore.clearAlerts());
 
 		Runnable peekUpdater = () -> {
-
 			TextView titleV = assistantPeek.findViewById(R.id.assistant_peek_title);
 			TextView descV = assistantPeek.findViewById(R.id.assistant_peek_description);
 			ImageView iconV = assistantPeek.findViewById(R.id.assistant_status_icon);
 
-			Alert.Urgency urgency = Arrays.stream(AlertStore.getActiveAlerts()).map(a -> a.URGENCY).reduce((a, b) -> a.getPriority() > b.getPriority() ? a : b).orElse(Alert.Urgency.INFO);
-			int amount = (int) Arrays.stream(AlertStore.getActiveAlerts()).filter(a -> a.URGENCY.equals(urgency)).count();
+			Alert.Urgency urgency = mAlertStore.getActiveAlerts().stream()
+					.map(a -> a.URGENCY).reduce((a, b) -> a.getPriority() > b.getPriority() ? a : b)
+					.orElse(Alert.Urgency.INFO);
+			int amount = (int) mAlertStore.getActiveAlerts().stream().filter(a -> a.URGENCY.equals(urgency)).count();
 
 			int color = amount == 0 ? getColor(android.R.color.holo_green_light) : getColor(urgency.getRawColor());
 			String title = amount == 0 ? getString(R.string.assistant_peek_title_none) : getString(urgency.getPeekTitle());
-			String desc = AlertStore.getActiveAlerts().length + " " + getString(R.string.assistant_peek_description);
+			String desc = mAlertStore.getActiveAlerts().size() + " " + getString(R.string.assistant_peek_description);
 			Drawable icon = amount == 0 ? getDrawable(R.drawable.ic_check) : getDrawable(R.drawable.ic_alert);
 
 			assistantPeek.setBackgroundColor(color);
 			titleV.setText(title);
 			descV.setText(desc);
 			iconV.setImageDrawable(icon);
-
 		};
 
-		AlertStore.attachListener(new AlertStoreListener() {
-
+		mAlertStore.attachListener(new AlertStoreListener() {
 			@Override
 			public void onNewAlert(Alert alert) {
-
 				alertClearB.setVisibility(View.VISIBLE);
 				alertEmptyT.setVisibility(View.GONE);
 
 				peekUpdater.run();
-
 			}
 
 			@Override
 			public void onAlertDismissed(Alert alert) {
-
 				peekUpdater.run();
-
 			}
 
 			@Override
 			public void onAlertRestored(Alert alert) {
-
 				onNewAlert(alert);
-
 			}
 
 			@Override
 			public void onAlertsCleared() {
-
 				alertClearB.setVisibility(View.GONE);
 				alertEmptyT.setVisibility(View.VISIBLE);
 
 				peekUpdater.run();
-
 			}
 
 			@Override
 			public void onDataSetInit() {
-
-				int len = AlertStore.getActiveAlerts().length;
+				int len = mAlertStore.getActiveAlerts().size();
 				alertClearB.setVisibility(len == 0 ? View.GONE : View.VISIBLE);
 				alertEmptyT.setVisibility(len == 0 ? View.VISIBLE : View.GONE);
 
 				peekUpdater.run();
-
 			}
-
 		});
 
 		CardView alertHistoryC = findViewById(R.id.alert_history);
@@ -249,22 +234,16 @@ public class HomeActivity extends AppCompatActivity {
 						}
 		);
 
-		boolean a = false;
-
 		findViewById(R.id.assistant_card_list).setOnTouchListener(new OnSwipeTouchListener(this) {
-
 			@Override
 			public void onSwipeLeft() { StaticData.assistantInhibitClose = true; }
 
 			@Override
 			public void onSwipeRight() { StaticData.assistantInhibitClose = true; }
-
 		});
-
 	}
 
 	private void setupDrawer() {
-
 		final DrawerLayout drawer = findViewById(R.id.drawer_layout);
 		final NavigationView navView = findViewById(R.id.nav_view);
 
@@ -277,11 +256,9 @@ public class HomeActivity extends AppCompatActivity {
 		NavigationUI.setupWithNavController(navView, navController);
 
 		navView.setNavigationItemSelectedListener(menuItem -> {
-
 			drawer.closeDrawers();
 
 			switch (menuItem.getItemId()) {
-
 				case R.id.nav_assistant:
 					expandAssistant();
 					break;
@@ -305,18 +282,14 @@ public class HomeActivity extends AppCompatActivity {
 				case R.id.nav_help_contact_us:
 					startActivity(new Intent(Intent.ACTION_SENDTO, Uri.parse(StaticData.CONTACT_MAIL)));
 					break;
-
 			}
 
 			return true;
-
 		});
-
 	}
 
 	@Override
 	public void onBackPressed() {
-
 		View nestedScrollView = findViewById(R.id.assistant_scrollview);
 		final BottomSheetBehavior assistant = BottomSheetBehavior.from(nestedScrollView);
 
@@ -324,7 +297,6 @@ public class HomeActivity extends AppCompatActivity {
 			assistant.setState(BottomSheetBehavior.STATE_COLLAPSED);
 		else
 			super.onBackPressed();
-
 	}
 
 	/*
@@ -332,9 +304,7 @@ public class HomeActivity extends AppCompatActivity {
 	 */
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent event) {
-
 		if (event.getAction() == MotionEvent.ACTION_DOWN && entryMenu.isExpanded()){
-
 			Rect outRect = new Rect();
 			entryMenu.getGlobalVisibleRect(outRect);
 
@@ -353,11 +323,8 @@ public class HomeActivity extends AppCompatActivity {
 	}
 
 	public static HomeActivity getInstance() {
-
 		return instance.get();
-
 	}
-
 }
 
 /* Class from https://gist.github.com/nesquena/ed58f34791da00da9751 under MIT license */

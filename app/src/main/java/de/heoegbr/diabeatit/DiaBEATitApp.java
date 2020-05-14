@@ -9,6 +9,7 @@ public class DiaBEATitApp extends Application {
     private static String TAG = "MAINAPP";
     public static DiaBEATitApp INSTANCE = null;
 
+    @Deprecated
     public static Context getContext() {
         if (INSTANCE != null)
             return INSTANCE.getApplicationContext();

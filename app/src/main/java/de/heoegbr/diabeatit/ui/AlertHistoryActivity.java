@@ -14,60 +14,50 @@ import de.heoegbr.diabeatit.db.repository.AlertStore;
 
 public class AlertHistoryActivity extends AppCompatActivity {
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.d_activity_alert_history);
+        getSupportActionBar().setTitle(getResources().getString(R.string.title_activity_alert_history));
 
-    super.onCreate(savedInstanceState);
-	setContentView(R.layout.d_activity_alert_history);
-	getSupportActionBar().setTitle(getResources().getString(R.string.title_activity_alert_history));
+        setTheme(R.style.diabeatit);
 
-	setTheme(R.style.diabeatit);
+        AlertStore alertStore = AlertStore.getRepository(getApplicationContext());
+        alertStore.dismissedAlertsManager = new DismissedAlertsManager(getApplicationContext(),
+                findViewById(R.id.alert_history_layout));
 
-	AlertStore.dismissedAlerts = new DismissedAlertsManager(this, findViewById(R.id.alert_history_layout));
+        TextView dismissedEmptyT = findViewById(R.id.alert_history_empty_notice);
 
-	  TextView dismissedEmptyT = findViewById(R.id.alert_history_empty_notice);
+        alertStore.attachListener(new AlertStoreListener() {
+            @Override
+            public void onNewAlert(Alert alert) {
+            }
 
-	  AlertStore.attachListener(new AlertStoreListener() {
+            @Override
+            public void onAlertDismissed(Alert alert) {
+                dismissedEmptyT.setVisibility(View.GONE);
+            }
 
-		  @Override
-		  public void onNewAlert(Alert alert) {
-		  }
+            @Override
+            public void onAlertRestored(Alert alert) {
+                if (alertStore.getDismissedAlerts().isEmpty())
+                    dismissedEmptyT.setVisibility(View.VISIBLE);
+            }
 
-		  @Override
-		  public void onAlertDismissed(Alert alert) {
+            @Override
+            public void onAlertsCleared() {
+            }
 
-			  dismissedEmptyT.setVisibility(View.GONE);
+            @Override
+            public void onDataSetInit() {
+                dismissedEmptyT.setVisibility(
+                        alertStore.getDismissedAlerts().isEmpty() ? View.VISIBLE : View.GONE);
+            }
+        });
+    }
 
-		  }
-
-		  @Override
-		  public void onAlertRestored(Alert alert) {
-
-			  if (AlertStore.getDismissedAlerts().length == 0)
-				  dismissedEmptyT.setVisibility(View.VISIBLE);
-
-		  }
-
-		  @Override
-		  public void onAlertsCleared() {
-		  }
-
-		  @Override
-		  public void onDataSetInit() {
-
-			  dismissedEmptyT.setVisibility(AlertStore.getDismissedAlerts().length == 0 ? View.VISIBLE : View.GONE);
-
-		  }
-
-	  });
-
-  }
-
-	@Override
-	public void onBackPressed() {
-
-		finish();
-
-	}
-
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 }

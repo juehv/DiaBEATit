@@ -1,210 +1,206 @@
 package de.heoegbr.diabeatit.db.repository;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
-import androidx.room.Room;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
-import de.heoegbr.diabeatit.DiaBEATitApp;
-import de.heoegbr.diabeatit.StaticData;
 import de.heoegbr.diabeatit.assistant.alert.AlertStoreListener;
 import de.heoegbr.diabeatit.assistant.alert.AlertsManager;
 import de.heoegbr.diabeatit.assistant.alert.DismissedAlertsManager;
 import de.heoegbr.diabeatit.db.DiabeatitDatabase;
 import de.heoegbr.diabeatit.db.container.Alert;
+import de.heoegbr.diabeatit.db.dao.AlertDao;
 
 public class AlertStore {
+    public static final String TAG = "ALERT_STORE";
+    public static AlertStore INSTANCE = null;
 
-  public static DismissedAlertsManager dismissedAlerts;
-  public static AlertsManager activeAlerts;
+    //TODO why are they here and not part of the home activity (programming pattern?)
+    public DismissedAlertsManager dismissedAlertsManager;
+    public AlertsManager alertsManager;
 
-  private static List<Alert> alerts = new ArrayList<>();
-  private static List<AlertStoreListener> listeners = new ArrayList<>();
+    private List<Alert> alerts = new ArrayList<>();
+    private List<AlertStoreListener> listeners = new ArrayList<>();
 
-  static {
+    private AlertDao mAlertDao;
+    private Executor mExecutor = Executors.newSingleThreadExecutor();
 
-    // load existing alerts from the database. this will block the thread
-    DiabeatitDatabase db = Room.databaseBuilder(
-            DiaBEATitApp.getContext(),
-              DiabeatitDatabase.class,
-              StaticData.ROOM_DATABASE_NAME)
-            .allowMainThreadQueries()
-            .build();
+    private AlertStore(final Context context) {
+        DiabeatitDatabase db = DiabeatitDatabase.getDatabase(context);
+        mAlertDao = db.alertDao();
 
-    List<Alert> loaded = db.alertDao().getActive();
-    loaded.addAll(db.alertDao().getDismissedLimited());
-    initAlerts(loaded.toArray(new Alert[0]));
-
-  }
-
-  /**
-   * Attaches an {@link AlertStoreListener} to the AlertStore.
-   * It will receive an initial {@link AlertStoreListener#onDataSetInit()} call and future data set updates
-   * @param listener The listener to add
-   */
-  public static void attachListener(@NonNull AlertStoreListener listener) {
-
-    listeners.add(listener);
-    listener.onDataSetInit();
-
-  }
-
-  /**
-   * Detaches the given {@link AlertStoreListener} from the AlertStore.
-   * It will not receive any further notification calls
-   * @param listener The listener to remove
-   */
-  public static void detachListener(AlertStoreListener listener) {
-
-    listeners.remove(listener);
-
-  }
-
-  /**
-   * Sets the list of active and dismissed alerts to the given array.
-   * This will overwrite all currently stored alerts.
-   * Distinction of active/dismissed is made on basis of {@link Alert#active}
-   * @param alertBundle The new data set
-   */
-  private static void initAlerts(@NonNull Alert[] alertBundle) {
-
-    alerts = new ArrayList<>();
-    alerts.addAll(Arrays.asList(alertBundle));
-
-    for (Alert alert : alerts)
-      alert.send();
-
-    for (AlertStoreListener l : listeners)
-      l.onDataSetInit();
-
-  }
-
-  /**
-   * Adds the given alert to the list of active alerts. This will notify the listeners via
-   * {@link AlertStoreListener#onNewAlert(Alert)}.
-   * It's {@link Alert#active} flag will be set to true
-   * @param alert The alert to add
-   */
-  public static void newAlert(@NonNull Alert alert) {
-
-    alert.active = true;
-
-    alerts.add(alert);
-    alert.send();
-
-    for (AlertStoreListener l : listeners)
-      l.onNewAlert(alert);
-
-    new Thread(() -> {
-      DiabeatitDatabase db = Room.databaseBuilder(
-              DiaBEATitApp.getContext(),
-              DiabeatitDatabase.class,
-              StaticData.ROOM_DATABASE_NAME).build();
-      db.alertDao().insertAll(alert);
-    }).start();
-  }
-
-  /**
-   * This will move the given alert from the active to the dismissed alerts. It will notify the listeners via
-   * {@link AlertStoreListener#onAlertDismissed(Alert)}.
-   * If the given alert was the last active alert, this will also trigger a notification for
-   * {@link AlertStoreListener#onAlertsCleared()}.
-   * It's {@link Alert#active} flag will be set to false.
-   * If the given alert is not present in the list of active alerts, this call will be ignored
-   * @param alert The alert to dismiss
-   */
-  public static void dismissAlert(@NonNull Alert alert) {
-
-    if (!alerts.contains(alert)) return;
-
-    int index = alerts.indexOf(alert);
-    alerts.get(index).active = false;
-    alert.destroy();
-
-    updateDatabaseEntry(alert);
-
-    for (AlertStoreListener l : listeners)
-      l.onAlertDismissed(alert);
-
-    if (getActiveAlerts().length == 0)
-      for (AlertStoreListener l : listeners)
-        l.onAlertsCleared();
-
-  }
-
-  /**
-   * This will move the given alert from the dismissed to the active alerts. It will notify the listeners via
-   * {@link AlertStoreListener#onAlertRestored(Alert)}.
-   * It's {@link Alert#active} flag will be set to false.
-   * If the given alert is not present in the list of dismissed alerts, this call will be redirected to
-   * {@link #newAlert(Alert)}
-   * @param alert The alert to restore
-   */
-  public static void restoreAlert(@NonNull Alert alert) {
-
-    if (!alerts.contains(alert)) {
-
-      newAlert(alert);
-      return;
-
+        // load existing alerts from the database.
+        mExecutor.execute(() -> {
+            List<Alert> items = new ArrayList<>();
+            items.addAll(mAlertDao.getActive());
+            items.addAll(mAlertDao.getDismissedLimited());
+            initAlerts(items);
+        });
     }
 
-    int index = alerts.indexOf(alert);
-    alerts.get(index).active = true;
-    alert.send();
+    public static AlertStore getRepository(final Context context) {
+        if (INSTANCE == null) {
+            synchronized (AlertStore.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new AlertStore(context);
+                }
+            }
+        }
+        return INSTANCE;
+    }
 
-    updateDatabaseEntry(alert);
+    /**
+     * Attaches an {@link AlertStoreListener} to the AlertStore.
+     * It will receive an initial {@link AlertStoreListener#onDataSetInit()} call and future data set updates
+     *
+     * @param listener The listener to add
+     */
+    public void attachListener(@NonNull AlertStoreListener listener) {
+        listeners.add(listener);
+        listener.onDataSetInit();
+    }
 
-    for (AlertStoreListener l : listeners)
-      l.onAlertRestored(alert);
-  }
+    /**
+     * Detaches the given {@link AlertStoreListener} from the AlertStore.
+     * It will not receive any further notification calls
+     *
+     * @param listener The listener to remove
+     */
+    public void detachListener(AlertStoreListener listener) {
+        listeners.remove(listener);
+    }
 
-  /**
-   * This will remove all active alerts by calling {@link #dismissAlert(Alert)} in sequence.
-   * These calls will trigger dismissal notifications
-   */
-  public static void clearAlerts() {
+    /**
+     * Sets the list of active and dismissed alerts to the given array.
+     * This will overwrite all currently stored alerts.
+     * Distinction of active/dismissed is made on basis of {@link Alert#active}
+     *
+     * @param alertBundle The new data set
+     */
+    private void initAlerts(@NonNull List<Alert> alertBundle) {
+        alerts = new ArrayList<>();
+        alerts.addAll(alertBundle);
 
-    for (Alert alert : getActiveAlerts())
-      dismissAlert(alert);
+        for (Alert alert : alerts)
+            alert.send();
 
-  }
+        for (AlertStoreListener l : listeners)
+            l.onDataSetInit();
+    }
 
-  /**
-   * This will return a list of all alerts with the {@link Alert#active} flag set
-   * @return all active alerts as an array
-   */
-  public static Alert[] getActiveAlerts() {
+    /**
+     * Adds the given alert to the list of active alerts. This will notify the listeners via
+     * {@link AlertStoreListener#onNewAlert(Alert)}.
+     * It's {@link Alert#active} flag will be set to true
+     *
+     * @param alert The alert to add
+     */
+    public void newAlert(@NonNull Alert alert) {
+        alert.active = true;
 
-    return alerts.stream().filter(a -> a.active).toArray(Alert[]::new);
+        alerts.add(alert);
+        alert.send();
 
-  }
+        for (AlertStoreListener l : listeners)
+            l.onNewAlert(alert);
 
-  /**
-   * This will return a list of all alerts with the {@link Alert#active} flag not set
-   * @return all dismissed alerts as an array
-   */
-  public static Alert[] getDismissedAlerts() {
+        mExecutor.execute(() -> mAlertDao.insertAll(alert));
+    }
 
-    return alerts.stream().filter(a -> !a.active).toArray(Alert[]::new);
+    /**
+     * This will move the given alert from the active to the dismissed alerts. It will notify the listeners via
+     * {@link AlertStoreListener#onAlertDismissed(Alert)}.
+     * If the given alert was the last active alert, this will also trigger a notification for
+     * {@link AlertStoreListener#onAlertsCleared()}.
+     * It's {@link Alert#active} flag will be set to false.
+     * If the given alert is not present in the list of active alerts, this call will be ignored
+     *
+     * @param alert The alert to dismiss
+     */
+    public void dismissAlert(@NonNull Alert alert) {
+        if (!alerts.contains(alert)) return;
 
-  }
+        int index = alerts.indexOf(alert);
+        alerts.get(index).active = false;
+        alert.destroy();
 
-  /**
-   * Dispatch a thread updating the alert in the database
-   * @param alert   Alert that needs to be updated
-   */
-  private static void updateDatabaseEntry(Alert alert) {
-    new Thread(() -> {
-      DiabeatitDatabase db = Room.databaseBuilder(
-              DiaBEATitApp.getContext(),
-                DiabeatitDatabase.class,
-                StaticData.ROOM_DATABASE_NAME)
-              .build();
-      db.alertDao().update(alert);
-    }).start();
-  }
+        updateDatabaseEntry(alert);
+
+        for (AlertStoreListener l : listeners)
+            l.onAlertDismissed(alert);
+
+        if (getActiveAlerts().isEmpty())
+            for (AlertStoreListener l : listeners)
+                l.onAlertsCleared();
+    }
+
+    /**
+     * This will move the given alert from the dismissed to the active alerts. It will notify the listeners via
+     * {@link AlertStoreListener#onAlertRestored(Alert)}.
+     * It's {@link Alert#active} flag will be set to false.
+     * If the given alert is not present in the list of dismissed alerts, this call will be redirected to
+     * {@link #newAlert(Alert)}
+     *
+     * @param alert The alert to restore
+     */
+    public void restoreAlert(@NonNull Alert alert) {
+        if (!alerts.contains(alert)) {
+
+            newAlert(alert);
+            return;
+
+        }
+
+        int index = alerts.indexOf(alert);
+        alerts.get(index).active = true;
+        alert.send();
+
+        updateDatabaseEntry(alert);
+
+        for (AlertStoreListener l : listeners)
+            l.onAlertRestored(alert);
+    }
+
+    /**
+     * This will remove all active alerts by calling {@link #dismissAlert(Alert)} in sequence.
+     * These calls will trigger dismissal notifications
+     */
+    public void clearAlerts() {
+        for (Alert alert : getActiveAlerts())
+            dismissAlert(alert);
+    }
+
+    /**
+     * This will return a list of all alerts with the {@link Alert#active} flag set
+     *
+     * @return all active alerts as an array
+     */
+    public List<Alert> getActiveAlerts() {
+        return alerts.stream().filter(a -> a.active).collect(Collectors.toList());
+    }
+
+    /**
+     * This will return a list of all alerts with the {@link Alert#active} flag not set
+     *
+     * @return all dismissed alerts as an array
+     */
+    public List<Alert> getDismissedAlerts() {
+        return alerts.stream().filter(a -> !a.active).collect(Collectors.toList());
+    }
+
+    /**
+     * Dispatch a thread updating the alert in the database
+     *
+     * @param alert Alert that needs to be updated
+     */
+    private void updateDatabaseEntry(Alert alert) {
+        mExecutor.execute(() -> mAlertDao.update(alert));
+    }
 
 }
