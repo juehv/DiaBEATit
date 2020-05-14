@@ -25,14 +25,14 @@
     <string name="mc_notes_hint">Notes</string>
     <string name="mc_picture_attach">Attach Picture</string>
     <string name="mc_save">Save</string>
-    <string name="mc_event_title">Carbs Intake</string>
+    <string name="mc_event_title">Carbs</string>
 
     <!-- Manual Insulin -->
     <string name="mi_title">Add Insulin Bolus</string>
     <string name="mi_input_hint">Bolus</string>
     <string name="mi_notes_hint">Notes</string>
     <string name="mi_save">Save</string>
-    <string name="mi_event_title">Bolus Event</string>
+    <string name="mi_event_title">Bolus</string>
 
     <!-- Manual Sports -->
     <string name="ms_title">Add Exercise Unit</string>
@@ -42,8 +42,8 @@
     <string name="ms_duration_ok">Done</string>
     <string name="ms_duration_cancel">Cancel</string>
     <string name="ms_save">Save</string>
-    <string name="ms_event_title">Exercise Unit</string>
     <string name="ms_event_minutes">%1$d minutes</string>
+    <string name="ms_event_title">Exercise</string>
 
     <!-- Manual Note -->
     <string name="mn_title">Add Note</string>

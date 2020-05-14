@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey;
 import java.util.Date;
 
 import de.heoegbr.diabeatit.R;
-import de.heoegbr.diabeatit.ui.notification.NotificationStore;
+import de.heoegbr.diabeatit.db.repository.NotificationStore;
 
 @Entity
 public class Alert {
@@ -30,7 +30,6 @@ public class Alert {
 		private String channel;
 
 		Urgency(int p, int s, int b, int r, String nId, String nTitle, int nImp, int t) {
-
 			priority = p;
 			stringId = s;
 			background = b;
@@ -39,7 +38,6 @@ public class Alert {
 			peekTitle = t;
 
 			NotificationStore.createChannel(nId, nTitle, nTitle, nImp);
-
 		}
 
 		public int getPriority() {
@@ -69,13 +67,12 @@ public class Alert {
 	@PrimaryKey(autoGenerate = true)
 	public long alertId;
 
-	@Ignore
-	private int NOTIFICATION_ID = -1;
-
 	@ColumnInfo(name = "urgency")
-	public final Urgency URGENCY;
+	public final Urgency urgency;
 	@ColumnInfo(name = "icon_id")
-	public final int ICON_ID;
+	public final int iconId;
+	@Ignore
+	private int notification_id = -1;
 	@ColumnInfo(name = "title")
 	public String title;
 	@ColumnInfo(name = "description")
@@ -96,16 +93,16 @@ public class Alert {
 
 	public Alert(Urgency urgency, int iconId, String title, String descriptionHtml, Date creation) {
 
-		URGENCY = urgency;
-		ICON_ID = iconId;
+		this.urgency = urgency;
+		this.iconId = iconId;
 		this.title = title;
-		desc = descriptionHtml;
-		timestamp = creation;
+		this.desc = descriptionHtml;
+		this.timestamp = creation;
 
 	}
 
-	public Alert(long alertId, Urgency URGENCY, int ICON_ID, String title, String desc, Date timestamp, boolean active, boolean notify) {
-		this(URGENCY, ICON_ID, title, desc, timestamp);
+	public Alert(long alertId, Urgency urgency, int ICON_ID, String title, String desc, Date timestamp, boolean active, boolean notify) {
+		this(urgency, ICON_ID, title, desc, timestamp);
 		this.alertId = alertId;
 		this.active = active;
 		this.notify = notify;
@@ -119,7 +116,7 @@ public class Alert {
 		if (!notify || !active) return;
 
 		destroy();
-		NOTIFICATION_ID = NotificationStore.sendNotification(URGENCY.getChannel(), this);
+		notification_id = NotificationStore.sendNotification(urgency.getChannel(), this);
 
 	}
 
@@ -128,10 +125,10 @@ public class Alert {
 	 */
 	public void destroy() {
 
-		if (NOTIFICATION_ID < 0) return;
+		if (notification_id < 0) return;
 
-		NotificationStore.removeNotification(NOTIFICATION_ID);
-		NOTIFICATION_ID = -1;
+		NotificationStore.removeNotification(notification_id);
+		notification_id = -1;
 
 	}
 

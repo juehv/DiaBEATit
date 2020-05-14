@@ -10,7 +10,7 @@ import androidx.lifecycle.LifecycleService;
 import de.heoegbr.diabeatit.R;
 import de.heoegbr.diabeatit.StaticData;
 import de.heoegbr.diabeatit.db.container.Alert;
-import de.heoegbr.diabeatit.ui.notification.NotificationStore;
+import de.heoegbr.diabeatit.db.repository.NotificationStore;
 
 /**
  * Foreground services that allows the app to run continuously without being automatically terminated

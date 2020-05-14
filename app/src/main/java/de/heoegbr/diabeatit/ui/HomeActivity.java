@@ -39,8 +39,8 @@ import de.heoegbr.diabeatit.assistant.alert.AlertStoreListener;
 import de.heoegbr.diabeatit.assistant.alert.AlertsManager;
 import de.heoegbr.diabeatit.db.container.Alert;
 import de.heoegbr.diabeatit.db.repository.AlertStore;
+import de.heoegbr.diabeatit.db.repository.NotificationStore;
 import de.heoegbr.diabeatit.service.ForegroundService;
-import de.heoegbr.diabeatit.ui.notification.NotificationStore;
 
 public class HomeActivity extends AppCompatActivity {
 

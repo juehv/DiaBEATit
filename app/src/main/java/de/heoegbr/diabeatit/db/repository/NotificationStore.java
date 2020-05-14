@@ -1,4 +1,4 @@
-package de.heoegbr.diabeatit.ui.notification;
+package de.heoegbr.diabeatit.db.repository;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -75,7 +75,7 @@ public class NotificationStore {
 		PendingIntent pendingIntent = PendingIntent.getActivity(DiaBEATitApp.getContext(), 0, intent, 0);
 
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(DiaBEATitApp.getContext(), channel)
-						.setSmallIcon(alert.ICON_ID)
+				.setSmallIcon(alert.iconId)
 						.setContentTitle(alert.title)
 						.setContentText(Html.fromHtml(alert.desc, Html.FROM_HTML_MODE_COMPACT))
 						.setPriority(NotificationCompat.PRIORITY_DEFAULT)

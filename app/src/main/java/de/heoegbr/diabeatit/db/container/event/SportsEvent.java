@@ -24,26 +24,26 @@ public class SportsEvent extends DiaryEvent {
 
 	/** Duration of the exercise */
 	@ColumnInfo(name = "duration")
-	public final int DURATION;
+	public final int duration;
 	/** Description by the user */
 	@ColumnInfo(name = "description")
-	public final String DESCRIPTION;
+	public final String description;
 
 	/**
 	 * Create a new sports event, supplying all fields. This is mainly used by the database to
 	 * create an event from a table row.
 	 * @param logEventId		Unqiue ID of this event, serves as primary key and is auto-generated
 	 *                          by the database.
-	 * @param TITLE				Title of this event
-	 * @param ICON				Resource ID of an icon that may be displayed for this event
-	 * @param TIMESTAMP			Timestamp of the beginning of the exercise.
-	 * @param DURATION			Duration of the exercise
-	 * @param DESCRIPTION		Description of the exercise
+	 * @param title                Title of this event
+	 * @param iconId                Resource ID of an icon that may be displayed for this event
+	 * @param timestamp            Timestamp of the beginning of the exercise.
+	 * @param duration            Duration of the exercise
+	 * @param description        Description of the exercise
 	 */
-	public SportsEvent(long logEventId, int TITLE, int ICON, Instant TIMESTAMP, int DURATION, String DESCRIPTION) {
-		super(logEventId, TITLE, ICON, TIMESTAMP);
-		this.DURATION = DURATION;
-		this.DESCRIPTION = DESCRIPTION;
+	public SportsEvent(long logEventId, int title, int iconId, Instant timestamp, int duration, String description) {
+		super(TYPE.SPORT, logEventId, title, iconId, timestamp);
+		this.duration = duration;
+		this.description = description;
 	}
 
 	/**
@@ -53,17 +53,13 @@ public class SportsEvent extends DiaryEvent {
 	 * @param description	Description the user provided
 	 */
 	public SportsEvent(Instant timestamp, int duration, String description) {
-
-		super(R.string.ms_event_title, R.drawable.ic_fab_sports, timestamp);
-
-		DURATION = duration;
-		DESCRIPTION = description;
-
+		super(TYPE.SPORT, R.string.ms_event_title, R.drawable.ic_fab_sports, timestamp);
+		this.duration = duration;
+		this.description = description;
 	}
 
 	@Override
 	public void createLayout(Context context, RelativeLayout root, boolean isSelected) {
-
 		TextView titleV = root.findViewById(R.id.log_event_title);
 		ImageView iconV = root.findViewById(R.id.log_event_icon);
 		TextView timeV = root.findViewById(R.id.log_event_time);
@@ -71,9 +67,9 @@ public class SportsEvent extends DiaryEvent {
 		TextView noteV = root.findViewById(R.id.log_event_note);
 		ImageView imgV = root.findViewById(R.id.log_event_picture);
 
-		titleV.setText(TITLE);
-		iconV.setImageResource(ICON);
-		timeV.setText(new SimpleDateFormat("dd.MM.YYYY HH:mm", Locale.GERMAN).format(Date.from(TIMESTAMP)));
+		titleV.setText(title);
+		iconV.setImageResource(iconId);
+		timeV.setText(new SimpleDateFormat("dd.MM.YYYY HH:mm", Locale.GERMAN).format(Date.from(timestamp)));
 
 		contentV.setVisibility(View.VISIBLE);
 		noteV.setVisibility(View.VISIBLE);
@@ -81,9 +77,8 @@ public class SportsEvent extends DiaryEvent {
 
 		root.setBackgroundResource(isSelected ? R.drawable.log_event_selected_background : R.drawable.log_event_background);
 
-		contentV.setText(context.getString(R.string.ms_event_minutes, DURATION));
-		noteV.setText(DESCRIPTION);
-
+		contentV.setText(context.getString(R.string.ms_event_minutes, duration));
+		noteV.setText(description);
 	}
 
 }

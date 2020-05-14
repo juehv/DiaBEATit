@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 import de.heoegbr.diabeatit.db.container.Alert;
 import de.heoegbr.diabeatit.db.container.BgReading;
 import de.heoegbr.diabeatit.db.container.event.BolusEvent;
-import de.heoegbr.diabeatit.db.container.event.CarbsEvent;
+import de.heoegbr.diabeatit.db.container.event.CarbEvent;
 import de.heoegbr.diabeatit.db.container.event.NoteEvent;
 import de.heoegbr.diabeatit.db.container.event.SportsEvent;
 import de.heoegbr.diabeatit.db.dao.AlertDao;
@@ -27,7 +27,7 @@ import de.heoegbr.diabeatit.db.dao.SportsEventDao;
 @Database(entities = {
             Alert.class,
             BolusEvent.class,
-            CarbsEvent.class,
+        CarbEvent.class,
             SportsEvent.class,
         NoteEvent.class,
         BgReading.class
@@ -58,7 +58,10 @@ public abstract class DiabeatitDatabase extends RoomDatabase {
     public abstract AlertDao alertDao();
     /** Get a data access object for {@link BolusEvent} */
     public abstract BolusEventDao bolusEventDao();
-    /** Get a data access object for {@link CarbsEvent} */
+
+    /**
+     * Get a data access object for {@link CarbEvent}
+     */
     public abstract CarbsEventDao carbsEventDao();
     /** Get a data access object for {@link SportsEvent} */
     public abstract SportsEventDao sportsEventDao();

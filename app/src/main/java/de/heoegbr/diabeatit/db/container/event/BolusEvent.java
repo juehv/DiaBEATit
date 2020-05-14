@@ -22,66 +22,68 @@ import de.heoegbr.diabeatit.R;
 @Entity
 public class BolusEvent extends DiaryEvent {
 
-	/** Amount administered in international units */
-	@ColumnInfo(name = "bolus")
-	public final double BOLUS;
-	/** Optional note that was supplied */
-	@ColumnInfo(name = "note")
-	public final String NOTE;
+    /**
+     * Amount administered in international units
+     */
+    @ColumnInfo(name = "bolus")
+    public final double bolus;
+    /**
+     * Optional note that was supplied
+     */
+    @ColumnInfo(name = "note")
+    public final String note;
 
-	/**
-	 * Create a new bolus event
-	 * @param timestamp	Timestamp of administration
-	 * @param bolus		Amount of insulin administered in international units.
-	 * @param note		Optional note supplied
-	 */
-	public BolusEvent(Instant timestamp, double bolus, String note) {
+    /**
+     * Create a new bolus event
+     *
+     * @param timestamp Timestamp of administration
+     * @param bolus     Amount of insulin administered in international units.
+     * @param note      Optional note supplied
+     */
+    public BolusEvent(Instant timestamp, double bolus, String note) {
+        super(TYPE.BOLUS, R.string.mi_event_title, R.drawable.ic_fab_insulin, timestamp);
+        this.bolus = bolus;
+        this.note = note;
+    }
 
-		super(R.string.mi_event_title, R.drawable.ic_fab_insulin, timestamp);
+    /**
+     * Create a new bolus event. Mainly used to create the object from the database
+     *
+     * @param logEventId Unique ID of this event, serves as primary key and is auto generated
+     * @param title      Title of this event
+     * @param iconId     Resource ID of an icon that may be dispalyed for this event
+     * @param timestamp  Timestamp of administration of the bolus
+     * @param bolus      Amount of insulin administered in international units
+     * @param note       User supplied optional note
+     */
+    public BolusEvent(long logEventId, int title, int iconId, Instant timestamp, double bolus, String note) {
+        super(TYPE.BOLUS, logEventId, title, iconId, timestamp);
+        this.bolus = bolus;
+        this.note = note;
+    }
 
-		BOLUS = bolus;
-		NOTE = note;
+    @Override
+    public void createLayout(Context context, RelativeLayout root, boolean isSelected) {
 
-	}
+        TextView titleV = root.findViewById(R.id.log_event_title);
+        ImageView iconV = root.findViewById(R.id.log_event_icon);
+        TextView timeV = root.findViewById(R.id.log_event_time);
+        TextView contentV = root.findViewById(R.id.log_event_content);
+        TextView noteV = root.findViewById(R.id.log_event_note);
+        ImageView imgV = root.findViewById(R.id.log_event_picture);
 
-	/**
-	 * 	Create a new bolus event. Mainly used to create the object from the database
-	 * @param logEventId	Unique ID of this event, serves as primary key and is auto generated
-	 * @param TITLE			Title of this event
-	 * @param ICON			Resource ID of an icon that may be dispalyed for this event
-	 * @param TIMESTAMP		Timestamp of administration of the bolus
-	 * @param BOLUS			Amount of insulin administered in international units
-	 * @param NOTE			User supplied optional note
-	 */
-	public BolusEvent(long logEventId, int TITLE, int ICON, Instant TIMESTAMP, double BOLUS, String NOTE) {
-		super(logEventId, TITLE, ICON, TIMESTAMP);
-		this.BOLUS = BOLUS;
-		this.NOTE = NOTE;
-	}
+        titleV.setText(title);
+        iconV.setImageResource(iconId);
+        timeV.setText(new SimpleDateFormat("dd.MM.YYYY HH:mm", Locale.GERMAN).format(Date.from(timestamp)));
 
-	@Override
-	public void createLayout(Context context, RelativeLayout root, boolean isSelected) {
+        contentV.setVisibility(View.VISIBLE);
+        noteV.setVisibility(!note.isEmpty() ? View.VISIBLE : View.GONE);
+        imgV.setVisibility(View.GONE);
 
-		TextView titleV = root.findViewById(R.id.log_event_title);
-		ImageView iconV = root.findViewById(R.id.log_event_icon);
-		TextView timeV = root.findViewById(R.id.log_event_time);
-		TextView contentV = root.findViewById(R.id.log_event_content);
-		TextView noteV = root.findViewById(R.id.log_event_note);
-		ImageView imgV = root.findViewById(R.id.log_event_picture);
+        root.setBackgroundResource(isSelected ? R.drawable.log_event_selected_background : R.drawable.log_event_background);
 
-		titleV.setText(TITLE);
-		iconV.setImageResource(ICON);
-		timeV.setText(new SimpleDateFormat("dd.MM.YYYY HH:mm", Locale.GERMAN).format(Date.from(TIMESTAMP)));
-
-		contentV.setVisibility(View.VISIBLE);
-		noteV.setVisibility(!NOTE.isEmpty() ? View.VISIBLE : View.GONE);
-		imgV.setVisibility(View.GONE);
-
-		root.setBackgroundResource(isSelected ? R.drawable.log_event_selected_background : R.drawable.log_event_background);
-
-		contentV.setText(BOLUS + " IE");
-		noteV.setText(NOTE);
-
-	}
+        contentV.setText(bolus + " IE");
+        noteV.setText(note);
+    }
 
 }
