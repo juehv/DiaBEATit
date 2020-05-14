@@ -62,7 +62,6 @@ public class HomeActivity extends AppCompatActivity {
 		setSupportActionBar(toolbar);
 
 		getSystemService(android.app.NotificationManager.class).cancelAll();
-		NotificationHelper.reset();
 
 		assistantPeekEnveloped = findViewById(R.id.assistant_peek_master);
 

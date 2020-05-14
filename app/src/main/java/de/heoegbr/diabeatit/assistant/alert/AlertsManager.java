@@ -165,7 +165,7 @@ class AlertAdapter extends RecyclerView.Adapter<AlertAdapter.AlertViewHolder> {
 
         /* Replace label */
         labelV.setText(mContext.getResources().getString(alert.urgency.getStringId()));
-        labelV.setBackground(mContext.getDrawable(alert.urgency.getBackground()));
+        labelV.setBackground(mContext.getDrawable(alert.urgency.getBgStyle()));
 
         /* Set icon and text */
         iconV.setImageDrawable(mContext.getDrawable(alert.iconId));

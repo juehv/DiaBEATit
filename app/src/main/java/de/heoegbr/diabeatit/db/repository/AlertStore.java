@@ -28,10 +28,12 @@ public class AlertStore {
     private List<Alert> alerts = new ArrayList<>();
     private List<AlertStoreListener> listeners = new ArrayList<>();
 
+    private Context mContext;
     private AlertDao mAlertDao;
     private Executor mExecutor = Executors.newSingleThreadExecutor();
 
     private AlertStore(final Context context) {
+        mContext = context;
         DiabeatitDatabase db = DiabeatitDatabase.getDatabase(context);
         mAlertDao = db.alertDao();
 
@@ -88,7 +90,7 @@ public class AlertStore {
         alerts.addAll(alertBundle);
 
         for (Alert alert : alerts)
-            alert.send();
+            alert.send(mContext);
 
         for (AlertStoreListener l : listeners)
             l.onDataSetInit();
@@ -105,7 +107,7 @@ public class AlertStore {
         alert.active = true;
 
         alerts.add(alert);
-        alert.send();
+        alert.send(mContext);
 
         for (AlertStoreListener l : listeners)
             l.onNewAlert(alert);
@@ -128,7 +130,7 @@ public class AlertStore {
 
         int index = alerts.indexOf(alert);
         alerts.get(index).active = false;
-        alert.destroy();
+        alert.destroy(mContext);
 
         updateDatabaseEntry(alert);
 
@@ -159,7 +161,7 @@ public class AlertStore {
 
         int index = alerts.indexOf(alert);
         alerts.get(index).active = true;
-        alert.send();
+        alert.send(mContext);
 
         updateDatabaseEntry(alert);
 

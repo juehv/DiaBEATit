@@ -6,11 +6,6 @@ import android.os.IBinder;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleService;
 
-import de.heoegbr.diabeatit.R;
-import de.heoegbr.diabeatit.StaticData;
-import de.heoegbr.diabeatit.db.container.Alert;
-import de.heoegbr.diabeatit.ui.NotificationHelper;
-
 /**
  * Foreground services that allows the app to run continuously without being automatically terminated
  */
@@ -40,10 +35,10 @@ public class ForegroundService extends LifecycleService {
 //
 //		startForeground(1, notification);
 
-		Alert alert = new Alert(Alert.URGENCY.INFO, R.drawable.ic_cake, "Diabeatit running", "The diabeatit service is online.");
-
-		NotificationHelper.createChannel("service", "Keep-Alive", "Foreground Service Notification", android.app.NotificationManager.IMPORTANCE_MIN);
-		startForeground(StaticData.FOREGROUND_SERVICE_ID, NotificationHelper.createNotification("service", alert, false));
+//		Alert alert = new Alert(Alert.URGENCY.INFO, R.drawable.ic_cake, "Diabeatit running", "The diabeatit service is online.");
+//
+//		NotificationHelper.createChannel("service", "Keep-Alive", "Foreground Service Notification", android.app.NotificationManager.IMPORTANCE_MIN);
+//		startForeground(StaticData.FOREGROUND_SERVICE_ID, NotificationHelper.createNotification("service", alert, false));
 
 		return START_NOT_STICKY;
 
