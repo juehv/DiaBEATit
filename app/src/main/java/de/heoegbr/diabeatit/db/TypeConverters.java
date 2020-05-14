@@ -40,28 +40,28 @@ public class TypeConverters {
         return date == null ? null : date.getTime();
     }
 
-    /** Convert an {@link Alert.Urgency} into
+    /** Convert an {@link Alert.URGENCY} into
      * an {@link Integer} representing its ordinal
      *
      * @param value     Urgency to convert
      * @return          An {@link Integer} representing the ordinal of the {@code value} provided
      */
     @TypeConverter
-    public static Integer urgencyToInteger(Alert.Urgency value) {
+    public static Integer urgencyToInteger(Alert.URGENCY value) {
         return value == null ? null : value.ordinal();
     }
 
-    /** Convert an {@link Integer} representing the ordinal of an {@link Alert.Urgency}
-     * into the {@link Alert.Urgency} object
+    /** Convert an {@link Integer} representing the ordinal of an {@link Alert.URGENCY}
+     * into the {@link Alert.URGENCY} object
      *
-     * @param value     An {@link Integer} representing the ordinal of an {@link Alert.Urgency}
+     * @param value     An {@link Integer} representing the ordinal of an {@link Alert.URGENCY}
      *                  value
-     * @return An {@link Alert.Urgency}
+     * @return An {@link Alert.URGENCY}
      *                  object with the given ordinal
      */
     @TypeConverter
-    public static Alert.Urgency integerToUrgency(Integer value) {
-        return value == null ? null : Alert.Urgency.values()[value];
+    public static Alert.URGENCY integerToUrgency(Integer value) {
+        return value == null ? null : Alert.URGENCY.values()[value];
     }
 
     /** Convert an {@link Instant} into a {@link Long} representing the amount of milliseconds since

@@ -1,6 +1,5 @@
 package de.heoegbr.diabeatit.ui;
 
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
@@ -39,7 +38,6 @@ import de.heoegbr.diabeatit.assistant.alert.AlertStoreListener;
 import de.heoegbr.diabeatit.assistant.alert.AlertsManager;
 import de.heoegbr.diabeatit.db.container.Alert;
 import de.heoegbr.diabeatit.db.repository.AlertStore;
-import de.heoegbr.diabeatit.db.repository.NotificationStore;
 import de.heoegbr.diabeatit.service.ForegroundService;
 
 public class HomeActivity extends AppCompatActivity {
@@ -63,8 +61,8 @@ public class HomeActivity extends AppCompatActivity {
 		toolbar.setTitle(getResources().getString(R.string.title_activity_home));
 		setSupportActionBar(toolbar);
 
-		getSystemService(NotificationManager.class).cancelAll();
-		NotificationStore.reset();
+		getSystemService(android.app.NotificationManager.class).cancelAll();
+		NotificationHelper.reset();
 
 		assistantPeekEnveloped = findViewById(R.id.assistant_peek_master);
 
@@ -169,10 +167,10 @@ public class HomeActivity extends AppCompatActivity {
 			TextView descV = assistantPeek.findViewById(R.id.assistant_peek_description);
 			ImageView iconV = assistantPeek.findViewById(R.id.assistant_status_icon);
 
-			Alert.Urgency urgency = mAlertStore.getActiveAlerts().stream()
-					.map(a -> a.URGENCY).reduce((a, b) -> a.getPriority() > b.getPriority() ? a : b)
-					.orElse(Alert.Urgency.INFO);
-			int amount = (int) mAlertStore.getActiveAlerts().stream().filter(a -> a.URGENCY.equals(urgency)).count();
+			Alert.URGENCY urgency = mAlertStore.getActiveAlerts().stream()
+					.map(a -> a.urgency).reduce((a, b) -> a.getPriority() > b.getPriority() ? a : b)
+					.orElse(Alert.URGENCY.INFO);
+			int amount = (int) mAlertStore.getActiveAlerts().stream().filter(a -> a.urgency.equals(urgency)).count();
 
 			int color = amount == 0 ? getColor(android.R.color.holo_green_light) : getColor(urgency.getRawColor());
 			String title = amount == 0 ? getString(R.string.assistant_peek_title_none) : getString(urgency.getPeekTitle());

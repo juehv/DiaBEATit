@@ -73,7 +73,7 @@ public class ManualNoteActivity extends AppCompatActivity {
     private void selectPicture() {
 
         Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(pickPhoto , 1);
+        startActivityForResult(pickPhoto, 1);
 
     }
 
@@ -90,7 +90,8 @@ public class ManualNoteActivity extends AppCompatActivity {
                 previewV.setVisibility(View.VISIBLE);
                 delPicB.setVisibility(View.VISIBLE);
 
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
 
         } else super.onActivityResult(requestCode, resultCode, data);
 
@@ -133,26 +134,22 @@ public class ManualNoteActivity extends AppCompatActivity {
     }
 
     private void save() {
-
         if (notesInput.getText().toString().isEmpty()) {
-
             notesInput.setHintTextColor(ContextCompat.getColor(this, R.color.d_important));
             return;
-
         }
 
         try {
-
             Bitmap bm = null;
             if (currentPicture != null)
                 bm = MediaStore.Images.Media.getBitmap(this.getContentResolver(), currentPicture);
 
-            DiaryEventStore.addEvent(new NoteEvent(timestamp.toInstant(), bm, notesInput.getText().toString()));
-
-        } catch (Exception ignored) { return; }
+            DiaryEventStore.getRepository(getApplicationContext())
+                    .addEvent(new NoteEvent(timestamp.toInstant(), bm, notesInput.getText().toString()));
+        } catch (Exception ignored) {
+            return;
+        }
 
         finish();
-
     }
-
 }

@@ -1,8 +1,7 @@
-package de.heoegbr.diabeatit.db.repository;
+package de.heoegbr.diabeatit.ui;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.text.Html;
@@ -16,13 +15,12 @@ import javax.annotation.Nullable;
 import de.heoegbr.diabeatit.DiaBEATitApp;
 import de.heoegbr.diabeatit.StaticData;
 import de.heoegbr.diabeatit.db.container.Alert;
-import de.heoegbr.diabeatit.ui.HomeActivity;
 
 /**
  * Manages log events and database connection.
  */
 @Deprecated
-public class NotificationStore {
+public class NotificationHelper {
 
 	public static final String DEFAULT_CHANNEL_ID = "default";
 
@@ -31,7 +29,7 @@ public class NotificationStore {
 
 	static {
 
-		createChannel(DEFAULT_CHANNEL_ID, "Default Channel", "Universal Notification Channel", NotificationManager.IMPORTANCE_DEFAULT);
+		createChannel(DEFAULT_CHANNEL_ID, "Default Channel", "Universal Notification Channel", android.app.NotificationManager.IMPORTANCE_DEFAULT);
 
 	}
 
@@ -41,7 +39,7 @@ public class NotificationStore {
 	 * @param id Unique name of the channel.
 	 * @param name Name for the Android notification settings.
 	 * @param description Description for the Android notification settings.
-	 * @param importance {@link NotificationManager} IMPORTANCE ordinal.
+	 * @param importance {@link android.app.NotificationManager} IMPORTANCE ordinal.
 	 */
 	public static void createChannel(String id, String name, String description, int importance) {
 
@@ -50,7 +48,7 @@ public class NotificationStore {
 		NotificationChannel channel = new NotificationChannel(id, name, importance);
 		channel.setDescription(description);
 
-		NotificationManager notificationManager = DiaBEATitApp.getContext().getSystemService(NotificationManager.class);
+		android.app.NotificationManager notificationManager = DiaBEATitApp.getContext().getSystemService(android.app.NotificationManager.class);
 		notificationManager.createNotificationChannel(channel);
 
 		channels.put(id, channel);
@@ -77,7 +75,7 @@ public class NotificationStore {
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(DiaBEATitApp.getContext(), channel)
 				.setSmallIcon(alert.iconId)
 						.setContentTitle(alert.title)
-						.setContentText(Html.fromHtml(alert.desc, Html.FROM_HTML_MODE_COMPACT))
+				.setContentText(Html.fromHtml(alert.description, Html.FROM_HTML_MODE_COMPACT))
 						.setPriority(NotificationCompat.PRIORITY_DEFAULT)
 						.setAutoCancel(autoCancel)
 						.setContentIntent(pendingIntent)
@@ -97,7 +95,7 @@ public class NotificationStore {
 	public static int sendNotification(@Nullable String channel, Alert alert) {
 
 		int id = nextId();
-		DiaBEATitApp.getContext().getSystemService(NotificationManager.class).notify(id, createNotification(channel, alert, true));
+		DiaBEATitApp.getContext().getSystemService(android.app.NotificationManager.class).notify(id, createNotification(channel, alert, true));
 
 		activeNotifications.put(id, alert);
 		return id;
@@ -111,7 +109,7 @@ public class NotificationStore {
 	 */
 	public static void removeNotification(int id) {
 
-		DiaBEATitApp.getContext().getSystemService(NotificationManager.class).cancel(id);
+		DiaBEATitApp.getContext().getSystemService(android.app.NotificationManager.class).cancel(id);
 
 	}
 

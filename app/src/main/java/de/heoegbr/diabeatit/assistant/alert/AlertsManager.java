@@ -86,7 +86,7 @@ public class AlertsManager {
     }
 
     private void sort() {
-        alerts.sort((alert0, alert1) -> alert1.URGENCY.getPriority() - alert0.URGENCY.getPriority());
+        alerts.sort((alert0, alert1) -> alert1.urgency.getPriority() - alert0.urgency.getPriority());
     }
 
 }
@@ -164,13 +164,13 @@ class AlertAdapter extends RecyclerView.Adapter<AlertAdapter.AlertViewHolder> {
         TextView descV = card.findViewById(R.id.card_description);
 
         /* Replace label */
-        labelV.setText(mContext.getResources().getString(alert.URGENCY.getStringId()));
-        labelV.setBackground(mContext.getDrawable(alert.URGENCY.getBackground()));
+        labelV.setText(mContext.getResources().getString(alert.urgency.getStringId()));
+        labelV.setBackground(mContext.getDrawable(alert.urgency.getBackground()));
 
         /* Set icon and text */
-        iconV.setImageDrawable(mContext.getDrawable(alert.ICON_ID));
+        iconV.setImageDrawable(mContext.getDrawable(alert.iconId));
         titleV.setText(alert.title);
-        descV.setText(Html.fromHtml(alert.desc, Html.FROM_HTML_MODE_COMPACT));
+        descV.setText(Html.fromHtml(alert.description, Html.FROM_HTML_MODE_COMPACT));
     }
 
     @Override

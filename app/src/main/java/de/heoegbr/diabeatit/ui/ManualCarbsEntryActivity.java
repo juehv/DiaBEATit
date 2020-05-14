@@ -135,16 +135,12 @@ public class ManualCarbsEntryActivity extends AppCompatActivity {
 	}
 
 	private void save() {
-
 		if (carbsInput.getText().toString().isEmpty()) {
-
 			carbsInput.setHintTextColor(ContextCompat.getColor(this, R.color.d_important));
 			return;
-
 		}
 
 		try {
-
 			int carbs = Integer.parseInt(carbsInput.getText().toString());
 			long ts = timestamp.toInstant().toEpochMilli();
 			String notes = notesInput.getText().toString();
@@ -156,7 +152,8 @@ public class ManualCarbsEntryActivity extends AppCompatActivity {
 			if (currentPicture != null)
 				bm = MediaStore.Images.Media.getBitmap(this.getContentResolver(), currentPicture);
 
-			DiaryEventStore.addEvent(new CarbEvent(timestamp.toInstant(), bm, carbs, notes));
+			DiaryEventStore.getRepository(getApplicationContext())
+					.addEvent(new CarbEvent(timestamp.toInstant(), bm, carbs, notes));
 
 			long min30 = 30 * 60 * 1000;
 //			HomeFragment frag = HomeFragment.getInstance();
@@ -171,7 +168,6 @@ public class ManualCarbsEntryActivity extends AppCompatActivity {
 			fragment.scheduleUpdateGUI(this.getClass().getCanonicalName());
 
 		finish();
-
 	}
 
 }

@@ -84,16 +84,12 @@ public class ManualInsulinEntryActivity extends AppCompatActivity {
     }
 
     private void save() {
-
         if (bolusInput.getText().toString().isEmpty()) {
-
             bolusInput.setHintTextColor(ContextCompat.getColor(this, R.color.d_important));
             return;
-
         }
 
         try {
-
             double insulin = Double.parseDouble(bolusInput.getText().toString());
             long ts = timestamp.toInstant().toEpochMilli();
 
@@ -106,9 +102,12 @@ public class ManualInsulinEntryActivity extends AppCompatActivity {
 
             //TreatmentsPlugin.getPlugin().addToHistoryTreatment(bolus, true);
 
-            DiaryEventStore.addEvent(new BolusEvent(timestamp.toInstant(), insulin, notesInput.getText().toString()));
+            DiaryEventStore.getRepository(getApplicationContext())
+                    .addEvent(new BolusEvent(timestamp.toInstant(), insulin, notesInput.getText().toString()));
 
-        } catch (Exception ignored) { return; }
+        } catch (Exception ignored) {
+            return;
+        }
 
         // Update GUI
         HomeFragment fragment = HomeFragment.getInstance();
@@ -116,7 +115,6 @@ public class ManualInsulinEntryActivity extends AppCompatActivity {
             fragment.scheduleUpdateGUI(this.getClass().getCanonicalName());
 
         finish();
-
     }
 
 }

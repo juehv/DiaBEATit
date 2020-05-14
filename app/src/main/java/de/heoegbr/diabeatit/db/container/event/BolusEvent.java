@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -40,6 +41,7 @@ public class BolusEvent extends DiaryEvent {
      * @param bolus     Amount of insulin administered in international units.
      * @param note      Optional note supplied
      */
+    @Ignore
     public BolusEvent(Instant timestamp, double bolus, String note) {
         super(TYPE.BOLUS, R.string.mi_event_title, R.drawable.ic_fab_insulin, timestamp);
         this.bolus = bolus;

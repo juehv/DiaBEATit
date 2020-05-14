@@ -106,10 +106,10 @@ class DismissedAlertAdapter extends RecyclerView.Adapter<DismissedAlertAdapter.D
         TextView descV = view.findViewById(R.id.alert_history_entry_description);
 
         timeV.setText(new SimpleDateFormat("d.M. H:mm").format(alert.timestamp));
-        urgencyV.setText(mContext.getResources().getString(alert.URGENCY.getStringId()));
-        urgencyV.setTextColor(mContext.getColor(alert.URGENCY.getRawColor()));
+        urgencyV.setText(mContext.getResources().getString(alert.urgency.getStringId()));
+        urgencyV.setTextColor(mContext.getColor(alert.urgency.getRawColor()));
         titleV.setText(alert.title);
-        descV.setText(Html.fromHtml(alert.desc, Html.FROM_HTML_MODE_COMPACT));
+        descV.setText(Html.fromHtml(alert.description, Html.FROM_HTML_MODE_COMPACT));
     }
 
     @Override

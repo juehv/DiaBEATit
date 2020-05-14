@@ -100,8 +100,8 @@ public class ManualSportsEntryActivity extends AppCompatActivity {
         builder.setView(input);
 
         builder.setPositiveButton(getString(R.string.ms_duration_ok), (dialog, which) -> {
-                if (!input.getText().toString().isEmpty() && input.getText().toString().length() < 6)
-                    selDurB.setText((durationMinutes = Integer.parseInt(input.getText().toString())) + "m");
+            if (!input.getText().toString().isEmpty() && input.getText().toString().length() < 6)
+                selDurB.setText((durationMinutes = Integer.parseInt(input.getText().toString())) + "m");
         });
 
         builder.setNegativeButton(getString(R.string.ms_duration_cancel), (dialog, which) -> dialog.cancel());
@@ -111,18 +111,15 @@ public class ManualSportsEntryActivity extends AppCompatActivity {
     }
 
     private void save() {
-
         if (descriptionInput.getText().toString().isEmpty()) {
-
             descriptionInput.setHintTextColor(ContextCompat.getColor(this, R.color.d_important));
             return;
-
         }
 
-        DiaryEventStore.addEvent(new SportsEvent(timestamp.toInstant(), durationMinutes, descriptionInput.getText().toString()));
+        DiaryEventStore.getRepository(getApplicationContext())
+                .addEvent(new SportsEvent(timestamp.toInstant(),
+                        durationMinutes, descriptionInput.getText().toString()));
 
         finish();
-
     }
-
 }

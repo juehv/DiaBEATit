@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -52,6 +53,7 @@ public class SportsEvent extends DiaryEvent {
 	 * @param duration		Duration of the exercise
 	 * @param description	Description the user provided
 	 */
+	@Ignore
 	public SportsEvent(Instant timestamp, int duration, String description) {
 		super(TYPE.SPORT, R.string.ms_event_title, R.drawable.ic_fab_sports, timestamp);
 		this.duration = duration;
