@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import de.heoegbr.diabeatit.db.container.Alert;
-import de.heoegbr.diabeatit.db.container.BgReading;
+import de.heoegbr.diabeatit.db.container.event.BgReadingEvent;
 import de.heoegbr.diabeatit.db.container.event.BolusEvent;
 import de.heoegbr.diabeatit.db.container.event.CarbEvent;
 import de.heoegbr.diabeatit.db.container.event.NoteEvent;
@@ -23,15 +23,17 @@ import de.heoegbr.diabeatit.db.dao.CarbsEventDao;
 import de.heoegbr.diabeatit.db.dao.NoteEventDao;
 import de.heoegbr.diabeatit.db.dao.SportsEventDao;
 
-/** Application database for the objects managed by the DiaBEATit project. */
+/**
+ * Application database for the objects managed by the DiaBEATit project.
+ */
 @Database(entities = {
-            Alert.class,
-            BolusEvent.class,
+        Alert.class,
+        BolusEvent.class,
         CarbEvent.class,
-            SportsEvent.class,
+        SportsEvent.class,
         NoteEvent.class,
-        BgReading.class
-        }, version = 1, exportSchema = false)
+        BgReadingEvent.class
+}, version = 1, exportSchema = false)
 @TypeConverters({de.heoegbr.diabeatit.db.TypeConverters.class})
 public abstract class DiabeatitDatabase extends RoomDatabase {
 
@@ -54,22 +56,33 @@ public abstract class DiabeatitDatabase extends RoomDatabase {
         return INSTANCE;
     }
 
-    /** Get a data access object for {@link Alert}s */
+    /**
+     * Get a data access object for {@link Alert}s
+     */
     public abstract AlertDao alertDao();
-    /** Get a data access object for {@link BolusEvent} */
+
+    /**
+     * Get a data access object for {@link BolusEvent}
+     */
     public abstract BolusEventDao bolusEventDao();
 
     /**
      * Get a data access object for {@link CarbEvent}
      */
     public abstract CarbsEventDao carbsEventDao();
-    /** Get a data access object for {@link SportsEvent} */
+
+    /**
+     * Get a data access object for {@link SportsEvent}
+     */
     public abstract SportsEventDao sportsEventDao();
-    /** Get a data access object for {@link NoteEvent} */
+
+    /**
+     * Get a data access object for {@link NoteEvent}
+     */
     public abstract NoteEventDao noteEventDao();
 
     /**
-     * Get a data access object for {@link BgReading}
+     * Get a data access object for {@link BgReadingEvent}
      */
     public abstract BgReadingDao bgReadingDao();
 

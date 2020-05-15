@@ -34,6 +34,13 @@
     <string name="mi_save">Save</string>
     <string name="mi_event_title">Bolus</string>
 
+    <!-- Manual Glucose -->
+    <string name="mg_title">Add Glucose Reading</string>
+    <string name="mg_input_hint">Blood Glucose</string>
+    <string name="mg_notes_hint">Notes</string>
+    <string name="mg_save">Save</string>
+    <string name="mg_event_title">Blood Glucose</string>
+
     <!-- Manual Sports -->
     <string name="ms_title">Add Exercise Unit</string>
     <string name="ms_input_hint">Description</string>

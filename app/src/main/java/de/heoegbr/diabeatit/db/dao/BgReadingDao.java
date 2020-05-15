@@ -7,20 +7,19 @@ import androidx.room.Query;
 
 import java.util.List;
 
-import de.heoegbr.diabeatit.db.container.BgReading;
+import de.heoegbr.diabeatit.db.container.event.BgReadingEvent;
 
 @Dao
 public interface BgReadingDao {
-    @Query("SELECT * FROM bgreadings ORDER BY date DESC LIMIT 24")
-    LiveData<List<BgReading>> getLiveReadings();
+    @Query("SELECT * FROM BgReadingEvent ORDER BY timestamp DESC LIMIT 24")
+    LiveData<List<BgReadingEvent>> getLiveReadings();
 
-    @Query("SELECT * FROM bgreadings ORDER BY date DESC LIMIT 24")
-        // 2 hours
-    List<BgReading> getStaticReadings();
+    @Query("SELECT * FROM BgReadingEvent ORDER BY timestamp DESC LIMIT 24")
+    List<BgReadingEvent> getStaticReadings(); // 2 hours
 
     @Insert
-    void insert(BgReading bgReading);
+    void insert(BgReadingEvent bgReading);
 
-    @Query("DELETE FROM bgreadings")
+    @Query("DELETE FROM BgReadingEvent")
     void deleteAll();
 }

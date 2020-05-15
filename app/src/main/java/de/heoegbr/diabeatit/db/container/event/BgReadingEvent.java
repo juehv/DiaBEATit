@@ -17,22 +17,19 @@ import java.util.Locale;
 
 import de.heoegbr.diabeatit.R;
 
-/**
- * Represents an entry of a manual bolus event.
- */
 @Entity
-public class BolusEvent extends DiaryEvent {
+public class BgReadingEvent extends DiaryEvent {
 
     /**
      * Create a new bolus event
      *
      * @param timestamp Timestamp of administration
-     * @param bolus     Amount of insulin administered in international units.
+     * @param bg        Amount of insulin administered in international units.
      * @param note      Optional note supplied
      */
     @Ignore
-    public BolusEvent(@Source int source, Instant timestamp, double bolus, String note) {
-        super(TYPE_BOLUS, source, R.drawable.ic_fab_insulin, timestamp, bolus, null, note);
+    public BgReadingEvent(@Source int source, Instant timestamp, double bg, String note) {
+        super(TYPE_BG, source, R.drawable.ic_fab_insulin, timestamp, bg, null, note);
     }
 
     /**
@@ -44,9 +41,9 @@ public class BolusEvent extends DiaryEvent {
      * @param value      Amount of insulin administered in international units
      * @param note       User supplied optional note
      */
-    public BolusEvent(@Source int source, long logEventId, int iconId, Instant timestamp, double value,
-                      Bitmap picture, String note) {
-        super(TYPE_BOLUS, source, logEventId, iconId, timestamp, value, picture, note);
+    public BgReadingEvent(@Source int source, long logEventId, int iconId, Instant timestamp,
+                          double value, Bitmap picture, String note) {
+        super(TYPE_BG, source, logEventId, iconId, timestamp, value, picture, note);
     }
 
     @Override
@@ -58,7 +55,7 @@ public class BolusEvent extends DiaryEvent {
         TextView noteV = root.findViewById(R.id.log_event_note);
         ImageView imgV = root.findViewById(R.id.log_event_picture);
 
-        titleV.setText(context.getResources().getString(R.string.mi_event_title));
+        titleV.setText(context.getResources().getString(R.string.mg_event_title));
         iconV.setImageResource(iconId);
         timeV.setText(new SimpleDateFormat("dd.MM.YYYY HH:mm", Locale.GERMAN).format(Date.from(timestamp)));
 
@@ -71,5 +68,4 @@ public class BolusEvent extends DiaryEvent {
         contentV.setText(value + " IE");
         noteV.setText(note);
     }
-
 }

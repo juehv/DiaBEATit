@@ -7,8 +7,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -24,53 +24,32 @@ import de.heoegbr.diabeatit.R;
 public class CarbEvent extends DiaryEvent {
 
     /**
-     * Optional, user supplied Image of the meal
+     * Create a new carbs event
+     *
+     * @param timestamp Timestamp when the meal was taken
+     * @param picture   Image of the meal (Optional)
+     * @param carbs     Amount of carbs in grams
+     * @param note      Optional note
      */
-    @ColumnInfo(name = "picture")
-    public final Bitmap picture;
-    /**
-     * Amount of carbs taken in, in grams
-     */
-    @ColumnInfo(name = "carbs")
-    public final int carbs;
-    /**
-     * Optional user supplied note
-     */
-    @ColumnInfo(name = "notes")
-    public final String note;
+    @Ignore
+    public CarbEvent(@Source int source, Instant timestamp, Bitmap picture, double carbs, String note) {
+        super(TYPE_CARB, source, R.drawable.ic_fab_carbs, timestamp, carbs, picture, note);
+    }
 
     /**
      * Create a new carbs event. This constructor is mainly used to generate an object from the
      * database.
      *
      * @param logEventId Unique ID of this object, used as primary key and auto-generated
-     * @param title      Title for this event
      * @param iconId     Resource ID of an icon that may be displayed for this event
      * @param timestamp  Timestamp when the meal was taken
      * @param picture    Optional image of the meal
-     * @param carbs      Amount of carbs in grams
+     * @param value      Amount of carbs in grams
      * @param note       Optional note
      */
-    public CarbEvent(long logEventId, int title, int iconId, Instant timestamp, Bitmap picture, int carbs, String note) {
-        super(TYPE.CARB, logEventId, title, iconId, timestamp);
-        this.picture = picture;
-        this.carbs = carbs;
-        this.note = note;
-    }
-
-    /**
-     * Create a new carbs event
-     *
-     * @param timestamp Timestamp when the meal was taken
-     * @param image     Image of the meal (Optional)
-     * @param carbs     Amount of carbs in grams
-     * @param note      Optional note
-     */
-    public CarbEvent(Instant timestamp, Bitmap image, int carbs, String note) {
-        super(TYPE.CARB, R.string.mc_event_title, R.drawable.ic_fab_carbs, timestamp);
-        picture = image;
-        this.carbs = carbs;
-        this.note = note;
+    public CarbEvent(@Source int source, long logEventId, int iconId, Instant timestamp,
+                     Bitmap picture, double value, String note) {
+        super(TYPE_CARB, source, logEventId, iconId, timestamp, value, picture, note);
     }
 
     @Override
@@ -82,7 +61,7 @@ public class CarbEvent extends DiaryEvent {
         TextView noteV = root.findViewById(R.id.log_event_note);
         ImageView imgV = root.findViewById(R.id.log_event_picture);
 
-        titleV.setText(title);
+        titleV.setText(context.getResources().getString(R.string.mc_event_title));
         iconV.setImageResource(iconId);
         timeV.setText(new SimpleDateFormat("dd.MM.YYYY HH:mm", Locale.GERMAN)
                 .format(Date.from(timestamp)));
@@ -95,7 +74,7 @@ public class CarbEvent extends DiaryEvent {
                 R.drawable.log_event_selected_background :
                 R.drawable.log_event_background);
 
-        contentV.setText(carbs + "g");
+        contentV.setText(value + "g");
         noteV.setText(note);
 
         if (picture != null)

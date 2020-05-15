@@ -18,6 +18,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import de.heoegbr.diabeatit.R;
+import de.heoegbr.diabeatit.db.container.event.DiaryEvent;
 import de.heoegbr.diabeatit.db.container.event.SportsEvent;
 import de.heoegbr.diabeatit.db.repository.DiaryEventStore;
 
@@ -116,9 +117,11 @@ public class ManualSportsEntryActivity extends AppCompatActivity {
             return;
         }
 
+        // TODO ask for intensity
         DiaryEventStore.getRepository(getApplicationContext())
-                .addEvent(new SportsEvent(timestamp.toInstant(),
-                        durationMinutes, descriptionInput.getText().toString()));
+                .addEvent(new SportsEvent(DiaryEvent.SOURCE_USER, timestamp.toInstant(),
+                        durationMinutes, SportsEvent.INTENSITY_UNKNOWN,
+                        descriptionInput.getText().toString()));
 
         finish();
     }

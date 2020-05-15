@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import de.heoegbr.diabeatit.R;
+import de.heoegbr.diabeatit.db.container.event.DiaryEvent;
 import de.heoegbr.diabeatit.db.container.event.NoteEvent;
 import de.heoegbr.diabeatit.db.repository.DiaryEventStore;
 
@@ -145,7 +146,8 @@ public class ManualNoteActivity extends AppCompatActivity {
                 bm = MediaStore.Images.Media.getBitmap(this.getContentResolver(), currentPicture);
 
             DiaryEventStore.getRepository(getApplicationContext())
-                    .addEvent(new NoteEvent(timestamp.toInstant(), bm, notesInput.getText().toString()));
+                    .addEvent(new NoteEvent(DiaryEvent.SOURCE_USER, timestamp.toInstant(), bm,
+                            notesInput.getText().toString()));
         } catch (Exception ignored) {
             return;
         }

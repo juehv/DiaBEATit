@@ -15,8 +15,8 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import de.heoegbr.diabeatit.R;
-import de.heoegbr.diabeatit.db.container.DetailedBolusInfo;
 import de.heoegbr.diabeatit.db.container.event.BolusEvent;
+import de.heoegbr.diabeatit.db.container.event.DiaryEvent;
 import de.heoegbr.diabeatit.db.repository.DiaryEventStore;
 import de.heoegbr.diabeatit.ui.home.HomeFragment;
 
@@ -93,17 +93,9 @@ public class ManualInsulinEntryActivity extends AppCompatActivity {
             double insulin = Double.parseDouble(bolusInput.getText().toString());
             long ts = timestamp.toInstant().toEpochMilli();
 
-            DetailedBolusInfo bolus = new DetailedBolusInfo();
-            bolus.insulin = insulin;
-            bolus.carbs = 0;
-            bolus.date = ts;
-            bolus.context = this;
-            bolus.source = 3; // =Source.USER;
-
-            //TreatmentsPlugin.getPlugin().addToHistoryTreatment(bolus, true);
-
             DiaryEventStore.getRepository(getApplicationContext())
-                    .addEvent(new BolusEvent(timestamp.toInstant(), insulin, notesInput.getText().toString()));
+                    .addEvent(new BolusEvent(DiaryEvent.SOURCE_USER, timestamp.toInstant(), insulin,
+                            notesInput.getText().toString()));
 
         } catch (Exception ignored) {
             return;

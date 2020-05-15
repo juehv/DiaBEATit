@@ -80,13 +80,13 @@ public class DiaryEventStore {
 
 		mExecutor.execute(() -> {
 			switch (event.type) {
-				case BOLUS:
+                case DiaryEvent.TYPE_BOLUS:
 					mBolusEventDao.insertAll((BolusEvent) event);
-				case CARB:
+                case DiaryEvent.TYPE_CARB:
 					mCarbsEventDao.insertAll((CarbEvent) event);
-				case SPORT:
+                case DiaryEvent.TYPE_SPORT:
 					mSportsEventDao.insertAll((SportsEvent) event);
-				case NOTE:
+                case DiaryEvent.TYPE_NOTE:
 					mNoteEventDao.insertAll((NoteEvent) event);
 				default:
 					Log.e(TAG, "Can't save event with type: " + event.type);
@@ -117,13 +117,13 @@ public class DiaryEventStore {
 
 		mExecutor.execute(() -> {
 			switch (event.type) {
-				case BOLUS:
+                case DiaryEvent.TYPE_BOLUS:
 					mBolusEventDao.delete((BolusEvent) event);
-				case CARB:
+                case DiaryEvent.TYPE_CARB:
 					mCarbsEventDao.delete((CarbEvent) event);
-				case SPORT:
+                case DiaryEvent.TYPE_SPORT:
 					mSportsEventDao.delete((SportsEvent) event);
-				case NOTE:
+                case DiaryEvent.TYPE_NOTE:
 					mNoteEventDao.delete((NoteEvent) event);
 				default:
 					Log.e(TAG, "Can't save event with type: " + event.type);
