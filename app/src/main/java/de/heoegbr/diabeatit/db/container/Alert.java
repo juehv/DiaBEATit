@@ -63,10 +63,10 @@ public class Alert {
     /**
      * Sends an Android notification associated with this Alert. Any existing notification will be replaced.
      */
-    public void send(Context context) {
+    public void sendNotification(Context context) {
         if (!notify || !active) return;
 
-        destroy(context);
+        destroyNotification(context);
         // TODO do real id generation based on the effect of this id (TODO find out the effect of the id)
         notification_id = Math.abs(new Random().nextInt());
 
@@ -86,7 +86,7 @@ public class Alert {
     /**
      * Destroy any associated Android notification.
      */
-    public void destroy(Context context) {
+    public void destroyNotification(Context context) {
         if (notification_id < 0) return;
 
         context.getSystemService(NotificationManager.class)
