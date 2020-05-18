@@ -1,5 +1,6 @@
 package de.heoegbr.diabeatit.db.dao;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -16,8 +17,11 @@ public interface NoteEventDao {
      *
      * @return A list containing all {@link NoteEvent}s stored in the database
      */
-    @Query("SELECT * FROM noteevent")
+    @Query("SELECT * FROM NoteEvent")
     List<NoteEvent> getAll();
+
+    @Query("SELECT * FROM NoteEvent ORDER BY timestamp DESC LIMIT 100")
+    LiveData<List<NoteEvent>> getLiveData();
 
     /** Get the 512 most recent {@link NoteEvent}s
      *

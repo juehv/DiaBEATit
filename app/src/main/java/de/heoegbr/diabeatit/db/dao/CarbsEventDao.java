@@ -1,5 +1,6 @@
 package de.heoegbr.diabeatit.db.dao;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -20,6 +21,9 @@ public interface CarbsEventDao {
      */
     @Query("SELECT * FROM CarbEvent")
     List<CarbEvent> getAll();
+
+    @Query("SELECT * FROM CarbEvent ORDER BY timestamp DESC LIMIT 100")
+    LiveData<List<CarbEvent>> getLiveData();
 
     /** Get the 512 most recent {@link CarbEvent}s
      *

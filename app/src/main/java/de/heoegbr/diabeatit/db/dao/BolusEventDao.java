@@ -1,5 +1,6 @@
 package de.heoegbr.diabeatit.db.dao;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -18,6 +19,9 @@ public interface BolusEventDao {
      */
     @Query("SELECT * FROM BolusEvent")
     List<BolusEvent> getAll();
+
+    @Query("SELECT * FROM BolusEvent ORDER BY timestamp DESC LIMIT 100")
+    LiveData<List<BolusEvent>> getLiveData();
 
     /** Get the 512 most recent {@link BolusEvent}s
      *

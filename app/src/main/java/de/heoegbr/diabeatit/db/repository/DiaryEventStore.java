@@ -39,9 +39,18 @@ public class DiaryEventStore {
     private final SportsEventDao mSportsEventDao;
     private final NoteEventDao mNoteEventDao;
     private final Executor mExecutor = Executors.newSingleThreadExecutor();
-    private List<DiaryEvent> events = new ArrayList<>();
-    private LiveData<List<BgReadingEvent>> mAllBgReadings;
+
+    private LiveData<List<BgReadingEvent>> mBgReadings;
+    private List<BgReadingEvent> mBgReadingsStatic;
     private BgReadingEvent mMostRecentValue = null;
+    private LiveData<List<BolusEvent>> mBolusEvents;
+    private List<BolusEvent> mBolusEventsStatic;
+    private LiveData<List<CarbEvent>> mCarbEvents;
+    private List<CarbEvent> mCarbEventsStatic;
+    private LiveData<List<SportsEvent>> mSportsEvents;
+    private List<SportsEvent> mSportsEventsStatic;
+    private LiveData<List<NoteEvent>> mNoteEvents;
+    private List<NoteEvent> mNoteEventsStatic;
 
     private DiaryEventStore(final Context context) {
         DiabeatitDatabase db = DiabeatitDatabase.getDatabase(context);
@@ -51,21 +60,27 @@ public class DiaryEventStore {
         mSportsEventDao = db.sportsEventDao();
         mNoteEventDao = db.noteEventDao();
 
-        mAllBgReadings = mBgReadingEventDao.getLiveReadings();
-        mAllBgReadings.observeForever(bgReadingEvents -> {
+        mBgReadings = mBgReadingEventDao.getLiveReadings();
+        mBgReadings.observeForever(bgReadingEvents -> {
 //            Log.d(TAG, "Live Data: " + bgReadingEvents.get(0).value + ", " + bgReadingEvents.get(bgReadingEvents.size() - 1).value);
+            mBgReadingsStatic = bgReadingEvents;
             mMostRecentValue = bgReadingEvents.get(0);
         });
-
-        // Initialization: Load the events from the database
-        // TODO change to live data
-        mExecutor.execute(() -> {
-            events.addAll(mBolusEventDao.getLimited());
-            events.addAll(mCarbsEventDao.getLimited());
-            events.addAll(mSportsEventDao.getLimited());
-            events.addAll(mNoteEventDao.getLimited());
-
-            events.sort((a, b) -> b.timestamp.compareTo(a.timestamp));
+        mBolusEvents = mBolusEventDao.getLiveData();
+        mBolusEvents.observeForever(bolusEvents -> {
+            mBolusEventsStatic = bolusEvents;
+        });
+        mCarbEvents = mCarbsEventDao.getLiveData();
+        mCarbEvents.observeForever(carbEvents -> {
+            mCarbEventsStatic = carbEvents;
+        });
+        mSportsEvents = mSportsEventDao.getLiveData();
+        mSportsEvents.observeForever(sportsEvents -> {
+            mSportsEventsStatic = sportsEvents;
+        });
+        mNoteEvents = mNoteEventDao.getLiveData();
+        mNoteEvents.observeForever(noteEvents -> {
+            mNoteEventsStatic = noteEvents;
         });
     }
 
@@ -86,9 +101,6 @@ public class DiaryEventStore {
      * @param event Event to add
      */
     public void insertEvent(DiaryEvent event) {
-        events.add(event);
-        events.sort((a, b) -> b.timestamp.compareTo(a.timestamp));
-
         mExecutor.execute(() -> {
             switch (event.type) {
                 case DiaryEvent.TYPE_BG:
@@ -137,8 +149,6 @@ public class DiaryEventStore {
      * @param event Event to remove
      */
     public void removeEvent(DiaryEvent event) {
-        events.remove(event);
-
         mExecutor.execute(() -> {
             switch (event.type) {
                 case DiaryEvent.TYPE_BG:
@@ -168,13 +178,19 @@ public class DiaryEventStore {
      *
      * @return A list containing all stored {@link DiaryEvent}s
      */
-    // TODO change this to loading from db (as it is inconsistent anyway).
     public List<DiaryEvent> getEvents() {
-        return new ArrayList<>(events);
+        List<DiaryEvent> events = new ArrayList<>();
+        events.addAll(mBgReadingsStatic);
+        events.addAll(mBolusEventsStatic);
+        events.addAll(mCarbEventsStatic);
+        events.addAll(mSportsEventsStatic);
+        events.addAll(mNoteEventsStatic);
+
+        return events;
     }
 
     public LiveData<List<BgReadingEvent>> getLiveBgEvents() {
-        return mAllBgReadings;
+        return mBgReadings;
     }
 
     public BgReadingEvent getMostRecentBgEvent() {
