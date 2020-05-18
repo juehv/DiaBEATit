@@ -154,7 +154,7 @@ public class ManualCarbsEntryActivity extends AppCompatActivity {
                 bm = MediaStore.Images.Media.getBitmap(this.getContentResolver(), currentPicture);
 
             DiaryEventStore.getRepository(getApplicationContext())
-                    .addEvent(new CarbEvent(DiaryEvent.SOURCE_USER, timestamp.toInstant(),
+                    .insertEvent(new CarbEvent(DiaryEvent.SOURCE_USER, timestamp.toInstant(),
                             bm, carbs, notes));
 
             long min30 = 30 * 60 * 1000;
@@ -169,7 +169,8 @@ public class ManualCarbsEntryActivity extends AppCompatActivity {
         // Update GUI
         HomeFragment fragment = HomeFragment.getInstance();
         if (fragment != null)
-            fragment.scheduleUpdateGUI(this.getClass().getCanonicalName());
+            // FIXME .... I deleted this shit ....
+            // fragment.scheduleUpdateGUI(this.getClass().getCanonicalName());
 
         finish();
     }

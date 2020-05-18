@@ -54,9 +54,10 @@ public class DiaryActivity extends AppCompatActivity implements DiaryEventAdapte
 
         findViewById(R.id.event_log_empty_notice).setVisibility(adapter.events.isEmpty() ? View.VISIBLE : View.GONE);
 
-        diaryEventStore.attachListener(this::change);
+        //diaryEventStore.attachListener(this::change);
     }
 
+    // TODO reimplement with live data listener
     private void change(DiaryEvent... e) {
         if (e.length != 0) {
             adapter.events.addAll(Arrays.asList(e));
@@ -140,6 +141,7 @@ public class DiaryActivity extends AppCompatActivity implements DiaryEventAdapte
     }
 }
 
+//TODO make this an adapter --> https://www.youtube.com/watch?v=Vyqz_-sJGFk
 /* Code snippets from https://enoent.fr/posts/recyclerview-basics/ */
 abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
 

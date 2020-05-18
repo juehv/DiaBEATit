@@ -146,7 +146,7 @@ public class ManualNoteActivity extends AppCompatActivity {
                 bm = MediaStore.Images.Media.getBitmap(this.getContentResolver(), currentPicture);
 
             DiaryEventStore.getRepository(getApplicationContext())
-                    .addEvent(new NoteEvent(DiaryEvent.SOURCE_USER, timestamp.toInstant(), bm,
+                    .insertEvent(new NoteEvent(DiaryEvent.SOURCE_USER, timestamp.toInstant(), bm,
                             notesInput.getText().toString()));
         } catch (Exception ignored) {
             return;

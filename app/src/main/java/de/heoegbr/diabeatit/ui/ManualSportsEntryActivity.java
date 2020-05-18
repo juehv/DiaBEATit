@@ -119,7 +119,7 @@ public class ManualSportsEntryActivity extends AppCompatActivity {
 
         // TODO ask for intensity
         DiaryEventStore.getRepository(getApplicationContext())
-                .addEvent(new SportsEvent(DiaryEvent.SOURCE_USER, timestamp.toInstant(),
+                .insertEvent(new SportsEvent(DiaryEvent.SOURCE_USER, timestamp.toInstant(),
                         durationMinutes, SportsEvent.INTENSITY_UNKNOWN,
                         descriptionInput.getText().toString()));
 

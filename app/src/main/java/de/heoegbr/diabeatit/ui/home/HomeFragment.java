@@ -1,10 +1,8 @@
 package de.heoegbr.diabeatit.ui.home;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,19 +12,24 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
-import com.jjoe64.graphview.GraphView;
+import com.github.mikephil.charting.charts.CombinedChart;
+import com.github.mikephil.charting.data.CombinedData;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.utils.EntryXComparator;
 
 import java.lang.ref.WeakReference;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import de.heoegbr.diabeatit.DiaBEATitApp;
 import de.heoegbr.diabeatit.R;
-import io.reactivex.disposables.CompositeDisposable;
+import de.heoegbr.diabeatit.db.container.event.BgReadingEvent;
 
 
 public class HomeFragment extends Fragment {
@@ -34,61 +37,66 @@ public class HomeFragment extends Fragment {
     private static WeakReference<HomeFragment> instance;
 
     private HomeViewModel homeViewModel;
-    private int rangeToDisplay = 6; // for graph
-    public GraphView graph;
-    //private ChartDataParser data;
-
-    private CompositeDisposable disposable = new CompositeDisposable();
+    private CombinedChart chart;
 
     private int numberOfLines = 1;
     private int maxNumberOfLines = 4;
     private int numberOfPoints = 12;
 
-    float[][] randomNumbersTab = new float[maxNumberOfLines][numberOfPoints];
-
-    private boolean hasAxes = true;
-    private boolean hasAxesNames = true;
-    private boolean hasPoints = true;
-    private boolean hasLines = true;
-    private boolean isCubic = false;
-    private boolean hasLabels = false;
-
-    private static final ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
-    private static ScheduledFuture<?> scheduledUpdate = null;
-
     SharedPreferences.OnSharedPreferenceChangeListener listener;
 
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle _b) {
-        homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
-        View root = inflater.inflate(R.layout.d_fragment_home, container, false);
-        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                //textView.setText(s);
-            }
-        });
-        Log.d("MAIN", "Getting graph and creating data");
-        graph = root.findViewById(R.id.chart);
-        //data = new ChartDataParser(graph);
-        scheduleUpdateGUI("");
-
-        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                prefsChanged(sharedPreferences, key);
-            }
-        };
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(DiaBEATitApp.getContext());
-        prefs.registerOnSharedPreferenceChangeListener(listener);
-
-        instance = new WeakReference<>(this);
-        return root;
-    }
-
     @Nullable
+    @Deprecated
     public static HomeFragment getInstance() {
         return instance.get();
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle _b) {
+        View root = inflater.inflate(R.layout.d_fragment_home, container, false);
+
+        chart = root.findViewById(R.id.chart_bg);
+
+        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        homeViewModel.getBgReadings().observe(getViewLifecycleOwner(), new Observer<List<BgReadingEvent>>() {
+            @Override
+            public void onChanged(List<BgReadingEvent> bgReadingEvents) {
+                if (bgReadingEvents.isEmpty()) {
+                    chart.clear();
+                    chart.invalidate();
+                    return;
+                }
+
+                // recreate chart dataset
+                Instant fistVisibleBgDate = bgReadingEvents.get(0).timestamp
+                        .minus(6, ChronoUnit.HOURS);
+
+                List<Entry> entries = new ArrayList<>();
+                for (BgReadingEvent item : bgReadingEvents) {
+                    // calculate x position
+                    long offset = item.timestamp.toEpochMilli() - fistVisibleBgDate.toEpochMilli();
+                    if (offset < 0) continue;
+                    float x = (float) offset / 300000; // 5 min slots
+
+                    entries.add(new Entry(x, (float) item.value));
+                }
+                Collections.sort(entries, new EntryXComparator());
+
+                LineDataSet bgDataSet = new LineDataSet(entries, "BG");
+                bgDataSet.setColor(R.color.mdtp_red);
+                bgDataSet.setValueTextColor(R.color.mdtp_light_gray);
+                LineData ld = new LineData();
+                ld.addDataSet(bgDataSet);
+
+                CombinedData combinedData = new CombinedData();
+                combinedData.setData(ld);
+                chart.setData(combinedData);
+                chart.invalidate();
+                Log.d(TAG, "updated main chart");
+            }
+        });
+
+        return root;
     }
 
     private void prefsChanged(SharedPreferences prefs, String key) {
@@ -105,59 +113,10 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-//        bc = new BolusCalculatorFragment();
-//        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-//        transaction.replace(R.id.bolus_calculator_fragment_container, bc).commit();
-        scheduleUpdateGUI("onViewCreated");
-
-        // Update GUI whenever we receive a new BG reading
-        // TODO do we want a pub/sub pattern?
-//        disposable.add(RxBus.INSTANCE
-//            .toObservable(EventNewBG.class)
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe(event -> scheduleUpdateGUI("New BG Event", 100),
-//                        FabricPrivacy::logException));
-//        disposable.add(RxBus.INSTANCE
-//            .toObservable(EventTreatmentChange.class)
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe(event -> scheduleUpdateGUI("TREATMENT", 200),
-//                        FabricPrivacy::logException));
-//        disposable.add(RxBus.INSTANCE
-//            .toObservable(EventReloadTreatmentData.class)
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe(event -> scheduleUpdateGUI("TREATMENT", 200),
-//                        FabricPrivacy::logException));
-    }
-
-    public void scheduleUpdateGUI(final String from, final long delay) {
-        class UpdateRunnable implements Runnable {
-            public void run() {
-                Activity activity = getActivity();
-                if (activity != null)
-                    activity.runOnUiThread(() -> {
-                        updateGUI(from);
-                        scheduledUpdate = null;
-                    });
-            }
-        }
-        // prepare task for execution in 400 msec
-        // cancel waiting task to prevent multiple updates
-        if (scheduledUpdate != null)
-            scheduledUpdate.cancel(false);
-        Runnable task = new UpdateRunnable();
-        scheduledUpdate = worker.schedule(task, delay, TimeUnit.MILLISECONDS);
-    }
-
-    public void scheduleUpdateGUI(final String from) {
-        scheduleUpdateGUI(from, 500);
-    }
-
     @SuppressLint("SetTextI18n")
     public void updateGUI(final String from) {
 //        if (L.isEnabled(L.OVERVIEW))
-            Log.d(TAG, "updateGUI entered from: " + from);
+        Log.d(TAG, "updateGUI entered from: " + from);
         final long updateGUIStart = System.currentTimeMillis();
 
         if (getActivity() == null)

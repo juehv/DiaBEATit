@@ -94,7 +94,7 @@ public class ManualInsulinEntryActivity extends AppCompatActivity {
             long ts = timestamp.toInstant().toEpochMilli();
 
             DiaryEventStore.getRepository(getApplicationContext())
-                    .addEvent(new BolusEvent(DiaryEvent.SOURCE_USER, timestamp.toInstant(), insulin,
+                    .insertEvent(new BolusEvent(DiaryEvent.SOURCE_USER, timestamp.toInstant(), insulin,
                             notesInput.getText().toString()));
 
         } catch (Exception ignored) {
@@ -104,7 +104,8 @@ public class ManualInsulinEntryActivity extends AppCompatActivity {
         // Update GUI
         HomeFragment fragment = HomeFragment.getInstance();
         if (fragment != null)
-            fragment.scheduleUpdateGUI(this.getClass().getCanonicalName());
+            //FIXME I deleted this sh***
+            //fragment.scheduleUpdateGUI(this.getClass().getCanonicalName());
 
         finish();
     }
