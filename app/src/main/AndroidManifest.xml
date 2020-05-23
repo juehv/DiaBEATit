@@ -72,7 +72,7 @@
             android:exported="true" />
 
         <activity
-            android:name=".ui.DiaryActivity"
+            android:name=".ui.diary.DiaryActivity"
             android:theme="@style/diabeatit"
             android:label="@string/nav_navigation_log"
             android:parentActivityName=".ui.home.HomeActivity" />

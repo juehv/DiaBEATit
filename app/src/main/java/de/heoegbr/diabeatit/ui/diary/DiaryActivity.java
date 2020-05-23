@@ -1,4 +1,4 @@
-package de.heoegbr.diabeatit.ui;
+package de.heoegbr.diabeatit.ui.diary;
 
 import android.content.Context;
 import android.os.Bundle;

@@ -38,6 +38,21 @@ public class SportsEvent extends DiaryEvent {
     public final @Intensity
     int intensity;
 
+    public static String getIntensityString(Context context, @Intensity int intesity) {
+        switch (intesity) {
+            case INTENSITY_UNKNOWN:
+                return context.getResources().getString(R.string.ms_intensity_unknown);
+            case INTENSITY_LOW:
+                return context.getResources().getString(R.string.ms_intensity_low);
+            case INTENSITY_MID:
+                return context.getResources().getString(R.string.ms_intensity_mid);
+            case INTENSITY_HIGH:
+                return context.getResources().getString(R.string.ms_intensity_high);
+            default:
+                return "CODE ERROR IN STRING CONVERSATION";
+        }
+    }
+
     /**
      * Create a new sports event
      *
@@ -91,7 +106,9 @@ public class SportsEvent extends DiaryEvent {
 
         root.setBackgroundResource(isSelected ? R.drawable.log_event_selected_background : R.drawable.log_event_background);
 
-        contentV.setText(context.getString(R.string.ms_event_minutes, value));
+
+        contentV.setText(context.getString(R.string.ms_event_minutes, value,
+                getIntensityString(context, intensity)));
         noteV.setText(note);
     }
 

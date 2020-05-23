@@ -34,6 +34,11 @@
     <string name="mi_save">Save</string>
     <string name="mi_event_title">Bolus</string>
 
+    <!-- Manual Basal -->
+    <string name="mb_save">Save</string>
+    <string name="mb_event_minutes">%1$.2f I.E. for %2$.1f minutes</string>
+    <string name="mb_event_title">Temp Basal</string> <!-- for ICT user its not temp .. -->
+
     <!-- Manual Glucose -->
     <string name="mg_title">Add Glucose Reading</string>
     <string name="mg_input_hint">Blood Glucose</string>
@@ -49,8 +54,12 @@
     <string name="ms_duration_ok">Done</string>
     <string name="ms_duration_cancel">Cancel</string>
     <string name="ms_save">Save</string>
-    <string name="ms_event_minutes">%1$d minutes</string>
+    <string name="ms_event_minutes">%1$.1f minutes, %2$s intensity</string>
     <string name="ms_event_title">Exercise</string>
+    <string name="ms_intensity_unknown">unknown</string>
+    <string name="ms_intensity_low">low</string>
+    <string name="ms_intensity_mid">medium</string>
+    <string name="ms_intensity_high">high</string>
 
     <!-- Manual Note -->
     <string name="mn_title">Add Note</string>

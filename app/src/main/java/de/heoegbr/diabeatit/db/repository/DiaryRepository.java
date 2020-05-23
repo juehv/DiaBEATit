@@ -250,12 +250,24 @@ public class DiaryRepository {
      */
     public List<DiaryEvent> getEvents() {
         List<DiaryEvent> events = new ArrayList<>();
-        events.addAll(mBgReadingsStatic);
-        events.addAll(mBolusEventsStatic);
-        events.addAll(mCarbEventsStatic);
-        events.addAll(mSportsEventsStatic);
-        events.addAll(mNoteEventsStatic);
-        events.addAll(mBasalEventsStatic);
+        if (mBgReadingsStatic != null) events.addAll(mBgReadingsStatic);
+        if (mBolusEventsStatic != null) events.addAll(mBolusEventsStatic);
+        if (mBasalEventsStatic != null) events.addAll(mBasalEventsStatic);
+        if (mCarbEventsStatic != null) events.addAll(mCarbEventsStatic);
+        if (mSportsEventsStatic != null) events.addAll(mSportsEventsStatic);
+        if (mNoteEventsStatic != null) events.addAll(mNoteEventsStatic);
+        events.sort((a, b) -> b.timestamp.compareTo(a.timestamp));
+        // TODO limit by date not by items
+        return events;
+    }
+
+    public List<DiaryEvent> getPlotEvents() {
+        List<DiaryEvent> events = new ArrayList<>();
+        if (mBgReadingsStatic != null) events.addAll(mBgReadingsStatic);
+        if (mBolusEventsStatic != null) events.addAll(mBolusEventsStatic);
+        if (mBasalEventsStatic != null) events.addAll(mBasalEventsStatic);
+        if (mCarbEventsStatic != null) events.addAll(mCarbEventsStatic);
+        if (mSportsEventsStatic != null) events.addAll(mSportsEventsStatic);
         events.sort((a, b) -> b.timestamp.compareTo(a.timestamp));
         // TODO limit by date not by items
         return events;
@@ -263,6 +275,22 @@ public class DiaryRepository {
 
     public LiveData<List<BgReadingEvent>> getLiveBgEvents() {
         return mBgReadings;
+    }
+
+    public LiveData<List<BolusEvent>> getLiveBolusEvents() {
+        return mBolusEvents;
+    }
+
+    public LiveData<List<BasalEvent>> getLiveBasalEvents() {
+        return mBasalEvents;
+    }
+
+    public LiveData<List<CarbEvent>> getLiveCarbEvents() {
+        return mCarbEvents;
+    }
+
+    public LiveData<List<SportsEvent>> getLiveSportsEvents() {
+        return mSportsEvents;
     }
 
     /**

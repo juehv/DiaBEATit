@@ -37,7 +37,7 @@ import de.heoegbr.diabeatit.assistant.alert.AlertsManager;
 import de.heoegbr.diabeatit.db.container.Alert;
 import de.heoegbr.diabeatit.db.repository.AlertStore;
 import de.heoegbr.diabeatit.ui.AlertHistoryActivity;
-import de.heoegbr.diabeatit.ui.DiaryActivity;
+import de.heoegbr.diabeatit.ui.diary.DiaryActivity;
 import de.heoegbr.diabeatit.ui.diary.ManualCarbsEntryActivity;
 import de.heoegbr.diabeatit.ui.diary.ManualInsulinEntryActivity;
 import de.heoegbr.diabeatit.ui.diary.ManualNoteActivity;

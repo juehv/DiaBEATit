@@ -28,6 +28,7 @@ public abstract class DiaryEvent {
     public static final int TYPE_HR = 7;
     public static final int TYPE_STRESS = 8;
     public static final int TYPE_BLOOD_PRESSURE = 9;
+    public static final int TYPE_WEIGHT = 10;
     // Source of information constants
     public static final int SOURCE_UNKNOWN = 0;
     public static final int SOURCE_USER = 1;
@@ -117,7 +118,7 @@ public abstract class DiaryEvent {
 
     // Declare the @IntDef for these constants
     @IntDef({TYPE_NONE, TYPE_BG, TYPE_BOLUS, TYPE_BASAL, TYPE_CARB, TYPE_SPORT,
-            TYPE_NOTE, TYPE_HR, TYPE_STRESS, TYPE_BLOOD_PRESSURE})
+            TYPE_NOTE, TYPE_HR, TYPE_STRESS, TYPE_BLOOD_PRESSURE, TYPE_WEIGHT})
     @Retention(RetentionPolicy.SOURCE)
     public @interface Type {
     }

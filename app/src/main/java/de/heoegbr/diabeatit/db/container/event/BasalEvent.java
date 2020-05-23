@@ -35,7 +35,8 @@ public class BasalEvent extends DiaryEvent {
     @Ignore
     public BasalEvent(@Source int source, Instant timestamp, double rate, double duration,
                       String description) {
-        super(TYPE_BASAL, source, R.drawable.ic_fab_sports, timestamp, rate, null, description);
+        // TODO find own icon
+        super(TYPE_BASAL, source, R.drawable.ic_fab_insulin, timestamp, rate, null, description);
         this.duration = duration;
     }
 
@@ -67,8 +68,9 @@ public class BasalEvent extends DiaryEvent {
         TextView noteV = root.findViewById(R.id.log_event_note);
         ImageView imgV = root.findViewById(R.id.log_event_picture);
 
-        titleV.setText(context.getResources().getString(R.string.ms_event_title));
-        iconV.setImageResource(iconId);
+        titleV.setText(context.getResources().getString(R.string.mb_event_title));
+        // iconV.setImageResource(iconId); // TODO set id from ressource everywere
+        iconV.setImageResource(R.drawable.ic_fab_insulin);
         timeV.setText(new SimpleDateFormat("dd.MM.YYYY HH:mm", Locale.GERMAN).format(Date.from(timestamp)));
 
         contentV.setVisibility(View.VISIBLE);
@@ -77,7 +79,7 @@ public class BasalEvent extends DiaryEvent {
 
         root.setBackgroundResource(isSelected ? R.drawable.log_event_selected_background : R.drawable.log_event_background);
 
-        contentV.setText(context.getString(R.string.ms_event_minutes, value));
+        contentV.setText(context.getString(R.string.mb_event_minutes, value, duration));
         noteV.setText(note);
     }
 }
