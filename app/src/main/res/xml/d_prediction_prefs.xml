@@ -3,20 +3,20 @@
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <ListPreference
-        android:summary="@string/prediction_model_select_description"
+        android:summary="@string/settings_prediction_model_select_description"
         android:key="d_selected_model_type"
-        android:title="@string/prediction_model_select_title"
+        android:title="@string/settings_prediction_model_select_title"
         android:entries="@array/d_model_types_readable_array"
         android:entryValues="@array/d_model_types_array" />
 
     <PreferenceCategory
-        android:summary="@string/prediction_category_ai_description"
-        android:title="@string/prediction_category_ai_title" >
+        android:summary="@string/settings_prediction_category_ai_description"
+        android:title="@string/settings_prediction_category_ai_title">
 
         <EditTextPreference
             android:key="d_ki_model_name"
-            android:summary="@string/prediction_model_path_description"
-            android:title="@string/prediction_model_path_title" />
+            android:summary="@string/settings_prediction_model_path_description"
+            android:title="@string/settings_prediction_model_path_title" />
 
     </PreferenceCategory>
 </PreferenceScreen>

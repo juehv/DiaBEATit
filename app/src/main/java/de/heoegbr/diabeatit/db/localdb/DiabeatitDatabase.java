@@ -1,4 +1,4 @@
-package de.heoegbr.diabeatit.db;
+package de.heoegbr.diabeatit.db.localdb;
 
 import android.content.Context;
 
@@ -11,12 +11,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import de.heoegbr.diabeatit.db.container.Alert;
+import de.heoegbr.diabeatit.db.container.event.BasalEvent;
 import de.heoegbr.diabeatit.db.container.event.BgReadingEvent;
 import de.heoegbr.diabeatit.db.container.event.BolusEvent;
 import de.heoegbr.diabeatit.db.container.event.CarbEvent;
 import de.heoegbr.diabeatit.db.container.event.NoteEvent;
 import de.heoegbr.diabeatit.db.container.event.SportsEvent;
 import de.heoegbr.diabeatit.db.dao.AlertDao;
+import de.heoegbr.diabeatit.db.dao.BasalEventDao;
 import de.heoegbr.diabeatit.db.dao.BgReadingDao;
 import de.heoegbr.diabeatit.db.dao.BolusEventDao;
 import de.heoegbr.diabeatit.db.dao.CarbsEventDao;
@@ -29,6 +31,7 @@ import de.heoegbr.diabeatit.db.dao.SportsEventDao;
 @Database(entities = {
         Alert.class,
         BolusEvent.class,
+        BasalEvent.class,
         CarbEvent.class,
         SportsEvent.class,
         NoteEvent.class,
@@ -65,6 +68,8 @@ public abstract class DiabeatitDatabase extends RoomDatabase {
      * Get a data access object for {@link BolusEvent}
      */
     public abstract BolusEventDao bolusEventDao();
+
+    public abstract BasalEventDao basalEventDao();
 
     /**
      * Get a data access object for {@link CarbEvent}

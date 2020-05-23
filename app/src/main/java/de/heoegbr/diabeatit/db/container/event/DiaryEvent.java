@@ -17,17 +17,18 @@ import java.time.Instant;
  * Parent class for any loggable events, such as inserting a manual bolus.
  */
 public abstract class DiaryEvent {
-    // Intensity Constants
+    // Type constants
     public static final int TYPE_NONE = 0;
     public static final int TYPE_BG = 1;
     public static final int TYPE_BOLUS = 2;
-    public static final int TYPE_CARB = 3;
-    public static final int TYPE_SPORT = 4;
-    public static final int TYPE_NOTE = 5;
-    public static final int TYPE_HR = 6;
-    public static final int TYPE_STRESS = 7;
-    public static final int TYPE_BLOOD_PRESSURE = 8;
-    // Intensity Constants
+    public static final int TYPE_BASAL = 3;
+    public static final int TYPE_CARB = 4;
+    public static final int TYPE_SPORT = 5;
+    public static final int TYPE_NOTE = 6;
+    public static final int TYPE_HR = 7;
+    public static final int TYPE_STRESS = 8;
+    public static final int TYPE_BLOOD_PRESSURE = 9;
+    // Source of information constants
     public static final int SOURCE_UNKNOWN = 0;
     public static final int SOURCE_USER = 1;
     public static final int SOURCE_DEVICE = 2;
@@ -115,7 +116,8 @@ public abstract class DiaryEvent {
     public abstract void createLayout(Context context, RelativeLayout root, boolean isSelected);
 
     // Declare the @IntDef for these constants
-    @IntDef({TYPE_NONE, TYPE_BG, TYPE_BOLUS, TYPE_CARB, TYPE_SPORT, TYPE_NOTE, TYPE_HR, TYPE_STRESS, TYPE_BLOOD_PRESSURE})
+    @IntDef({TYPE_NONE, TYPE_BG, TYPE_BOLUS, TYPE_BASAL, TYPE_CARB, TYPE_SPORT,
+            TYPE_NOTE, TYPE_HR, TYPE_STRESS, TYPE_BLOOD_PRESSURE})
     @Retention(RetentionPolicy.SOURCE)
     public @interface Type {
     }

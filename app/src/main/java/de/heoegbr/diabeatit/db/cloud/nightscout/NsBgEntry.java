@@ -1,4 +1,4 @@
-package de.heoegbr.diabeatit.interfacing.xdrip;
+package de.heoegbr.diabeatit.db.cloud.nightscout;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -10,7 +10,7 @@ import java.time.Instant;
 import de.heoegbr.diabeatit.db.container.event.BgReadingEvent;
 import de.heoegbr.diabeatit.db.container.event.DiaryEvent;
 
-public class NsEntry {
+public class NsBgEntry {
     @SerializedName("_id")
     @Expose
     public String id;

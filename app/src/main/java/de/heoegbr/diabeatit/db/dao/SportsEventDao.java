@@ -6,6 +6,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
+import java.time.Instant;
 import java.util.List;
 
 import de.heoegbr.diabeatit.db.container.event.SportsEvent;
@@ -44,4 +45,7 @@ public interface SportsEventDao {
      */
     @Delete
     void delete(SportsEvent event);
+
+    @Query("SELECT * FROM SportsEvent WHERE timestamp BETWEEN :from AND :to ORDER BY timestamp DESC LIMIT 24")
+    List<SportsEvent> getEventInDateTimeRange(Instant from, Instant to);
 }

@@ -17,7 +17,7 @@ import java.util.Locale;
 import de.heoegbr.diabeatit.R;
 import de.heoegbr.diabeatit.db.container.event.BolusEvent;
 import de.heoegbr.diabeatit.db.container.event.DiaryEvent;
-import de.heoegbr.diabeatit.db.repository.DiaryEventStore;
+import de.heoegbr.diabeatit.db.repository.DiaryRepository;
 import de.heoegbr.diabeatit.ui.home.HomeFragment;
 
 public class ManualInsulinEntryActivity extends AppCompatActivity {
@@ -93,7 +93,7 @@ public class ManualInsulinEntryActivity extends AppCompatActivity {
             double insulin = Double.parseDouble(bolusInput.getText().toString());
             long ts = timestamp.toInstant().toEpochMilli();
 
-            DiaryEventStore.getRepository(getApplicationContext())
+            DiaryRepository.getRepository(getApplicationContext())
                     .insertEvent(new BolusEvent(DiaryEvent.SOURCE_USER, timestamp.toInstant(), insulin,
                             notesInput.getText().toString()));
 

@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
 import de.heoegbr.diabeatit.assistant.alert.AlertStoreListener;
 import de.heoegbr.diabeatit.assistant.alert.AlertsManager;
 import de.heoegbr.diabeatit.assistant.alert.DismissedAlertsManager;
-import de.heoegbr.diabeatit.db.DiabeatitDatabase;
 import de.heoegbr.diabeatit.db.container.Alert;
 import de.heoegbr.diabeatit.db.dao.AlertDao;
+import de.heoegbr.diabeatit.db.localdb.DiabeatitDatabase;
 
 public class AlertStore {
     public static final String TAG = "ALERT_STORE";

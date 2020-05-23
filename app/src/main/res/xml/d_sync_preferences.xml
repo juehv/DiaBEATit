@@ -1,0 +1,27 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:key="nsclientgroup"
+        app:title="@string/settings_sync_ns_title">
+
+        <SwitchPreferenceCompat
+            app:key="sync_ns_download_en"
+            app:summary="@string/settings_sync_ns_download_summary"
+            app:title="@string/settings_sync_ns_download_title" />
+
+        <EditTextPreference
+            app:key="sync_ns_url"
+            app:summary="@string/settings_sync_ns_url_summary"
+            app:title="@string/settings_sync_ns_url_title" />
+
+        <EditTextPreference
+            app:key="sync_ns_pw"
+            app:title="@string/settings_sync_ns_secret_title" />
+
+        <Preference
+            app:key="sync_ns_historic"
+            app:summary="@string/settings_sync_ns_historic_summary"
+            app:title="@string/settings_sync_ns_historic_title" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -20,7 +20,7 @@ import java.util.Locale;
 import de.heoegbr.diabeatit.R;
 import de.heoegbr.diabeatit.db.container.event.DiaryEvent;
 import de.heoegbr.diabeatit.db.container.event.SportsEvent;
-import de.heoegbr.diabeatit.db.repository.DiaryEventStore;
+import de.heoegbr.diabeatit.db.repository.DiaryRepository;
 
 public class ManualSportsEntryActivity extends AppCompatActivity {
 
@@ -118,7 +118,7 @@ public class ManualSportsEntryActivity extends AppCompatActivity {
         }
 
         // TODO ask for intensity
-        DiaryEventStore.getRepository(getApplicationContext())
+        DiaryRepository.getRepository(getApplicationContext())
                 .insertEvent(new SportsEvent(DiaryEvent.SOURCE_USER, timestamp.toInstant(),
                         durationMinutes, SportsEvent.INTENSITY_UNKNOWN,
                         descriptionInput.getText().toString()));

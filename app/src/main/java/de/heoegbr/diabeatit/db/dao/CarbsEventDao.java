@@ -6,6 +6,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
+import java.time.Instant;
 import java.util.List;
 
 import de.heoegbr.diabeatit.db.container.event.CarbEvent;
@@ -45,4 +46,7 @@ public interface CarbsEventDao {
      */
     @Delete
     void delete(CarbEvent event);
+
+    @Query("SELECT * FROM CarbEvent WHERE timestamp BETWEEN :from AND :to ORDER BY timestamp DESC LIMIT 24")
+    List<CarbEvent> getEventInDateTimeRange(Instant from, Instant to);
 }

@@ -1,4 +1,4 @@
-package de.heoegbr.diabeatit.ui;
+package de.heoegbr.diabeatit.ui.home;
 
 import android.content.Context;
 import android.content.Intent;
@@ -30,8 +30,6 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.navigation.NavigationView;
 
-import java.lang.ref.WeakReference;
-
 import de.heoegbr.diabeatit.R;
 import de.heoegbr.diabeatit.StaticData;
 import de.heoegbr.diabeatit.assistant.alert.AlertStoreListener;
@@ -39,11 +37,15 @@ import de.heoegbr.diabeatit.assistant.alert.AlertsManager;
 import de.heoegbr.diabeatit.db.container.Alert;
 import de.heoegbr.diabeatit.db.repository.AlertStore;
 import de.heoegbr.diabeatit.service.ForegroundService;
+import de.heoegbr.diabeatit.ui.AlertHistoryActivity;
+import de.heoegbr.diabeatit.ui.DiaryActivity;
+import de.heoegbr.diabeatit.ui.ManualCarbsEntryActivity;
+import de.heoegbr.diabeatit.ui.ManualInsulinEntryActivity;
+import de.heoegbr.diabeatit.ui.ManualNoteActivity;
+import de.heoegbr.diabeatit.ui.ManualSportsEntryActivity;
+import de.heoegbr.diabeatit.ui.SettingsActivity;
 
 public class HomeActivity extends AppCompatActivity {
-
-	private static WeakReference<HomeActivity> instance;
-
 	public LinearLayout assistantPeekEnveloped;
 
 	private AppBarConfiguration mAppBarConfiguration;
@@ -75,13 +77,9 @@ public class HomeActivity extends AppCompatActivity {
 		Intent intent = getIntent();
 		if (intent != null && intent.getAction() != null && intent.getAction().equals(StaticData.ASSISTANT_INTENT_CODE))
 			expandAssistant();
-
-		instance = new WeakReference<>(this);
-
 	}
 
 	private void setupManualEntry() {
-
 		entryMenu = findViewById(R.id.manual_entry_fab_menu);
 		FloatingActionButton manualInsulinButton = findViewById(R.id.fab_manual_insulin);
 		FloatingActionButton manualCarbsButton = findViewById(R.id.fab_manual_carbs);
@@ -109,22 +107,6 @@ public class HomeActivity extends AppCompatActivity {
 		});
 	}
 
-	private void expandAssistant() {
-
-		View nestedScrollView = findViewById(R.id.assistant_scrollview);
-		final BottomSheetBehavior assistant = BottomSheetBehavior.from(nestedScrollView);
-		final RelativeLayout assistantPeek = findViewById(R.id.assistant_peek);
-		final RelativeLayout assistantPeekAlt = findViewById(R.id.assistant_peek_alt);
-
-		entryMenu.setVisibility(View.GONE);
-		entryMenu.collapseImmediately();
-
-		assistant.setState(BottomSheetBehavior.STATE_EXPANDED);
-		assistantPeek.setVisibility(View.GONE);
-		assistantPeekAlt.setVisibility(View.VISIBLE);
-
-	}
-
 	private void setupAssistant() {
 		final View nestedScrollView = findViewById(R.id.assistant_scrollview);
 		final BottomSheetBehavior assistant = BottomSheetBehavior.from(nestedScrollView);
@@ -132,7 +114,7 @@ public class HomeActivity extends AppCompatActivity {
 		final RelativeLayout assistantPeekAlt = findViewById(R.id.assistant_peek_alt);
 		final TextView assistantCloseHint = findViewById(R.id.assistant_close_hint);
 
-		assistant.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+		assistant.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
 			@Override
 			public void onStateChanged(@NonNull View bottomSheet, int newState) {
 				entryMenu.setVisibility(newState == BottomSheetBehavior.STATE_COLLAPSED ? View.VISIBLE : View.GONE);
@@ -285,6 +267,20 @@ public class HomeActivity extends AppCompatActivity {
 		});
 	}
 
+	private void expandAssistant() {
+		View nestedScrollView = findViewById(R.id.assistant_scrollview);
+		final BottomSheetBehavior assistant = BottomSheetBehavior.from(nestedScrollView);
+		final RelativeLayout assistantPeek = findViewById(R.id.assistant_peek);
+		final RelativeLayout assistantPeekAlt = findViewById(R.id.assistant_peek_alt);
+
+		entryMenu.setVisibility(View.GONE);
+		entryMenu.collapseImmediately();
+
+		assistant.setState(BottomSheetBehavior.STATE_EXPANDED);
+		assistantPeek.setVisibility(View.GONE);
+		assistantPeekAlt.setVisibility(View.VISIBLE);
+	}
+
 	@Override
 	public void onBackPressed() {
 		View nestedScrollView = findViewById(R.id.assistant_scrollview);
@@ -318,23 +314,19 @@ public class HomeActivity extends AppCompatActivity {
 		return NavigationUI.navigateUp(navController, mAppBarConfiguration)
 						|| super.onSupportNavigateUp();
 	}
-
-	public static HomeActivity getInstance() {
-		return instance.get();
-	}
 }
 
 /* Class from https://gist.github.com/nesquena/ed58f34791da00da9751 under MIT license */
-
 class OnSwipeTouchListener implements View.OnTouchListener {
 
 	private GestureDetector gestureDetector;
 
-	public OnSwipeTouchListener(Context c) {
+	OnSwipeTouchListener(Context c) {
 		gestureDetector = new GestureDetector(c, new GestureListener());
 	}
 
 	public boolean onTouch(final View view, final MotionEvent motionEvent) {
+		view.performClick(); //FIXME <-- added because of warning .. will it still work ?
 		return gestureDetector.onTouchEvent(motionEvent);
 	}
 

@@ -13,28 +13,31 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import de.heoegbr.diabeatit.db.DiabeatitDatabase;
+import de.heoegbr.diabeatit.db.container.event.BasalEvent;
 import de.heoegbr.diabeatit.db.container.event.BgReadingEvent;
 import de.heoegbr.diabeatit.db.container.event.BolusEvent;
 import de.heoegbr.diabeatit.db.container.event.CarbEvent;
 import de.heoegbr.diabeatit.db.container.event.DiaryEvent;
 import de.heoegbr.diabeatit.db.container.event.NoteEvent;
 import de.heoegbr.diabeatit.db.container.event.SportsEvent;
+import de.heoegbr.diabeatit.db.dao.BasalEventDao;
 import de.heoegbr.diabeatit.db.dao.BgReadingDao;
 import de.heoegbr.diabeatit.db.dao.BolusEventDao;
 import de.heoegbr.diabeatit.db.dao.CarbsEventDao;
 import de.heoegbr.diabeatit.db.dao.NoteEventDao;
 import de.heoegbr.diabeatit.db.dao.SportsEventDao;
+import de.heoegbr.diabeatit.db.localdb.DiabeatitDatabase;
 
 /**
  * Manages {@link DiaryEvent}s. Provides an interface to listen for changes as well as keeps the
  * events in the Database up to date.
  */
-public class DiaryEventStore {
+public class DiaryRepository {
     public static final String TAG = "DIARY_STORE";
-    public static DiaryEventStore INSTANCE = null;
+    public static DiaryRepository INSTANCE = null;
     private final BgReadingDao mBgReadingEventDao;
     private final BolusEventDao mBolusEventDao;
+    private final BasalEventDao mBasalEventDao;
     private final CarbsEventDao mCarbsEventDao;
     private final SportsEventDao mSportsEventDao;
     private final NoteEventDao mNoteEventDao;
@@ -45,6 +48,8 @@ public class DiaryEventStore {
     private BgReadingEvent mMostRecentValue = null;
     private LiveData<List<BolusEvent>> mBolusEvents;
     private List<BolusEvent> mBolusEventsStatic;
+    private LiveData<List<BasalEvent>> mBasalEvents;
+    private List<BasalEvent> mBasalEventsStatic;
     private LiveData<List<CarbEvent>> mCarbEvents;
     private List<CarbEvent> mCarbEventsStatic;
     private LiveData<List<SportsEvent>> mSportsEvents;
@@ -52,10 +57,11 @@ public class DiaryEventStore {
     private LiveData<List<NoteEvent>> mNoteEvents;
     private List<NoteEvent> mNoteEventsStatic;
 
-    private DiaryEventStore(final Context context) {
+    private DiaryRepository(final Context context) {
         DiabeatitDatabase db = DiabeatitDatabase.getDatabase(context);
         mBgReadingEventDao = db.bgReadingDao();
         mBolusEventDao = db.bolusEventDao();
+        mBasalEventDao = db.basalEventDao();
         mCarbsEventDao = db.carbsEventDao();
         mSportsEventDao = db.sportsEventDao();
         mNoteEventDao = db.noteEventDao();
@@ -64,11 +70,16 @@ public class DiaryEventStore {
         mBgReadings.observeForever(bgReadingEvents -> {
 //            Log.d(TAG, "Live Data: " + bgReadingEvents.get(0).value + ", " + bgReadingEvents.get(bgReadingEvents.size() - 1).value);
             mBgReadingsStatic = bgReadingEvents;
-            mMostRecentValue = bgReadingEvents.get(0);
+            if (!bgReadingEvents.isEmpty())
+                mMostRecentValue = bgReadingEvents.get(0);
         });
         mBolusEvents = mBolusEventDao.getLiveData();
         mBolusEvents.observeForever(bolusEvents -> {
             mBolusEventsStatic = bolusEvents;
+        });
+        mBasalEvents = mBasalEventDao.getLiveData();
+        mBasalEvents.observeForever(bolusEvents -> {
+            mBasalEventsStatic = bolusEvents;
         });
         mCarbEvents = mCarbsEventDao.getLiveData();
         mCarbEvents.observeForever(carbEvents -> {
@@ -84,11 +95,11 @@ public class DiaryEventStore {
         });
     }
 
-    public static DiaryEventStore getRepository(final Context context) {
+    public static DiaryRepository getRepository(final Context context) {
         if (INSTANCE == null) {
             synchronized (AlertStore.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = new DiaryEventStore(context);
+                    INSTANCE = new DiaryRepository(context);
                 }
             }
         }
@@ -101,6 +112,8 @@ public class DiaryEventStore {
      * @param event Event to add
      */
     public void insertEvent(DiaryEvent event) {
+        if (event == null) return;
+
         mExecutor.execute(() -> {
             switch (event.type) {
                 case DiaryEvent.TYPE_BG:
@@ -108,6 +121,9 @@ public class DiaryEventStore {
                     break;
                 case DiaryEvent.TYPE_BOLUS:
                     mBolusEventDao.insertAll((BolusEvent) event);
+                    break;
+                case DiaryEvent.TYPE_BASAL:
+                    mBasalEventDao.insertAll((BasalEvent) event);
                     break;
                 case DiaryEvent.TYPE_CARB:
                     mCarbsEventDao.insertAll((CarbEvent) event);
@@ -132,13 +148,64 @@ public class DiaryEventStore {
             Instant from = event.timestamp.minus(widowHalf);
             Instant to = event.timestamp.plus(widowHalf);
 
-            List<BgReadingEvent> readings = mBgReadingEventDao.getBgInDateTimeRange(from, to);
+            List<BgReadingEvent> readings = mBgReadingEventDao.getEventInDateTimeRange(from, to);
             if (readings.isEmpty()) {
                 mBgReadingEventDao.insert(event);
                 Log.d(TAG, "Added missing backfill reading to DB " + event.value);
             } else {
                 Log.d(TAG, "Found BG in time window. No backfill value added. " + readings.size());
-                Log.d(TAG, "ref: " + event.value + ", found: " + readings.get(0).value);
+                // Log.d(TAG, "ref: " + event.value + ", found: " + readings.get(0).value);
+            }
+        });
+    }
+
+    public void insertEventIfNotExist(DiaryEvent event) {
+        if (event == null) return;
+
+        mExecutor.execute(() -> {
+            Duration widowHalf = Duration.of(1, ChronoUnit.MINUTES);
+            Instant from = event.timestamp.minus(widowHalf);
+            Instant to = event.timestamp.plus(widowHalf);
+
+            switch (event.type) {
+                case DiaryEvent.TYPE_BG:
+                    List<BgReadingEvent> readings = mBgReadingEventDao.getEventInDateTimeRange(from, to);
+                    if (readings.isEmpty()) {
+                        mBgReadingEventDao.insert((BgReadingEvent) event);
+                    }
+                    break;
+                case DiaryEvent.TYPE_BOLUS:
+                    List<BolusEvent> bolus = mBolusEventDao.getEventInDateTimeRange(from, to);
+                    if (bolus.isEmpty()) {
+                        mBolusEventDao.insertAll((BolusEvent) event);
+                    }
+                    break;
+                case DiaryEvent.TYPE_BASAL:
+                    List<BasalEvent> basal = mBasalEventDao.getEventInDateTimeRange(from, to);
+                    if (basal.isEmpty()) {
+                        mBasalEventDao.insertAll((BasalEvent) event);
+                    }
+                    break;
+                case DiaryEvent.TYPE_CARB:
+                    List<CarbEvent> carbs = mCarbsEventDao.getEventInDateTimeRange(from, to);
+                    if (carbs.isEmpty()) {
+                        mCarbsEventDao.insertAll((CarbEvent) event);
+                    }
+                    break;
+                case DiaryEvent.TYPE_SPORT:
+                    List<SportsEvent> sports = mSportsEventDao.getEventInDateTimeRange(from, to);
+                    if (sports.isEmpty()) {
+                        mSportsEventDao.insertAll((SportsEvent) event);
+                    }
+                    break;
+                case DiaryEvent.TYPE_NOTE:
+                    List<NoteEvent> notes = mNoteEventDao.getEventInDateTimeRange(from, to);
+                    if (notes.isEmpty()) {
+                        mNoteEventDao.insertAll((NoteEvent) event);
+                    }
+                    break;
+                default:
+                    Log.e(TAG, "Can't save event with type: " + event.type);
             }
         });
     }
@@ -156,6 +223,9 @@ public class DiaryEventStore {
                     break;
                 case DiaryEvent.TYPE_BOLUS:
                     mBolusEventDao.delete((BolusEvent) event);
+                    break;
+                case DiaryEvent.TYPE_BASAL:
+                    mBasalEventDao.delete((BasalEvent) event);
                     break;
                 case DiaryEvent.TYPE_CARB:
                     mCarbsEventDao.delete((CarbEvent) event);
@@ -185,7 +255,9 @@ public class DiaryEventStore {
         events.addAll(mCarbEventsStatic);
         events.addAll(mSportsEventsStatic);
         events.addAll(mNoteEventsStatic);
-
+        events.addAll(mBasalEventsStatic);
+        events.sort((a, b) -> b.timestamp.compareTo(a.timestamp));
+        // TODO limit by date not by items
         return events;
     }
 
@@ -193,6 +265,9 @@ public class DiaryEventStore {
         return mBgReadings;
     }
 
+    /**
+     * @return Most recent BG value or null if database is empty.
+     */
     public BgReadingEvent getMostRecentBgEvent() {
         return mMostRecentValue;
     }

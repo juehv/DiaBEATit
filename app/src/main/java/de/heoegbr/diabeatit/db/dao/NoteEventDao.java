@@ -6,6 +6,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
+import java.time.Instant;
 import java.util.List;
 
 import de.heoegbr.diabeatit.db.container.event.NoteEvent;
@@ -43,4 +44,7 @@ public interface NoteEventDao {
      */
     @Delete
     void delete(NoteEvent event);
+
+    @Query("SELECT * FROM NoteEvent WHERE timestamp BETWEEN :from AND :to ORDER BY timestamp DESC LIMIT 24")
+    List<NoteEvent> getEventInDateTimeRange(Instant from, Instant to);
 }

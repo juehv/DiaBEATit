@@ -9,16 +9,16 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 import de.heoegbr.diabeatit.db.container.event.BgReadingEvent;
-import de.heoegbr.diabeatit.db.repository.DiaryEventStore;
+import de.heoegbr.diabeatit.db.repository.DiaryRepository;
 
 public class HomeViewModel extends AndroidViewModel {
 
-    private final DiaryEventStore mDiaryRepository;
+    private final DiaryRepository mDiaryRepository;
     private final LiveData<List<BgReadingEvent>> mBgReadings;
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
-        mDiaryRepository = DiaryEventStore.getRepository(application.getApplicationContext());
+        mDiaryRepository = DiaryRepository.getRepository(application.getApplicationContext());
         mBgReadings = mDiaryRepository.getLiveBgEvents();
     }
 

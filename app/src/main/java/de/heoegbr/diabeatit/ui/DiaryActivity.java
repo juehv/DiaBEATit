@@ -26,7 +26,7 @@ import java.util.List;
 
 import de.heoegbr.diabeatit.R;
 import de.heoegbr.diabeatit.db.container.event.DiaryEvent;
-import de.heoegbr.diabeatit.db.repository.DiaryEventStore;
+import de.heoegbr.diabeatit.db.repository.DiaryRepository;
 
 public class DiaryActivity extends AppCompatActivity implements DiaryEventAdapter.LogEventViewHolder.ClickListener {
 
@@ -44,8 +44,8 @@ public class DiaryActivity extends AppCompatActivity implements DiaryEventAdapte
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        DiaryEventStore diaryEventStore = DiaryEventStore.getRepository(getApplicationContext());
-        adapter = new DiaryEventAdapter(this, this, diaryEventStore.getEvents());
+        DiaryRepository diaryRepository = DiaryRepository.getRepository(getApplicationContext());
+        adapter = new DiaryEventAdapter(this, this, diaryRepository.getEvents());
 
         RecyclerView recycler = findViewById(R.id.event_log_layout);
         recycler.setLayoutManager(new LinearLayoutManager(this));
@@ -225,7 +225,7 @@ class DiaryEventAdapter extends SelectableAdapter<DiaryEventAdapter.LogEventView
 
     public void removeItem(int position) {
         if (multi_mode) {
-            DiaryEventStore.getRepository(mContext).removeEvent(events.get(position));
+            DiaryRepository.getRepository(mContext).removeEvent(events.get(position));
             events.remove(position);
             notifyDataSetChanged();
 
@@ -236,7 +236,7 @@ class DiaryEventAdapter extends SelectableAdapter<DiaryEventAdapter.LogEventView
         builder.setTitle(mContext.getString(R.string.event_log_hide_alert_title));
         builder.setMessage(mContext.getString(R.string.event_log_hide_alert_message));
         builder.setPositiveButton(mContext.getString(R.string.event_log_hide_alert_ok), (dialogInterface, i) -> {
-            DiaryEventStore.getRepository(mContext).removeEvent(events.get(position));
+            DiaryRepository.getRepository(mContext).removeEvent(events.get(position));
             events.remove(position);
             notifyDataSetChanged();
         });

@@ -5,11 +5,17 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.util.Log;
+
+import androidx.work.Data;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
+import de.heoegbr.diabeatit.db.cloud.ScheduleSyncHelper;
+import de.heoegbr.diabeatit.db.cloud.nightscout.NightscoutDownloader;
 import de.heoegbr.diabeatit.interfacing.xdrip.XdripBgSource;
 
 
@@ -21,11 +27,12 @@ public class DiaBEATitApp extends Application {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "OnCreate");
+        JodaTimeAndroid.init(getApplicationContext());
 
         registerBroadcastReceivers(getApplicationContext());
         createNotificationChannel();
 
-        JodaTimeAndroid.init(getApplicationContext());
+        scheduleEnabledBackgroundSync(getApplicationContext());
     }
 
     private void createNotificationChannel() {
@@ -44,6 +51,19 @@ public class DiaBEATitApp extends Application {
                 new XdripBgSource(),
                 new IntentFilter(XdripBgSource.XDRIP_ACTION_NEW_ESTIMATE));
         Log.d(TAG, "Receiver registered.");
+    }
+
+    private void scheduleEnabledBackgroundSync(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        // Nightscout
+        if (prefs.getBoolean("sync_ns_download_en", false)) {
+            Data.Builder data = new Data.Builder();
+            data.putInt(NightscoutDownloader.KEY_NO_OF_VALUE, 24);
+            ScheduleSyncHelper.schedulePeriodicSync(context,
+                    NightscoutDownloader.class,
+                    NightscoutDownloader.WORK_NAME,
+                    data.build());
+        }
     }
 
 }

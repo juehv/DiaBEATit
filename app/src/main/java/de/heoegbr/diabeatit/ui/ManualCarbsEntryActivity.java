@@ -25,7 +25,7 @@ import java.util.Locale;
 import de.heoegbr.diabeatit.R;
 import de.heoegbr.diabeatit.db.container.event.CarbEvent;
 import de.heoegbr.diabeatit.db.container.event.DiaryEvent;
-import de.heoegbr.diabeatit.db.repository.DiaryEventStore;
+import de.heoegbr.diabeatit.db.repository.DiaryRepository;
 import de.heoegbr.diabeatit.ui.home.HomeFragment;
 
 public class ManualCarbsEntryActivity extends AppCompatActivity {
@@ -153,7 +153,7 @@ public class ManualCarbsEntryActivity extends AppCompatActivity {
             if (currentPicture != null)
                 bm = MediaStore.Images.Media.getBitmap(this.getContentResolver(), currentPicture);
 
-            DiaryEventStore.getRepository(getApplicationContext())
+            DiaryRepository.getRepository(getApplicationContext())
                     .insertEvent(new CarbEvent(DiaryEvent.SOURCE_USER, timestamp.toInstant(),
                             bm, carbs, notes));
 

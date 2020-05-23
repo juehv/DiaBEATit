@@ -12,7 +12,7 @@ import java.util.Date;
 
 import de.heoegbr.diabeatit.db.container.event.BgReadingEvent;
 import de.heoegbr.diabeatit.db.container.event.DiaryEvent;
-import de.heoegbr.diabeatit.db.repository.DiaryEventStore;
+import de.heoegbr.diabeatit.db.repository.DiaryRepository;
 
 /**
  * Interface class to receive xdrip broadcasts as BG source.
@@ -51,7 +51,7 @@ public class XdripBgSource extends BroadcastReceiver {
             BgReadingEvent bgReadingEvent = new BgReadingEvent(DiaryEvent.SOURCE_DEVICE,
                     mTimestamp.toInstant(), bundle.getDouble(XDRIP_EXTRA_BG_ESTIMATE), "");
 
-            DiaryEventStore repo = DiaryEventStore.getRepository(context);
+            DiaryRepository repo = DiaryRepository.getRepository(context);
             BgReadingEvent lastBgEvent = repo.getMostRecentBgEvent();
             repo.insertEvent(bgReadingEvent);
 

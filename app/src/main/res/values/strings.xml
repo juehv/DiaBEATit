@@ -60,16 +60,34 @@
     <string name="mn_event_title">Note</string>
 
     <!-- Settings -->
-    <string name="title_activity_settings">Settings</string>
+    <string name="settings_activity_title">Settings</string>
+    <string name="settings_sync">Sync</string>
+    <string name="settings_prediction">Prediction Settings</string>
+
+    <!-- About Settings -->
+    <string name="settings_about_title">About</string>
+    <string name="settings_about_feedback_title">Send feedback</string>
+    <string name="settings_about_feedback_summary">Report technical issues or suggest new features</string>
+    <string name="settings_about_version_title">Build version</string>
+
+    <!-- Sync Settings -->
+    <string name="settings_sync_ns_rationale">Scheduled sync in background.</string>
+    <string name="settings_sync_ns_download_summary">Download Nightscout data every hour</string>
+    <string name="settings_sync_ns_download_title">Periodic Download</string>
+    <string name="settings_sync_ns_title">Nightscout</string>
+    <string name="settings_sync_ns_url_title">Connection URL</string>
+    <string name="settings_sync_ns_url_summary">e.g. https://user.ns.10be.de/api/v1/</string>
+    <string name="settings_sync_ns_secret_title">API Secret</string>
+    <string name="settings_sync_ns_historic_summary">Download Nightscout data of the last 2 years</string>
+    <string name="settings_sync_ns_historic_title">Historic Download</string>
 
     <!-- Prediction Settings -->
-    <string name="settings_prediction">Prediction Settings</string>
-    <string name="prediction_model_select_description">Which kind of model to use for BG Predictions</string>
-    <string name="prediction_model_select_title">Model type</string>
-    <string name="prediction_category_ai_description">Settings for the AI Predictions</string>
-    <string name="prediction_category_ai_title">AI Predictions</string>
-    <string name="prediction_model_path_description">Path to the model (.tflite)</string>
-    <string name="prediction_model_path_title">Path to model</string>
+    <string name="settings_prediction_model_select_description">Which kind of model to use for BG Predictions</string>
+    <string name="settings_prediction_model_select_title">Model type</string>
+    <string name="settings_prediction_category_ai_description">Settings for the AI Predictions</string>
+    <string name="settings_prediction_category_ai_title">AI Predictions</string>
+    <string name="settings_prediction_model_path_description">Path to the model (.tflite)</string>
+    <string name="settings_prediction_model_path_title">Path to model</string>
 
     <!-- Event Log -->
     <string name="event_log_no_entries">No Entries</string>
@@ -126,7 +144,7 @@
 
     <!-- Misc -->
     <string name="restart_app">Restarting app</string>
-    <string name="title_activity_home">Home</string>
+    <string name="title_activity_home">DiaBEATit</string>
 
 
 
@@ -1728,7 +1746,7 @@
     <string name="key_boluswizard_percentage" translatable="false">boluswizard_percentage</string>
     <string name="partialboluswizard">Deliver this part of bolus wizard result [%]</string>
     <string name="deliverpartofboluswizard">Bolus wizard performs calculation but only this part of calculated insulin is delivered. Useful with SMB algorithm.</string>
-    <string name="loading">Loading ...</string>
+    <string name="loading">Loading …</string>
     <string name="snooze">Snooze</string>
     <string name="time_range">Time range</string>
     <string name="timerange_value">Time is between %1$s and %2$s</string>
@@ -1748,5 +1766,6 @@
     <string name="common_on">On</string>
     <string name="common_off">Off</string>
     <string name="app_name">DiaBEATit</string>
+
 
 </resources>

@@ -20,7 +20,7 @@ public interface BgReadingDao {
     List<BgReadingEvent> getStaticReadings(); // 2 hours
 
     @Query("SELECT * FROM BgReadingEvent WHERE timestamp BETWEEN :from AND :to ORDER BY timestamp DESC LIMIT 24")
-    List<BgReadingEvent> getBgInDateTimeRange(Instant from, Instant to);
+    List<BgReadingEvent> getEventInDateTimeRange(Instant from, Instant to);
 
     @Insert
     void insert(BgReadingEvent... events);

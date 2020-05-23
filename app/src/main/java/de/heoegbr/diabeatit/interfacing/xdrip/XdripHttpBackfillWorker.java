@@ -13,8 +13,9 @@ import androidx.work.WorkerParameters;
 import java.io.IOException;
 import java.util.List;
 
+import de.heoegbr.diabeatit.db.cloud.nightscout.NsBgEntry;
 import de.heoegbr.diabeatit.db.container.event.DiaryEvent;
-import de.heoegbr.diabeatit.db.repository.DiaryEventStore;
+import de.heoegbr.diabeatit.db.repository.DiaryRepository;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -47,13 +48,13 @@ public class XdripHttpBackfillWorker extends Worker {
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             XdripWebService mXdripRestClient = retrofit.create(XdripWebService.class);
-            Call<List<NsEntry>> bgReadings = mXdripRestClient.requestBg();
-            Response<List<NsEntry>> execute = bgReadings.execute();
+            Call<List<NsBgEntry>> bgReadings = mXdripRestClient.requestBg();
+            Response<List<NsBgEntry>> execute = bgReadings.execute();
             if (execute.isSuccessful()) {
                 Log.d(TAG, "HTTP request was successful");
-                List<NsEntry> data = execute.body();
-                for (NsEntry item : data) {
-                    DiaryEventStore.getRepository(mContext)
+                List<NsBgEntry> data = execute.body();
+                for (NsBgEntry item : data) {
+                    DiaryRepository.getRepository(mContext)
                             .insertBgIfNotExist(item.toBgReadingEvent(DiaryEvent.SOURCE_DEVICE));
                 }
             }
@@ -65,6 +66,6 @@ public class XdripHttpBackfillWorker extends Worker {
 
     public interface XdripWebService {
         @GET("sgv.json")
-        Call<List<NsEntry>> requestBg();
+        Call<List<NsBgEntry>> requestBg();
     }
 }

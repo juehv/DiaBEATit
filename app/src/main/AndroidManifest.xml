@@ -35,7 +35,7 @@
         android:usesCleartextTraffic="true">
 
         <activity
-            android:name=".ui.HomeActivity"
+            android:name=".ui.home.HomeActivity"
             android:label="DIABEATIT">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -47,7 +47,7 @@
 
         <activity android:name=".ui.ManualNoteActivity"
             android:theme="@style/diabeatit"
-            android:parentActivityName=".ui.HomeActivity"/>
+            android:parentActivityName=".ui.home.HomeActivity" />
 
         <service
             android:name=".service.ForegroundService"
@@ -58,35 +58,35 @@
             android:name=".ui.DiaryActivity"
             android:theme="@style/diabeatit"
             android:label="@string/nav_navigation_log"
-            android:parentActivityName=".ui.HomeActivity"/>
+            android:parentActivityName=".ui.home.HomeActivity" />
 
         <activity android:name=".ui.SettingsActivity"
             android:theme="@style/diabeatit"
-            android:parentActivityName=".ui.HomeActivity">
+            android:parentActivityName=".ui.home.HomeActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.HomeActivity"/>
+                android:value=".ui.home.HomeActivity" />
         </activity>
 
         <activity
             android:name=".ui.ManualSportsEntryActivity"
             android:theme="@style/diabeatit"
-            android:parentActivityName=".ui.HomeActivity"/>
+            android:parentActivityName=".ui.home.HomeActivity" />
 
         <activity
             android:name=".ui.ManualCarbsEntryActivity"
             android:theme="@style/diabeatit"
-            android:parentActivityName=".ui.HomeActivity"/>
+            android:parentActivityName=".ui.home.HomeActivity" />
 
         <activity
             android:name=".ui.ManualInsulinEntryActivity"
             android:theme="@style/diabeatit"
-            android:parentActivityName=".ui.HomeActivity"/>
+            android:parentActivityName=".ui.home.HomeActivity" />
 
         <activity
             android:name=".ui.AlertHistoryActivity"
             android:label="@string/title_activity_alert_history"
-            android:parentActivityName=".ui.HomeActivity"
+            android:parentActivityName=".ui.home.HomeActivity"
             android:theme="@style/diabeatit"/>
     </application>
 </manifest>
