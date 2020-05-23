@@ -39,11 +39,27 @@
             android:label="DIABEATIT">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <!--<action android:name="info.nightscout.androidaps.OPEN_ASSISTANT" />-->
-
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="info.nightscout.androidaps.OPEN_ASSISTANT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver
+            android:name=".service.BootCompletedBroadcastReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".interfacing.xdrip.XdripBgSource"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.eveningoutpost.dexdrip.BgEstimate" />
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name=".ui.diary.ManualNoteActivity"
@@ -51,7 +67,7 @@
             android:parentActivityName=".ui.home.HomeActivity" />
 
         <service
-            android:name=".service.ForegroundService"
+            android:name=".service.DontDieForegroundService"
             android:enabled="true"
             android:exported="true" />
 

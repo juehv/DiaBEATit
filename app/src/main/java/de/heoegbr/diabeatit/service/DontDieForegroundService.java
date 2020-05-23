@@ -12,11 +12,12 @@ import androidx.lifecycle.LifecycleService;
 import de.heoegbr.diabeatit.DiaBEATitApp;
 import de.heoegbr.diabeatit.R;
 import de.heoegbr.diabeatit.StaticData;
+import de.heoegbr.diabeatit.ui.home.HomeActivity;
 
 /**
  * Foreground services that allows the app to run continuously without being automatically terminated
  */
-public class ForegroundService extends LifecycleService {
+public class DontDieForegroundService extends LifecycleService {
 
 	@Override
 	public void onCreate() {
@@ -27,7 +28,9 @@ public class ForegroundService extends LifecycleService {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);
 
-        Intent notificationIntent = new Intent(this, DiaBEATitApp.class);
+		Intent notificationIntent = new Intent(getApplicationContext(), HomeActivity.class);
+		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // ??
+		notificationIntent.setAction(StaticData.ASSISTANT_INTENT_CODE); // opens assistant tap
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 0, notificationIntent, 0);
 

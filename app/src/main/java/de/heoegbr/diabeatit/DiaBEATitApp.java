@@ -4,12 +4,14 @@ import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import androidx.core.content.ContextCompat;
 import androidx.work.Data;
 
 import net.danlew.android.joda.JodaTimeAndroid;
@@ -17,6 +19,7 @@ import net.danlew.android.joda.JodaTimeAndroid;
 import de.heoegbr.diabeatit.db.cloud.ScheduleSyncHelper;
 import de.heoegbr.diabeatit.db.cloud.nightscout.NightscoutDownloader;
 import de.heoegbr.diabeatit.interfacing.xdrip.XdripBgSource;
+import de.heoegbr.diabeatit.service.DontDieForegroundService;
 
 
 public class DiaBEATitApp extends Application {
@@ -30,7 +33,10 @@ public class DiaBEATitApp extends Application {
         JodaTimeAndroid.init(getApplicationContext());
 
         registerBroadcastReceivers(getApplicationContext());
+
         createNotificationChannel();
+        Intent serviceIntent = new Intent(getApplicationContext(), DontDieForegroundService.class);
+        ContextCompat.startForegroundService(getApplicationContext(), serviceIntent);
 
         scheduleEnabledBackgroundSync(getApplicationContext());
     }

@@ -10,7 +10,7 @@ public class StaticData {
 	public static final int RESTART_INTENT_ID = 999;
 
 	/* Intent code that is used to open the assistant */
-	public static final String ASSISTANT_INTENT_CODE = "info.nightscout.androidaps.OPEN_ASSISTANT";
+	public static final String ASSISTANT_INTENT_CODE = "de.heoegbr.diabeatit.OPEN_ASSISTANT";
 
 	/* URL pointing to the user handbook */
 	public static final String HANDBOOK_URL = "https://diabeatit.de/app-docs/";

@@ -36,7 +36,6 @@ import de.heoegbr.diabeatit.assistant.alert.AlertStoreListener;
 import de.heoegbr.diabeatit.assistant.alert.AlertsManager;
 import de.heoegbr.diabeatit.db.container.Alert;
 import de.heoegbr.diabeatit.db.repository.AlertStore;
-import de.heoegbr.diabeatit.service.ForegroundService;
 import de.heoegbr.diabeatit.ui.AlertHistoryActivity;
 import de.heoegbr.diabeatit.ui.DiaryActivity;
 import de.heoegbr.diabeatit.ui.diary.ManualCarbsEntryActivity;
@@ -70,9 +69,6 @@ public class HomeActivity extends AppCompatActivity {
 		setupManualEntry();
 		setupAssistant();
 		setupDrawer();
-
-		Intent serviceIntent = new Intent(this, ForegroundService.class);
-		startForegroundService(serviceIntent);
 
 		Intent intent = getIntent();
 		if (intent != null && intent.getAction() != null && intent.getAction().equals(StaticData.ASSISTANT_INTENT_CODE))
