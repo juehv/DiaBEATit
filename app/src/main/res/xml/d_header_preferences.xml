@@ -3,19 +3,19 @@
 
 
     <Preference
-        android:fragment="de.heoegbr.diabeatit.ui.SettingsActivity$GeneralFragment"
+        android:fragment="de.heoegbr.diabeatit.ui.settings.SettingsActivity$GeneralFragment"
         app:icon="@drawable/ic_general"
         app:key="general_settings_header"
         app:title="General" />
 
     <Preference
-        android:fragment="de.heoegbr.diabeatit.ui.SettingsActivity$SyncFragment"
+        android:fragment="de.heoegbr.diabeatit.ui.settings.SettingsSyncFragment"
         app:icon="@drawable/ic_sync"
         app:key="sync_settings_header"
         app:title="@string/settings_sync" />
 
     <Preference
-        android:fragment="de.heoegbr.diabeatit.ui.SettingsActivity$PredictionsFragment"
+        android:fragment="de.heoegbr.diabeatit.ui.settings.SettingsActivity$PredictionsFragment"
         app:icon="@drawable/d_ic_settings_alt"
         app:key="model_settings_header"
         app:title="@string/settings_prediction" />

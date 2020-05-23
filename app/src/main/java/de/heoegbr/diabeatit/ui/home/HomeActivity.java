@@ -39,11 +39,11 @@ import de.heoegbr.diabeatit.db.repository.AlertStore;
 import de.heoegbr.diabeatit.service.ForegroundService;
 import de.heoegbr.diabeatit.ui.AlertHistoryActivity;
 import de.heoegbr.diabeatit.ui.DiaryActivity;
-import de.heoegbr.diabeatit.ui.ManualCarbsEntryActivity;
-import de.heoegbr.diabeatit.ui.ManualInsulinEntryActivity;
-import de.heoegbr.diabeatit.ui.ManualNoteActivity;
-import de.heoegbr.diabeatit.ui.ManualSportsEntryActivity;
-import de.heoegbr.diabeatit.ui.SettingsActivity;
+import de.heoegbr.diabeatit.ui.diary.ManualCarbsEntryActivity;
+import de.heoegbr.diabeatit.ui.diary.ManualInsulinEntryActivity;
+import de.heoegbr.diabeatit.ui.diary.ManualNoteActivity;
+import de.heoegbr.diabeatit.ui.diary.ManualSportsEntryActivity;
+import de.heoegbr.diabeatit.ui.settings.SettingsActivity;
 
 public class HomeActivity extends AppCompatActivity {
 	public LinearLayout assistantPeekEnveloped;

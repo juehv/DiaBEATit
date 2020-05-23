@@ -13,11 +13,11 @@ public class StaticData {
 	public static final String ASSISTANT_INTENT_CODE = "info.nightscout.androidaps.OPEN_ASSISTANT";
 
 	/* URL pointing to the user handbook */
-	public static final String HANDBOOK_URL = "https://diabeatit.de/app-docs/"; // TODO Update
+	public static final String HANDBOOK_URL = "https://diabeatit.de/app-docs/";
 	/* Contect mail address */
-	public static final String CONTACT_MAIL = "mailto:diabeatit@tk.tu-darmstadt.de"; // TODO Update
+	public static final String CONTACT_MAIL = "mailto:diabeatit@tk.tu-darmstadt.de";
 	/* Error report mailto */
-	public static final String ERROR_MAIL = CONTACT_MAIL  +"?subject=Stacktrace&body=%s"; // TODO Update
+	public static final String ERROR_MAIL = CONTACT_MAIL + "?subject=Stacktrace&body=%s";
 
 	/* Name of the database managed by Room */
 	public static final String ROOM_DATABASE_NAME = "diabeatit";

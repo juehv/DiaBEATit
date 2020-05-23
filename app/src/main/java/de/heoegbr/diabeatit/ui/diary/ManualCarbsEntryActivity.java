@@ -1,4 +1,4 @@
-package de.heoegbr.diabeatit.ui;
+package de.heoegbr.diabeatit.ui.diary;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -23,43 +23,44 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import de.heoegbr.diabeatit.R;
+import de.heoegbr.diabeatit.db.container.event.CarbEvent;
 import de.heoegbr.diabeatit.db.container.event.DiaryEvent;
-import de.heoegbr.diabeatit.db.container.event.NoteEvent;
 import de.heoegbr.diabeatit.db.repository.DiaryRepository;
+import de.heoegbr.diabeatit.ui.home.HomeFragment;
 
-public class ManualNoteActivity extends AppCompatActivity {
-
-    private EditText notesInput;
-    private ImageView previewV;
-    private Button selDateB, selTimeB;
-    private ImageButton delPicB;
+public class ManualCarbsEntryActivity extends AppCompatActivity {
 
     Uri currentPicture;
     Calendar timestamp;
+    private EditText carbsInput, notesInput;
+    private ImageView previewV;
+    private Button selDateB, selTimeB;
+    private ImageButton delPicB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.d_activity_manual_note);
+        setContentView(R.layout.d_activity_manual_carbs_entry);
 
-        getSupportActionBar().setTitle(getResources().getString(R.string.mn_title));
+        getSupportActionBar().setTitle(getString(R.string.mc_title));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        notesInput = findViewById(R.id.mn_notes);
+        carbsInput = findViewById(R.id.mc_input);
+        notesInput = findViewById(R.id.mc_notes);
 
-        previewV = findViewById(R.id.mn_picture_preview);
+        previewV = findViewById(R.id.mc_picture_preview);
 
-        delPicB = findViewById(R.id.mn_picture_delete);
-        selDateB = findViewById(R.id.mn_date);
-        selTimeB = findViewById(R.id.mn_time);
+        delPicB = findViewById(R.id.mc_picture_delete);
+        selDateB = findViewById(R.id.mc_date);
+        selTimeB = findViewById(R.id.mc_time);
 
-        findViewById(R.id.mn_picture_set).setOnClickListener(v -> selectPicture());
+        findViewById(R.id.mc_picture_set).setOnClickListener(v -> selectPicture());
         delPicB.setOnClickListener(v -> deletePicture());
         selDateB.setOnClickListener(v -> selectDate());
         selTimeB.setOnClickListener(v -> selectTime());
-        findViewById(R.id.mn_save).setOnClickListener(v -> save());
+        findViewById(R.id.mc_save).setOnClickListener(v -> save());
 
         timestamp = new Calendar.Builder()
                 .setInstant(Instant.now().toEpochMilli())
@@ -135,23 +136,43 @@ public class ManualNoteActivity extends AppCompatActivity {
     }
 
     private void save() {
-        if (notesInput.getText().toString().isEmpty()) {
-            notesInput.setHintTextColor(ContextCompat.getColor(this, R.color.d_important));
+        if (carbsInput.getText().toString().isEmpty()) {
+            carbsInput.setHintTextColor(ContextCompat.getColor(this, R.color.d_important));
             return;
         }
 
         try {
+            int carbs = Integer.parseInt(carbsInput.getText().toString());
+            long ts = timestamp.toInstant().toEpochMilli();
+            String notes = notesInput.getText().toString();
+
+            //CarbsGenerator.createCarb(carbs, ts, "ManualCarbsActivity", notes);
+            // --> 	TreatmentsPlugin.getPlugin().addToHistoryTreatment(carbInfo, false);
+
             Bitmap bm = null;
             if (currentPicture != null)
                 bm = MediaStore.Images.Media.getBitmap(this.getContentResolver(), currentPicture);
 
             DiaryRepository.getRepository(getApplicationContext())
-                    .insertEvent(new NoteEvent(DiaryEvent.SOURCE_USER, timestamp.toInstant(), bm,
-                            notesInput.getText().toString()));
+                    .insertEvent(new CarbEvent(DiaryEvent.SOURCE_USER, timestamp.toInstant(),
+                            bm, carbs, notes));
+
+            long min30 = 30 * 60 * 1000;
+//			HomeFragment frag = HomeFragment.getInstance();
+//			if (ts > (System.currentTimeMillis() - min30) && frag != null )//&& frag.bc != null)
+//				frag.bc.setCarbs(carbs);
+
         } catch (Exception ignored) {
             return;
         }
 
+        // Update GUI
+        HomeFragment fragment = HomeFragment.getInstance();
+        if (fragment != null)
+            // FIXME .... I deleted this shit ....
+            // fragment.scheduleUpdateGUI(this.getClass().getCanonicalName());
+
         finish();
     }
+
 }

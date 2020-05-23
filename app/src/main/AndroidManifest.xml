@@ -45,7 +45,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.ManualNoteActivity"
+        <activity
+            android:name=".ui.diary.ManualNoteActivity"
             android:theme="@style/diabeatit"
             android:parentActivityName=".ui.home.HomeActivity" />
 
@@ -60,7 +61,8 @@
             android:label="@string/nav_navigation_log"
             android:parentActivityName=".ui.home.HomeActivity" />
 
-        <activity android:name=".ui.SettingsActivity"
+        <activity
+            android:name=".ui.settings.SettingsActivity"
             android:theme="@style/diabeatit"
             android:parentActivityName=".ui.home.HomeActivity">
             <meta-data
@@ -69,17 +71,17 @@
         </activity>
 
         <activity
-            android:name=".ui.ManualSportsEntryActivity"
+            android:name=".ui.diary.ManualSportsEntryActivity"
             android:theme="@style/diabeatit"
             android:parentActivityName=".ui.home.HomeActivity" />
 
         <activity
-            android:name=".ui.ManualCarbsEntryActivity"
+            android:name=".ui.diary.ManualCarbsEntryActivity"
             android:theme="@style/diabeatit"
             android:parentActivityName=".ui.home.HomeActivity" />
 
         <activity
-            android:name=".ui.ManualInsulinEntryActivity"
+            android:name=".ui.diary.ManualInsulinEntryActivity"
             android:theme="@style/diabeatit"
             android:parentActivityName=".ui.home.HomeActivity" />
 
