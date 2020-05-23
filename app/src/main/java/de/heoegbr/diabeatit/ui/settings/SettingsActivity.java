@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
+import org.jetbrains.annotations.NotNull;
+
 import de.heoegbr.diabeatit.BuildConfig;
 import de.heoegbr.diabeatit.R;
 
@@ -49,7 +51,7 @@ public class SettingsActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
         // Save current activity title so we can set it again after a configuration change
         outState.putCharSequence(TITLE_TAG, getTitle());

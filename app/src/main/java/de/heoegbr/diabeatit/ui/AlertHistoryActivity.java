@@ -6,6 +6,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Objects;
+
 import de.heoegbr.diabeatit.R;
 import de.heoegbr.diabeatit.assistant.alert.AlertStoreListener;
 import de.heoegbr.diabeatit.assistant.alert.DismissedAlertsManager;
@@ -18,7 +20,8 @@ public class AlertHistoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.d_activity_alert_history);
-        getSupportActionBar().setTitle(getResources().getString(R.string.title_activity_alert_history));
+        Objects.requireNonNull(getSupportActionBar()).setTitle(getResources()
+                .getString(R.string.title_activity_alert_history));
 
         setTheme(R.style.diabeatit);
 

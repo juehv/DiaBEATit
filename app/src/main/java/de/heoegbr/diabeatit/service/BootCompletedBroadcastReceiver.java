@@ -13,9 +13,11 @@ public class BootCompletedBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "Try to register BroadcastReceiver...");
-        Toast.makeText(context,
-                context.getResources().getString(R.string.app_name) + " started by boot completed intent",
-                Toast.LENGTH_LONG).show();
+        if (intent.getAction() != null
+                && intent.getAction().equalsIgnoreCase("android.intent.action.BOOT_COMPLETED"))
+            Toast.makeText(context,
+                    context.getResources().getString(R.string.app_name) + " started by boot completed intent",
+                    Toast.LENGTH_LONG).show();
+        Log.d(TAG, "App received boot completed intent");
     }
 }

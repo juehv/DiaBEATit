@@ -9,6 +9,8 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.LifecycleService;
 
+import org.jetbrains.annotations.NotNull;
+
 import de.heoegbr.diabeatit.DiaBEATitApp;
 import de.heoegbr.diabeatit.R;
 import de.heoegbr.diabeatit.StaticData;
@@ -53,7 +55,7 @@ public class DontDieForegroundService extends LifecycleService {
 
 	@Nullable
 	@Override
-	public IBinder onBind(Intent intent) {
+	public IBinder onBind(@NotNull Intent intent) {
 		super.onBind(intent);
 		return null;
 	}

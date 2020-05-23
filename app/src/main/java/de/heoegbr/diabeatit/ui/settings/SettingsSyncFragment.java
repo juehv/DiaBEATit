@@ -30,12 +30,12 @@ public class SettingsSyncFragment extends PreferenceFragmentCompat {
                 if ((Boolean) newValue) {
                     Data.Builder data = new Data.Builder();
                     data.putInt(NightscoutDownloader.KEY_NO_OF_VALUE, 24);
-                    ScheduleSyncHelper.schedulePeriodicSync(getContext(),
+                    ScheduleSyncHelper.schedulePeriodicSync(requireContext(),
                             NightscoutDownloader.class,
                             NightscoutDownloader.WORK_NAME,
                             data.build());
                 } else {
-                    ScheduleSyncHelper.stopPeriodicSync(getContext(),
+                    ScheduleSyncHelper.stopPeriodicSync(requireContext(),
                             NightscoutDownloader.WORK_NAME);
                 }
                 return true;
@@ -52,7 +52,7 @@ public class SettingsSyncFragment extends PreferenceFragmentCompat {
             );
 
             Preference.SummaryProvider<EditTextPreference> sumProv = new Preference.SummaryProvider<EditTextPreference>() {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
 
                 @Override
                 public CharSequence provideSummary(EditTextPreference preference) {
@@ -78,10 +78,10 @@ public class SettingsSyncFragment extends PreferenceFragmentCompat {
             nsHistoricSync.setOnPreferenceClickListener(preference -> {
                 Data.Builder data = new Data.Builder();
                 data.putInt(NightscoutDownloader.KEY_NO_OF_VALUE, 210240); // two years
-                ScheduleSyncHelper.scheduleOneTimeSync(getContext(),
+                ScheduleSyncHelper.scheduleOneTimeSync(requireContext(),
                         NightscoutDownloader.class,
                         data.build());
-                Toast.makeText(getContext(),
+                Toast.makeText(requireContext(),
                         getString(R.string.settings_sync_ns_rationale),
                         Toast.LENGTH_LONG).show();
                 return true;

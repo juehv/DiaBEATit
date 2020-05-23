@@ -26,7 +26,6 @@ import de.heoegbr.diabeatit.R;
 import de.heoegbr.diabeatit.db.container.event.CarbEvent;
 import de.heoegbr.diabeatit.db.container.event.DiaryEvent;
 import de.heoegbr.diabeatit.db.repository.DiaryRepository;
-import de.heoegbr.diabeatit.ui.home.HomeFragment;
 
 public class ManualCarbsEntryActivity extends AppCompatActivity {
 
@@ -143,11 +142,7 @@ public class ManualCarbsEntryActivity extends AppCompatActivity {
 
         try {
             int carbs = Integer.parseInt(carbsInput.getText().toString());
-            long ts = timestamp.toInstant().toEpochMilli();
             String notes = notesInput.getText().toString();
-
-            //CarbsGenerator.createCarb(carbs, ts, "ManualCarbsActivity", notes);
-            // --> 	TreatmentsPlugin.getPlugin().addToHistoryTreatment(carbInfo, false);
 
             Bitmap bm = null;
             if (currentPicture != null)
@@ -157,20 +152,9 @@ public class ManualCarbsEntryActivity extends AppCompatActivity {
                     .insertEvent(new CarbEvent(DiaryEvent.SOURCE_USER, timestamp.toInstant(),
                             bm, carbs, notes));
 
-            long min30 = 30 * 60 * 1000;
-//			HomeFragment frag = HomeFragment.getInstance();
-//			if (ts > (System.currentTimeMillis() - min30) && frag != null )//&& frag.bc != null)
-//				frag.bc.setCarbs(carbs);
-
         } catch (Exception ignored) {
             return;
         }
-
-        // Update GUI
-        HomeFragment fragment = HomeFragment.getInstance();
-        if (fragment != null)
-            // FIXME .... I deleted this shit ....
-            // fragment.scheduleUpdateGUI(this.getClass().getCanonicalName());
 
         finish();
     }

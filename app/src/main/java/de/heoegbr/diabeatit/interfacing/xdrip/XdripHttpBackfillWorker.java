@@ -59,7 +59,6 @@ public class XdripHttpBackfillWorker extends Worker {
                 }
             }
         } catch (IOException ignored) {
-            ignored.printStackTrace();
         }
         return Result.success();
     }

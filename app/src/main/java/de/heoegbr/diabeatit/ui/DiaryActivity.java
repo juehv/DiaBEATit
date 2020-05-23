@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
@@ -18,11 +19,14 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import de.heoegbr.diabeatit.R;
 import de.heoegbr.diabeatit.db.container.event.DiaryEvent;
@@ -40,9 +44,10 @@ public class DiaryActivity extends AppCompatActivity implements DiaryEventAdapte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.d_activity_log);
 
-        getSupportActionBar().setTitle(getResources().getString(R.string.nav_navigation_log));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        ActionBar actionBar = Objects.requireNonNull(getSupportActionBar());
+        actionBar.setTitle(getResources().getString(R.string.nav_navigation_log));
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
 
         DiaryRepository diaryRepository = DiaryRepository.getRepository(getApplicationContext());
         adapter = new DiaryEventAdapter(this, this, diaryRepository.getEvents());
@@ -313,6 +318,7 @@ class DiaryEventAdapter extends SelectableAdapter<DiaryEventAdapter.LogEventView
         notifyItemRangeRemoved(positionStart, itemCount);
     }
 
+    @NotNull
     @Override
     public LogEventViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RelativeLayout view = (RelativeLayout) LayoutInflater.from(parent.getContext())

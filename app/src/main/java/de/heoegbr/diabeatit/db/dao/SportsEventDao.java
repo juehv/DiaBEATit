@@ -26,7 +26,7 @@ public interface SportsEventDao {
 
     /** Get the 512 most recent {@link SportsEvent}s
      *
-     * @return  A list of {@link SportsEvent}s, ordered by {@link SportsEvent#TIMESTAMP} and limited
+     * @return A list of {@link SportsEvent}s, ordered by {@link SportsEvent#timestamp} and limited
      *          to 512 entries
      */
     @Query("SELECT * FROM SportsEvent ORDER BY timestamp DESC LIMIT 512")

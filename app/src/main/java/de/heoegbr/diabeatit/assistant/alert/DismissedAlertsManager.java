@@ -10,6 +10,8 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +89,7 @@ class DismissedAlertAdapter extends RecyclerView.Adapter<DismissedAlertAdapter.D
         this.mAlerts = alerts;
     }
 
+    @NotNull
     @Override
     public DismissedAlertViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RelativeLayout view = (RelativeLayout) LayoutInflater.from(parent.getContext())
