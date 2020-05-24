@@ -11,13 +11,13 @@ import androidx.lifecycle.Observer;
 
 import java.util.List;
 
-import de.heoegbr.diabeatit.db.container.event.BasalEvent;
-import de.heoegbr.diabeatit.db.container.event.BgReadingEvent;
-import de.heoegbr.diabeatit.db.container.event.BolusEvent;
-import de.heoegbr.diabeatit.db.container.event.CarbEvent;
-import de.heoegbr.diabeatit.db.container.event.DiaryEvent;
-import de.heoegbr.diabeatit.db.container.event.SportsEvent;
-import de.heoegbr.diabeatit.db.repository.DiaryRepository;
+import de.heoegbr.diabeatit.data.container.event.BasalEvent;
+import de.heoegbr.diabeatit.data.container.event.BgReadingEvent;
+import de.heoegbr.diabeatit.data.container.event.BolusEvent;
+import de.heoegbr.diabeatit.data.container.event.CarbEvent;
+import de.heoegbr.diabeatit.data.container.event.DiaryEvent;
+import de.heoegbr.diabeatit.data.container.event.SportsEvent;
+import de.heoegbr.diabeatit.data.repository.DiaryRepository;
 
 public class HomeViewModel extends AndroidViewModel {
 

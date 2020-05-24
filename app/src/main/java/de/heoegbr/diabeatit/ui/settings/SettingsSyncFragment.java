@@ -13,8 +13,8 @@ import androidx.preference.SwitchPreferenceCompat;
 import androidx.work.Data;
 
 import de.heoegbr.diabeatit.R;
-import de.heoegbr.diabeatit.db.cloud.ScheduleSyncHelper;
-import de.heoegbr.diabeatit.db.cloud.nightscout.NightscoutDownloader;
+import de.heoegbr.diabeatit.data.source.cloud.ScheduleSyncHelper;
+import de.heoegbr.diabeatit.data.source.cloud.nightscout.NightscoutDownloader;
 
 public class SettingsSyncFragment extends PreferenceFragmentCompat {
     @Override

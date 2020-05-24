@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 import de.heoegbr.diabeatit.R;
-import de.heoegbr.diabeatit.db.container.event.DiaryEvent;
+import de.heoegbr.diabeatit.data.container.event.DiaryEvent;
 
 
 public class HomeFragment extends Fragment {
@@ -86,16 +86,16 @@ public class HomeFragment extends Fragment {
             LineDataSet bgDataSet = new LineDataSet(bgEntries, "BG");
             bgDataSet.setColor(Color.BLUE);
             bgDataSet.setCircleColor(Color.BLUE);
-            bgDataSet.setValueTextColor(Color.BLUE);
+            bgDataSet.setDrawValues(false);
             LineData ld = new LineData();
             ld.addDataSet(bgDataSet);
 
             BarDataSet bolusDataSet = new BarDataSet(bolusEntries, "Bolus");
             bolusDataSet.setColor(Color.parseColor("#00BB00"));
-            bolusDataSet.setValueTextColor(Color.GREEN);
+            bolusDataSet.setDrawValues(false);
             BarDataSet carbDataSet = new BarDataSet(carbEntries, "Carbs");
             carbDataSet.setColor(Color.RED);
-            carbDataSet.setValueTextColor(Color.RED);
+            carbDataSet.setDrawValues(false);
             BarData bd = new BarData();
             bd.addDataSet(bolusDataSet);
             bd.addDataSet(carbDataSet);

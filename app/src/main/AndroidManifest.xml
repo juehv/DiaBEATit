@@ -54,7 +54,7 @@
         </receiver>
 
         <receiver
-            android:name=".interfacing.xdrip.XdripBgSource"
+            android:name=".data.source.xdrip.XdripBgSource"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.eveningoutpost.dexdrip.BgEstimate" />

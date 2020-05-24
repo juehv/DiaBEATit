@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.Objects;
 
 import de.heoegbr.diabeatit.R;
-import de.heoegbr.diabeatit.db.container.event.DiaryEvent;
-import de.heoegbr.diabeatit.db.repository.DiaryRepository;
+import de.heoegbr.diabeatit.data.container.event.DiaryEvent;
+import de.heoegbr.diabeatit.data.repository.DiaryRepository;
 
 public class DiaryActivity extends AppCompatActivity implements DiaryEventAdapter.LogEventViewHolder.ClickListener {
 

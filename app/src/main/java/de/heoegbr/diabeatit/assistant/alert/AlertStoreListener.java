@@ -1,6 +1,6 @@
 package de.heoegbr.diabeatit.assistant.alert;
 
-import de.heoegbr.diabeatit.db.container.Alert;
+import de.heoegbr.diabeatit.data.container.Alert;
 
 public interface AlertStoreListener {
 

@@ -15,9 +15,9 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import de.heoegbr.diabeatit.R;
-import de.heoegbr.diabeatit.db.container.event.BolusEvent;
-import de.heoegbr.diabeatit.db.container.event.DiaryEvent;
-import de.heoegbr.diabeatit.db.repository.DiaryRepository;
+import de.heoegbr.diabeatit.data.container.event.BolusEvent;
+import de.heoegbr.diabeatit.data.container.event.DiaryEvent;
+import de.heoegbr.diabeatit.data.repository.DiaryRepository;
 
 public class ManualInsulinEntryActivity extends AppCompatActivity {
 

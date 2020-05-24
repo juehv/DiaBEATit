@@ -16,9 +16,9 @@ import androidx.work.Data;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
-import de.heoegbr.diabeatit.db.cloud.ScheduleSyncHelper;
-import de.heoegbr.diabeatit.db.cloud.nightscout.NightscoutDownloader;
-import de.heoegbr.diabeatit.interfacing.xdrip.XdripBgSource;
+import de.heoegbr.diabeatit.data.source.cloud.ScheduleSyncHelper;
+import de.heoegbr.diabeatit.data.source.cloud.nightscout.NightscoutDownloader;
+import de.heoegbr.diabeatit.data.source.xdrip.XdripBgSource;
 import de.heoegbr.diabeatit.service.DontDieForegroundService;
 
 
