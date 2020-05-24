@@ -74,7 +74,7 @@
         <activity
             android:name=".ui.diary.DiaryActivity"
             android:theme="@style/diabeatit"
-            android:label="@string/nav_navigation_log"
+            android:label="@string/nav_log"
             android:parentActivityName=".ui.home.HomeActivity" />
 
         <activity

@@ -45,7 +45,7 @@ public class DiaryActivity extends AppCompatActivity implements DiaryEventAdapte
         setContentView(R.layout.d_activity_log);
 
         ActionBar actionBar = Objects.requireNonNull(getSupportActionBar());
-        actionBar.setTitle(getResources().getString(R.string.nav_navigation_log));
+        actionBar.setTitle(getResources().getString(R.string.nav_log));
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
 

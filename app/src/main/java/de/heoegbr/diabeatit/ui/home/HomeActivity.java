@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -127,7 +128,8 @@ public class HomeActivity extends AppCompatActivity {
 			}
 
 			@Override
-			public void onSlide(@NonNull View view, float v) {}
+			public void onSlide(@NonNull View view, float v) {
+			}
 		});
 
 		assistantPeek.setOnClickListener(view -> assistant.setState(BottomSheetBehavior.STATE_EXPANDED));
@@ -201,20 +203,24 @@ public class HomeActivity extends AppCompatActivity {
 		alertHistoryC.setOnClickListener(view -> startActivity(new Intent(HomeActivity.this, AlertHistoryActivity.class)));
 
 		findViewById(R.id.alert_settings).setOnClickListener(
-						view -> {
-							Intent intent = new Intent();
-							intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
-							intent.putExtra("android.provider.extra.APP_PACKAGE", getPackageName());
-							startActivity(intent);
-						}
+				view -> {
+					Intent intent = new Intent();
+					intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+					intent.putExtra("android.provider.extra.APP_PACKAGE", getPackageName());
+					startActivity(intent);
+				}
 		);
 
 		findViewById(R.id.assistant_card_list).setOnTouchListener(new OnSwipeTouchListener(this) {
 			@Override
-			public void onSwipeLeft() { StaticData.assistantInhibitClose = true; }
+			public void onSwipeLeft() {
+				StaticData.assistantInhibitClose = true;
+			}
 
 			@Override
-			public void onSwipeRight() { StaticData.assistantInhibitClose = true; }
+			public void onSwipeRight() {
+				StaticData.assistantInhibitClose = true;
+			}
 		});
 	}
 
@@ -223,8 +229,8 @@ public class HomeActivity extends AppCompatActivity {
 		final NavigationView navView = findViewById(R.id.nav_view);
 
 		mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.nav_assistant, R.id.nav_settings)
-						.setDrawerLayout(drawer)
-						.build();
+				.setDrawerLayout(drawer)
+				.build();
 
 		NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 		NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
@@ -238,24 +244,16 @@ public class HomeActivity extends AppCompatActivity {
 					expandAssistant();
 					break;
 
+				case R.id.nav_log:
+					startActivity(new Intent(HomeActivity.this, DiaryActivity.class));
+					break;
+
 				case R.id.nav_settings:
 					startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
 					break;
 
-				case R.id.nav_setup:
-					//startActivity(new Intent(HomeActivity.this, SetupWizardActivity.class));
-					break;
-
-				case R.id.nav_log:
-                    startActivity(new Intent(HomeActivity.this, DiaryActivity.class));
-					break;
-
-				case R.id.nav_help_guide:
+				case R.id.nav_info:
 					startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(StaticData.HANDBOOK_URL)));
-					break;
-
-				case R.id.nav_help_contact_us:
-					startActivity(new Intent(Intent.ACTION_SENDTO, Uri.parse(StaticData.CONTACT_MAIL)));
 					break;
 			}
 
@@ -280,24 +278,27 @@ public class HomeActivity extends AppCompatActivity {
 	@Override
 	public void onBackPressed() {
 		View nestedScrollView = findViewById(R.id.assistant_scrollview);
+		final DrawerLayout drawer = findViewById(R.id.drawer_layout);
 		final BottomSheetBehavior assistant = BottomSheetBehavior.from(nestedScrollView);
 
-		if (assistant.getState() == BottomSheetBehavior.STATE_EXPANDED)
+		if (drawer.isDrawerOpen(GravityCompat.START))
+			drawer.closeDrawer(GravityCompat.START);
+		else if (assistant.getState() == BottomSheetBehavior.STATE_EXPANDED)
 			assistant.setState(BottomSheetBehavior.STATE_COLLAPSED);
 		else
 			super.onBackPressed();
 	}
 
 	/*
-			Closes entry menu when user clicks somewhere else
-	 */
+            Closes entry menu when user clicks somewhere else
+     */
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent event) {
-		if (event.getAction() == MotionEvent.ACTION_DOWN && entryMenu.isExpanded()){
+		if (event.getAction() == MotionEvent.ACTION_DOWN && entryMenu.isExpanded()) {
 			Rect outRect = new Rect();
 			entryMenu.getGlobalVisibleRect(outRect);
 
-			if (!outRect.contains((int )event.getRawX(), (int) event.getRawY()))
+			if (!outRect.contains((int) event.getRawX(), (int) event.getRawY()))
 				entryMenu.collapse();
 		}
 
@@ -308,7 +309,7 @@ public class HomeActivity extends AppCompatActivity {
 	public boolean onSupportNavigateUp() {
 		NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 		return NavigationUI.navigateUp(navController, mAppBarConfiguration)
-						|| super.onSupportNavigateUp();
+				|| super.onSupportNavigateUp();
 	}
 }
 
@@ -324,6 +325,18 @@ class OnSwipeTouchListener implements View.OnTouchListener {
 	public boolean onTouch(final View view, final MotionEvent motionEvent) {
 		view.performClick(); //FIXME <-- added because of warning .. will it still work ?
 		return gestureDetector.onTouchEvent(motionEvent);
+	}
+
+	public void onSwipeRight() {
+	}
+
+	public void onSwipeLeft() {
+	}
+
+	public void onSwipeUp() {
+	}
+
+	public void onSwipeDown() {
 	}
 
 	private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -365,17 +378,5 @@ class OnSwipeTouchListener implements View.OnTouchListener {
 			}
 			return result;
 		}
-	}
-
-	public void onSwipeRight() {
-	}
-
-	public void onSwipeLeft() {
-	}
-
-	public void onSwipeUp() {
-	}
-
-	public void onSwipeDown() {
 	}
 }
