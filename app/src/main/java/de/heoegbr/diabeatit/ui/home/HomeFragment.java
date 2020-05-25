@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -47,185 +48,258 @@ public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
     private CombinedChart chart;
+    private int mBgColor;
+    private int mBolusColor;
+    private int mBasalColor;
+    private int mBasalFillColor;
+    private int mCarbsColor;
+    private int mPredictionColor;
+    private int mPredictionMarkerColor;
+    private List<LegendEntry> mLegendEntries;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle _b) {
         View root = inflater.inflate(R.layout.d_fragment_home, container, false);
 
         chart = root.findViewById(R.id.chart_bg);
+        mBgColor = Color.parseColor(getString(R.string.chart_color_bg));
+        mBolusColor = Color.parseColor(getString(R.string.chart_color_bolus));
+        mBasalColor = Color.parseColor(getString(R.string.chart_color_basal));
+        mBasalFillColor = Color.parseColor(getString(R.string.chart_color_basal_fill));
+        mCarbsColor = Color.parseColor(getString(R.string.chart_color_carbs));
+        mPredictionColor = Color.parseColor(getString(R.string.chart_color_prediction));
+        mPredictionMarkerColor = Color.parseColor(getString(R.string.chart_color_prediction_marker));
+        mLegendEntries = new ArrayList<>();
+        setupChart();
+
+        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        homeViewModel.observeData(getViewLifecycleOwner(), diaryEvents -> {
+            updateChart(diaryEvents);
+            Log.d(TAG, "updated main chart");
+        });
+
+        return root;
+    }
+
+    private void updateChart(List<DiaryEvent> diaryEvents) {
+        // make sure data is not empty
+        if (diaryEvents.isEmpty()) {
+            chart.clear();
+            chart.invalidate();
+            return;
+        }
+
+        // recreate chart dataset:
+        // calculate date of fist visible entry from left
+        Instant firstVisibleBgDate = Instant.now()
+                .minus(12, ChronoUnit.HOURS);
+        // calculate x value of newest bg value
+        float lastBgX = diaryEvents.get(0).timestamp.toEpochMilli() - firstVisibleBgDate.toEpochMilli();
+        lastBgX = lastBgX / 300000;
+
+        // prepare data lists
+        List<Entry> bgEntries = new ArrayList<>();
+        double biggestBgValue = 0;
+        List<Entry> basalEntries = new ArrayList<>();
+        List<List<Entry>> predictionEntries = new ArrayList<>();
+        List<BarEntry> bolusEntries = new ArrayList<>();
+        List<BarEntry> carbEntries = new ArrayList<>();
+        for (DiaryEvent item : diaryEvents) {
+            // filter values older than 12h
+            if (firstVisibleBgDate.isAfter(item.timestamp)) continue;
+
+            // calculate x position
+            long offset = item.timestamp.toEpochMilli() - firstVisibleBgDate.toEpochMilli();
+            float x = (float) offset / 300000; // 5 min slots
+
+            // split data types
+            switch (item.type) {
+                case DiaryEvent.TYPE_BG:
+                    // limit bg to 430 .. higher values are out of sensor range anyway
+                    float value = item.value > 430.0 ? 430f : (float) item.value;
+                    bgEntries.add(new Entry(x, value));
+                    biggestBgValue = item.value > biggestBgValue ? item.value : biggestBgValue;
+                    break;
+                case DiaryEvent.TYPE_BASAL:
+                    basalEntries.add(new Entry(x, (float) item.value * 10));
+                    break;
+                case DiaryEvent.TYPE_BOLUS:
+                    bolusEntries.add(new BarEntry(x + 0.25f, (float) item.value * 10));
+                    break;
+                case DiaryEvent.TYPE_CARB:
+                    carbEntries.add(new BarEntry(x - 0.25f, (float) item.value));
+                    break;
+                case DiaryEvent.TYPE_PREDICTION:
+                    // Prediction entries are a complete dataset on its own
+                    // --> create one dataset per entry
+                    List<Entry> tmpPrediction = new ArrayList<>();
+                    int predCount = 1;
+                    for (Double predItem : ((PredictionEvent) item).prediction) {
+                        tmpPrediction.add(new Entry(x + predCount, predItem.floatValue()));
+                        predCount++;
+                    }
+                    Collections.sort(tmpPrediction, new EntryXComparator());
+                    predictionEntries.add(tmpPrediction);
+                    break;
+            }
+        }
+        // sort x entries because chart will die otherwise
+        Collections.sort(bgEntries, new EntryXComparator());
+        Collections.sort(basalEntries, new EntryXComparator());
+        Collections.sort(bolusEntries, new EntryXComparator());
+        Collections.sort(carbEntries, new EntryXComparator());
+
+        // create datasets from entry lists
+        LineDataSet bgDataSet = new LineDataSet(bgEntries, getString(R.string.chart_label_bg));
+        bgDataSet.setColor(mBgColor);
+        bgDataSet.setCircleColor(mBgColor);
+        bgDataSet.setDrawValues(false);
+
+        LineDataSet basalDataSet = new LineDataSet(basalEntries, getString(R.string.chart_label_basal));
+        basalDataSet.setColor(mBasalColor);
+        basalDataSet.setLineWidth(1.5f);
+        basalDataSet.setDrawValues(false);
+        basalDataSet.setDrawCircles(false);
+        basalDataSet.setMode(LineDataSet.Mode.STEPPED);
+        basalDataSet.setDrawFilled(true);
+        basalDataSet.setFillColor(mBasalFillColor);
+        basalDataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);
+
+        LineData ld = new LineData();
+        ld.addDataSet(bgDataSet);
+        ld.addDataSet(basalDataSet);
+
+        if (!predictionEntries.isEmpty()) {
+            for (List<Entry> predictionEntry : predictionEntries) {
+                LineDataSet predDataSet = new LineDataSet(predictionEntry, "");
+                predDataSet.setColor(mPredictionColor);
+                predDataSet.setCircleColor(mPredictionColor);
+                predDataSet.setDrawValues(false);
+                ld.addDataSet(predDataSet);
+            }
+        }
+
+        BarDataSet bolusDataSet = new BarDataSet(bolusEntries, getString(R.string.chart_label_bolus));
+        bolusDataSet.setColor(mBolusColor);
+        bolusDataSet.setDrawValues(false);
+
+        BarDataSet carbDataSet = new BarDataSet(carbEntries, getString(R.string.chart_label_carbs));
+        carbDataSet.setColor(mCarbsColor);
+        carbDataSet.setDrawValues(false);
+
+        BarData bd = new BarData();
+        bd.addDataSet(bolusDataSet);
+        bd.addDataSet(carbDataSet);
+
+        // combine datasets
+        CombinedData combinedData = new CombinedData();
+        combinedData.setData(ld);
+        combinedData.setData(bd);
+
+        // calculate y axis max value
+        if (biggestBgValue > 295) {
+            chart.getAxisLeft().setAxisMaximum(450.0f);
+            chart.getAxisRight().setAxisMaximum(450.0f);
+        } else {
+            chart.getAxisLeft().setAxisMaximum(300.0f);
+            chart.getAxisRight().setAxisMaximum(300.0f);
+        }
+
+        // set formatter for x axis (timestamps)
+        chart.getXAxis().setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                long rawReturnValue = firstVisibleBgDate.toEpochMilli() + Math.round(value * 300000);
+                return SimpleDateFormat.getTimeInstance(DateFormat.SHORT)
+                        .format(new Date(rawReturnValue));
+            }
+        });
+
+        // set prediction marker
+        chart.getXAxis().removeAllLimitLines();
+        if (!predictionEntries.isEmpty()) {
+            LimitLine predictionLine = new LimitLine(lastBgX + 0.2f, "-->");
+            predictionLine.setLineColor(mPredictionMarkerColor);
+            predictionLine.setLineWidth(1.5f);
+            predictionLine.enableDashedLine(15f, 5f, 0f);
+            chart.getXAxis().addLimitLine(predictionLine);
+        }
+
+        // update chart data
+        chart.resetZoom();
+        chart.setData(combinedData);
+        chart.invalidate();
+
+        // reset legend
+        chart.getLegend().setEntries(mLegendEntries);
+
+        // zoom to current time frame
+        chart.zoom(1.25f, 1f, lastBgX, 180);
+        chart.moveViewToX(lastBgX);
+    }
+
+    private void setupChart() {
+        // make y axis fixed to reasonable values
         chart.setScaleYEnabled(false);
         chart.getAxisLeft().setAxisMinimum(0.0f);
         chart.getAxisLeft().setAxisMaximum(300.0f);
         chart.getAxisRight().setAxisMinimum(0.0f);
         chart.getAxisRight().setAxisMaximum(300.0f);
+
+        // setup x axis
         chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+
+        // setup legend
         chart.getLegend().setOrientation(Legend.LegendOrientation.VERTICAL);
         chart.getLegend().setDrawInside(true);
-        chart.getLegend().setYOffset(90f);
-        chart.getLegend().setXOffset(38f);
-        //chart.getLegend().setEntries();
-        chart.getLegend().setEnabled(false);
+        chart.getLegend().setYOffset(79f);
+        chart.getLegend().setXOffset(36f);
+
+        mLegendEntries.add(new LegendEntry(getString(R.string.chart_label_bg), Legend.LegendForm.DEFAULT,
+                8f, 1f, null, mBgColor));
+        mLegendEntries.add(new LegendEntry(getString(R.string.chart_label_basal), Legend.LegendForm.DEFAULT,
+                8f, 1f, null, mBasalColor));
+        mLegendEntries.add(new LegendEntry(getString(R.string.chart_label_bolus), Legend.LegendForm.DEFAULT,
+                8f, 1f, null, mBolusColor));
+        mLegendEntries.add(new LegendEntry(getString(R.string.chart_label_carbs), Legend.LegendForm.DEFAULT,
+                8f, 1f, null, mCarbsColor));
+        chart.getLegend().setEntries(mLegendEntries);
+
+        // don't know what description should do...
         chart.getDescription().setEnabled(false);
 
-        // workaorund for trarget range background
+        // workaround for target range background (as limit line width is limited to 10)
         // https://stackoverflow.com/questions/37406003/mpandroidchart-set-background-between-limit-lines
+        // TODO make this real code not trial and error until it looks fine ...
         float rangeHigh = 180f;
         float rangeLow = 80f;
-        float increment = (rangeHigh - rangeLow) / 20;
+        float increment = (rangeHigh - rangeLow) / 15;
         float metricLine = rangeLow;
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 15; i++) {
             LimitLine llRange = new LimitLine(metricLine, "");
-            llRange.setLineColor(Color.parseColor("#33b5eb45"));
-            llRange.setLineWidth(increment - 1.4f);
+            llRange.setLineColor(Color.parseColor(getString(R.string.chart_color_target_zone)));
+            llRange.setLineWidth(increment - 1.8f);
             chart.getAxisLeft().addLimitLine(llRange);
             metricLine = metricLine + increment;
         }
+
+        // set limit lines for hyper, hypo, and severe hypo
         LimitLine hypoLine = new LimitLine(rangeLow - 2f, "");
-        hypoLine.setLineColor(Color.parseColor("#888888"));
+        hypoLine.setLineColor(Color.parseColor(getString(R.string.chart_color_target_line)));
         hypoLine.setLineWidth(1f);
         chart.getAxisLeft().addLimitLine(hypoLine);
+
         LimitLine severeHypoLine = new LimitLine(51f, "");
-        severeHypoLine.setLineColor(Color.parseColor("#88d63131"));
+        severeHypoLine.setLineColor(Color.parseColor(getString(R.string.chart_color_severe_hypo)));
         severeHypoLine.setLineWidth(1f);
         chart.getAxisLeft().addLimitLine(severeHypoLine);
-        LimitLine hiperLine = new LimitLine(rangeHigh - 2f, "");
-        hiperLine.setLineColor(Color.parseColor("#888888"));
-        hiperLine.setLineWidth(1f);
-        chart.getAxisLeft().addLimitLine(hiperLine);
+
+        LimitLine hyperLine = new LimitLine(rangeHigh - 2f, "");
+        hyperLine.setLineColor(Color.parseColor(getString(R.string.chart_color_target_line)));
+        hyperLine.setLineWidth(1f);
+        chart.getAxisLeft().addLimitLine(hyperLine);
         chart.getAxisLeft().setDrawLimitLinesBehindData(true);
-
-        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-        homeViewModel.observeData(getViewLifecycleOwner(), diaryEvents -> {
-            if (diaryEvents.isEmpty()) {
-                chart.clear();
-                chart.invalidate();
-                return;
-            }
-
-            // recreate chart dataset
-            Instant firstVisibleBgDate = Instant.now() //diaryEvents.get(0).timestamp
-                    .minus(12, ChronoUnit.HOURS);
-            float fistX = diaryEvents.get(0).timestamp.toEpochMilli() - firstVisibleBgDate.toEpochMilli();
-            fistX = fistX / 300000;
-
-            List<Entry> bgEntries = new ArrayList<>();
-            double biggestBgValue = 0;
-            List<Entry> basalEntries = new ArrayList<>();
-            List<List<Entry>> predictionEntries = new ArrayList<>();
-            List<BarEntry> bolusEntries = new ArrayList<>();
-            List<BarEntry> carbEntries = new ArrayList<>();
-            for (DiaryEvent item : diaryEvents) {
-                if (firstVisibleBgDate.isAfter(item.timestamp)) continue;
-
-                // calculate x position
-                long offset = item.timestamp.toEpochMilli() - firstVisibleBgDate.toEpochMilli();
-                float x = (float) offset / 300000; // 5 min slots
-                switch (item.type) {
-                    case DiaryEvent.TYPE_BG:
-                        float value = item.value > 430.0 ? 430f : (float) item.value;
-                        bgEntries.add(new Entry(x, value));
-                        biggestBgValue = item.value > biggestBgValue ? item.value : biggestBgValue;
-                        break;
-                    case DiaryEvent.TYPE_BASAL:
-                        basalEntries.add(new Entry(x, (float) item.value * 10));
-                        break;
-                    case DiaryEvent.TYPE_BOLUS:
-                        bolusEntries.add(new BarEntry(x + 0.25f, (float) item.value * 10));
-                        break;
-                    case DiaryEvent.TYPE_CARB:
-                        carbEntries.add(new BarEntry(x - 0.25f, (float) item.value));
-                        break;
-                    case DiaryEvent.TYPE_PREDICTION:
-                        List<Entry> tmpPrediction = new ArrayList<>();
-                        int predCount = 1;
-                        for (Double predItem : ((PredictionEvent) item).prediction) {
-                            tmpPrediction.add(new Entry(x + predCount, predItem.floatValue()));
-                            predCount++;
-                        }
-                        Collections.sort(tmpPrediction, new EntryXComparator());
-                        predictionEntries.add(tmpPrediction);
-                        break;
-                }
-            }
-            Collections.sort(bgEntries, new EntryXComparator());
-            Collections.sort(basalEntries, new EntryXComparator());
-            Collections.sort(bolusEntries, new EntryXComparator());
-            Collections.sort(carbEntries, new EntryXComparator());
-
-            LineDataSet bgDataSet = new LineDataSet(bgEntries, "BG");
-            bgDataSet.setColor(Color.BLUE);
-            bgDataSet.setCircleColor(Color.BLUE);
-            bgDataSet.setDrawValues(false);
-            LineDataSet basalDataSet = new LineDataSet(basalEntries, "Basal");
-            basalDataSet.setColor(Color.parseColor("#f2ae00"));
-            basalDataSet.setLineWidth(1.5f);
-            basalDataSet.setDrawValues(false);
-            basalDataSet.setDrawCircles(false);
-            basalDataSet.setMode(LineDataSet.Mode.STEPPED);
-            basalDataSet.setDrawFilled(true);
-            basalDataSet.setFillColor(Color.parseColor("#ffcc4a"));
-            basalDataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);
-            LineData ld = new LineData();
-            ld.addDataSet(bgDataSet);
-            ld.addDataSet(basalDataSet);
-            for (List<Entry> predictionEntry : predictionEntries) {
-                LineDataSet predDataSet = new LineDataSet(predictionEntry, "");
-                predDataSet.setColor(Color.parseColor("#b60dbf"));
-                predDataSet.setCircleColor(Color.parseColor("#b60dbf"));
-                predDataSet.setDrawValues(false);
-                ld.addDataSet(predDataSet);
-            }
-
-            BarDataSet bolusDataSet = new BarDataSet(bolusEntries, "Bolus");
-            bolusDataSet.setColor(Color.parseColor("#00BB00"));
-            bolusDataSet.setDrawValues(false);
-            BarDataSet carbDataSet = new BarDataSet(carbEntries, "Carbs");
-            carbDataSet.setColor(Color.RED);
-            carbDataSet.setDrawValues(false);
-            BarData bd = new BarData();
-            bd.addDataSet(bolusDataSet);
-            bd.addDataSet(carbDataSet);
-
-            CombinedData combinedData = new CombinedData();
-            combinedData.setData(ld);
-            combinedData.setData(bd);
-
-            if (biggestBgValue > 295) {
-                chart.getAxisLeft().setAxisMaximum(450.0f);
-                chart.getAxisRight().setAxisMaximum(450.0f);
-            } else {
-                chart.getAxisLeft().setAxisMaximum(300.0f);
-                chart.getAxisRight().setAxisMaximum(300.0f);
-            }
-
-            chart.getXAxis().setValueFormatter(new ValueFormatter() {
-                private long startValue = firstVisibleBgDate.toEpochMilli();
-
-                @Override
-                public String getFormattedValue(float value) {
-                    long rawReturnValue = startValue + Math.round(value * 300000);
-                    return SimpleDateFormat.getTimeInstance(DateFormat.SHORT)
-                            .format(new Date(rawReturnValue));
-                }
-            });
-            chart.zoom(1.25f, 1f, fistX, 180);
-            chart.moveViewToX(fistX);
-
-
-            LimitLine predictionLine = new LimitLine(fistX + 0.2f, "-->");
-            predictionLine.setLineColor(Color.parseColor("#707070"));
-            predictionLine.setLineWidth(1.5f);
-            predictionLine.enableDashedLine(15f, 5f, 0f);
-            chart.getXAxis().removeAllLimitLines();
-            chart.getXAxis().addLimitLine(predictionLine);
-
-            chart.setData(combinedData);
-            chart.invalidate();
-            Log.d(TAG, "updated main chart");
-        });
-
-        return root;
     }
 
 

@@ -1,8 +1,15 @@
 <resources>
 
     <!-- Diabeatit -->
+    <string name="app_name">DiaBEATit</string>
 
     <!-- Activity Titles -->
+
+    <!-- Chart labels -->
+    <string name="chart_label_bg">CGM</string>
+    <string name="chart_label_basal">Basal</string>
+    <string name="chart_label_bolus">Bolus</string>
+    <string name="chart_label_carbs">Carbs</string>
 
     <!-- Graph in HomeActivity -->
     <string name="graphLabelFormat">HH</string>
@@ -1774,7 +1781,6 @@
     <string name="format_carbs">%1$dg</string>
     <string name="common_on">On</string>
     <string name="common_off">Off</string>
-    <string name="app_name">DiaBEATit</string>
 
 
 </resources>
