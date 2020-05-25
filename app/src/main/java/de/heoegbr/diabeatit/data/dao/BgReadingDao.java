@@ -15,9 +15,9 @@ import de.heoegbr.diabeatit.data.container.event.BgReadingEvent;
 public interface BgReadingDao {
     /**
      *
-     * @return a live dataset with a list of #BgReadingEvent not older than 4 hours
+     * @return a live dataset with a list of #BgReadingEvent not older than 12 hours
      */
-    @Query("SELECT * FROM BgReadingEvent WHERE datetime((timestamp/1000), 'unixepoch', 'localtime') >=  datetime('now', '-4 hours') ORDER BY timestamp DESC")
+    @Query("SELECT * FROM BgReadingEvent WHERE datetime((timestamp/1000), 'unixepoch', 'localtime') >=  datetime('now', '-12 hours') ORDER BY timestamp DESC")
     LiveData<List<BgReadingEvent>> getLiveReadings();
 
     @Query("SELECT * FROM BgReadingEvent WHERE timestamp BETWEEN :from AND :to ORDER BY timestamp DESC LIMIT 24")

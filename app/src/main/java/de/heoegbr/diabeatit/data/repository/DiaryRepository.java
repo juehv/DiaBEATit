@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -19,6 +20,7 @@ import de.heoegbr.diabeatit.data.container.event.BolusEvent;
 import de.heoegbr.diabeatit.data.container.event.CarbEvent;
 import de.heoegbr.diabeatit.data.container.event.DiaryEvent;
 import de.heoegbr.diabeatit.data.container.event.NoteEvent;
+import de.heoegbr.diabeatit.data.container.event.PredictionEvent;
 import de.heoegbr.diabeatit.data.container.event.SportsEvent;
 import de.heoegbr.diabeatit.data.dao.BasalEventDao;
 import de.heoegbr.diabeatit.data.dao.BgReadingDao;
@@ -256,18 +258,41 @@ public class DiaryRepository {
         if (mCarbEventsStatic != null) events.addAll(mCarbEventsStatic);
         if (mSportsEventsStatic != null) events.addAll(mSportsEventsStatic);
         if (mNoteEventsStatic != null) events.addAll(mNoteEventsStatic);
+
         events.sort((a, b) -> b.timestamp.compareTo(a.timestamp));
-        // TODO limit by date not by items
+
         return events;
     }
 
     public List<DiaryEvent> getPlotEvents() {
+        // TODO remove fake data
+        List<PredictionEvent> fakePrediction = new ArrayList<>();
+        if (mMostRecentValue != null) {
+            fakePrediction.add(
+                    new PredictionEvent(DiaryEvent.SOURCE_DEVICE,
+                            Instant.now(), null, Arrays.asList(mMostRecentValue.value + 10.0,
+                            mMostRecentValue.value + 20.0,
+                            mMostRecentValue.value + 30.0,
+                            mMostRecentValue.value + 40.0,
+                            mMostRecentValue.value + 50.0)));
+            fakePrediction.add(
+                    new PredictionEvent(DiaryEvent.SOURCE_DEVICE,
+                            Instant.now(), null, Arrays.asList(mMostRecentValue.value - 10.0,
+                            mMostRecentValue.value - 20.0,
+                            mMostRecentValue.value - 30.0,
+                            mMostRecentValue.value - 40.0,
+                            mMostRecentValue.value - 50.0)));
+        }
+
         List<DiaryEvent> events = new ArrayList<>();
         if (mBgReadingsStatic != null) events.addAll(mBgReadingsStatic);
         if (mBolusEventsStatic != null) events.addAll(mBolusEventsStatic);
         if (mBasalEventsStatic != null) events.addAll(mBasalEventsStatic);
         if (mCarbEventsStatic != null) events.addAll(mCarbEventsStatic);
         if (mSportsEventsStatic != null) events.addAll(mSportsEventsStatic);
+
+        events.addAll(fakePrediction);
+
         events.sort((a, b) -> b.timestamp.compareTo(a.timestamp));
         // TODO limit by date not by items
         return events;

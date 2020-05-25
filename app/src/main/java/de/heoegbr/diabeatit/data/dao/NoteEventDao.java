@@ -16,9 +16,9 @@ import de.heoegbr.diabeatit.data.container.event.NoteEvent;
 public interface NoteEventDao {
     /**
      *
-     * @return a live dataset with a list of #NoteEvent not older than 4 hours
+     * @return a live dataset with a list of #NoteEvent not older than 12 hours
      */
-    @Query("SELECT * FROM NoteEvent WHERE datetime((timestamp/1000), 'unixepoch', 'localtime') >=  datetime('now', '-4 hours') ORDER BY timestamp DESC")
+    @Query("SELECT * FROM NoteEvent WHERE datetime((timestamp/1000), 'unixepoch', 'localtime') >=  datetime('now', '-12 hours') ORDER BY timestamp DESC")
     LiveData<List<NoteEvent>> getLiveData();
 
     /** Insert a list of {@link NoteEvent}s into the database

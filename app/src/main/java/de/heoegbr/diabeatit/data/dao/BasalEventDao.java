@@ -18,9 +18,9 @@ import de.heoegbr.diabeatit.data.container.event.BasalEvent;
 public interface BasalEventDao {
     /**
      *
-     * @return a live dataset with a list of #BasalEvent not older than 4 hours
+     * @return a live dataset with a list of #BasalEvent not older than 12 hours
      */
-    @Query("SELECT * FROM BasalEvent WHERE timestamp <= datetime('now', '-1 hour') ORDER BY timestamp DESC")
+    @Query("SELECT * FROM BasalEvent WHERE timestamp <= datetime('now', '-12 hour') ORDER BY timestamp DESC")
     LiveData<List<BasalEvent>> getLiveData();
 
     /**

@@ -16,9 +16,9 @@ import de.heoegbr.diabeatit.data.container.event.BolusEvent;
 public interface BolusEventDao {
     /**
      *
-     * @return a live dataset with a list of #BolusEvent not older than 4 hours
+     * @return a live dataset with a list of #BolusEvent not older than 12 hours
      */
-    @Query("SELECT * FROM BolusEvent WHERE datetime((timestamp/1000), 'unixepoch', 'localtime') >=  datetime('now', '-4 hours') ORDER BY timestamp DESC")
+    @Query("SELECT * FROM BolusEvent WHERE datetime((timestamp/1000), 'unixepoch', 'localtime') >=  datetime('now', '-12 hours') ORDER BY timestamp DESC")
     LiveData<List<BolusEvent>> getLiveData();
 
     /** Insert a list of {@link BolusEvent} into the database

@@ -18,9 +18,9 @@ import de.heoegbr.diabeatit.data.container.event.CarbEvent;
 public interface CarbsEventDao {
     /**
      *
-     * @return a live dataset with a list of #CarbEvent not older than 4 hours
+     * @return a live dataset with a list of #CarbEvent not older than 12 hours
      */
-    @Query("SELECT * FROM CarbEvent WHERE datetime((timestamp/1000), 'unixepoch', 'localtime') >=  datetime('now', '-4 hours') ORDER BY timestamp DESC")
+    @Query("SELECT * FROM CarbEvent WHERE datetime((timestamp/1000), 'unixepoch', 'localtime') >=  datetime('now', '-12 hours') ORDER BY timestamp DESC")
     LiveData<List<CarbEvent>> getLiveData();
 
     /** Insert a list of {@link CarbEvent}s

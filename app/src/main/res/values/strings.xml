@@ -15,7 +15,7 @@
     <string name="nav_settings">Settings</string>
     <string name="nav_help">Help</string>
 
-    <!-- Manual Carbs -->
+    <!-- DiaryEntry Carbs -->
     <string name="mc_title">Add Carbs Intake</string>
     <string name="mc_input_hint">Carbs</string>
     <string name="mc_notes_hint">Notes</string>
@@ -23,26 +23,26 @@
     <string name="mc_save">Save</string>
     <string name="mc_event_title">Carbs</string>
 
-    <!-- Manual Insulin -->
+    <!-- DiaryEntry Insulin -->
     <string name="mi_title">Add Insulin Bolus</string>
     <string name="mi_input_hint">Bolus</string>
     <string name="mi_notes_hint">Notes</string>
     <string name="mi_save">Save</string>
     <string name="mi_event_title">Bolus</string>
 
-    <!-- Manual Basal -->
+    <!-- DiaryEntry Basal -->
     <string name="mb_save">Save</string>
     <string name="mb_event_minutes">%1$.2f I.E. for %2$.1f minutes</string>
     <string name="mb_event_title">Temp Basal</string> <!-- for ICT user its not temp .. -->
 
-    <!-- Manual Glucose -->
+    <!-- DiaryEntry Glucose -->
     <string name="mg_title">Add Glucose Reading</string>
     <string name="mg_input_hint">Blood Glucose</string>
     <string name="mg_notes_hint">Notes</string>
     <string name="mg_save">Save</string>
     <string name="mg_event_title">Blood Glucose</string>
 
-    <!-- Manual Sports -->
+    <!-- DiaryEntry Sports -->
     <string name="ms_title">Add Exercise Unit</string>
     <string name="ms_input_hint">Description</string>
     <string name="ms_duration_title">Duration (minutes)</string>
@@ -57,12 +57,16 @@
     <string name="ms_intensity_mid">medium</string>
     <string name="ms_intensity_high">high</string>
 
-    <!-- Manual Note -->
+    <!-- DiaryEntry Note -->
     <string name="mn_title">Add Note</string>
     <string name="mn_notes_hint">Text</string>
     <string name="mn_picture_attach">Attach Picture</string>
     <string name="mn_save">Save</string>
     <string name="mn_event_title">Note</string>
+
+    <!-- DiaryEntry Prediction -->
+    <string name="diary_pred_event_text">ADD SOME INFO HERE? GRAPH?</string>
+    <string name="diary_pred_event_title">Prediction</string>
 
     <!-- Settings -->
     <string name="settings_activity_title">Settings</string>
