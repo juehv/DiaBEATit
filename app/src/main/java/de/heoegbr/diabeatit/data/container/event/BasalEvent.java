@@ -20,7 +20,8 @@ import de.heoegbr.diabeatit.R;
 @Entity
 public class BasalEvent extends DiaryEvent {
     /**
-     * Duration of an Basal event (in case of an insulin pump)
+     * Duration of an Basal event in minutes
+     * (in case of an insulin pump, insulin acting time for ICT)
      */
     public final double duration;
 

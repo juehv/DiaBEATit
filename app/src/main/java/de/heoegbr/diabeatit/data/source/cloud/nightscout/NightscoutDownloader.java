@@ -23,6 +23,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import de.heoegbr.diabeatit.BuildConfig;
 import de.heoegbr.diabeatit.data.container.event.BasalEvent;
@@ -59,7 +60,7 @@ public class NightscoutDownloader extends Worker {
 
         Retrofit retrofit = initRetrofit();
         if (retrofit != null) {
-            mService = initRetrofit().create(Nightscout.class);
+            mService = Objects.requireNonNull(initRetrofit()).create(Nightscout.class);
         } else {
             mService = null;
         }
@@ -73,7 +74,7 @@ public class NightscoutDownloader extends Worker {
                 : null;
     }
 
-    public Retrofit initRetrofit() throws IllegalArgumentException {
+    private Retrofit initRetrofit() throws IllegalArgumentException {
         // Check URL and try autofix if not correct
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         String url = prefs.getString("sync_ns_url", "");
@@ -113,18 +114,19 @@ public class NightscoutDownloader extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        // TODO add proper impementation of an request loop (and make noofvalues final agin)
+        // TODO add proper impementation of an request loop (and make noOfvalues final agin)
         if (mNoOfValues > 500) mNoOfValues = 500;
-        // check if initialization worked
+        // check if initialization was successful
         if (mService == null) return Result.failure();
 
         // try requests
         DateTime requestTime = DateTime.now().minus(mNoOfValues * 300000);
+        Log.e(TAG, "EPOCH " + requestTime.getMillis());
         String dateString = ISODateTimeFormat.dateTimeNoMillis().print(requestTime);
         Log.d(TAG, "Connecting to Nightscout to request from " + dateString);
         try {
             // Request BG
-            Response<List<NsBgEntry>> execute = mService.getEntries(mHashedSecret, dateString)
+            Response<List<NsBgEntry>> execute = mService.getEntries(mHashedSecret, mNoOfValues)
                     .execute();
             if (execute.isSuccessful()) {
                 Log.d(TAG, "HTTP request was successful");
@@ -136,7 +138,7 @@ public class NightscoutDownloader extends Worker {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, "Exception in entries work() " + e);
+            Log.e(TAG, "Exception in ns client entries work() " + e.getMessage());
             return Result.retry();
         }
 
@@ -152,7 +154,7 @@ public class NightscoutDownloader extends Worker {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, "Exception in treatments work() " + e);
+            Log.e(TAG, "Exception in ns client treatments work() " + e.getMessage());
             return Result.retry();
         }
         return Result.success();
@@ -241,21 +243,34 @@ public class NightscoutDownloader extends Worker {
         // prepare tmp basal events
         BasalEvent lastItem = null;
         for (BasalEvent item : tmpBasalEvents) {
-            if (lastItem != null && item.duration < 0.01) { // == 0 for double
-                // this should cancel a tmp basal before ... so let's do that (since nightscout doesn't ..)
-                Log.d(TAG, "Found cancel entry. Create new tmp basal item.");
-                double newDuration = (double) Math.round(Duration.between(lastItem.timestamp,
-                        item.timestamp).abs().getSeconds() / 60.0);
-                diaryEvents.add(new BasalEvent(DiaryEvent.SOURCE_CLOUD, lastItem.timestamp,
-                        lastItem.value, newDuration, lastItem.note));
-                lastItem = null;
-                //TODO this is untested as I don't have testdata at the moment
-            } else {
-                Log.d(TAG, "Added unchanged tmp basal item.");
-                if (lastItem != null)
+            if (lastItem != null) { // == 0 for double
+                // ns saves the *planned* duration at creation, overlapping entries cancel the one before
+                // we want the real duration
+                if (lastItem.timestamp.plus(Duration.ofMinutes((long) lastItem.duration)).isAfter(item.timestamp)) {
+                    // current item is started before last item finished
+                    Log.d(TAG, "Found overlapping entry. Create new tmp basal item.");
+                    double newDuration = (double) Math.round(Duration.between(lastItem.timestamp,
+                            item.timestamp).abs().getSeconds() / 60.0);
+                    diaryEvents.add(new BasalEvent(DiaryEvent.SOURCE_CLOUD, lastItem.timestamp,
+                            lastItem.value, newDuration, lastItem.note));
+                } else {
+                    // last item finished without overlap
+                    Log.d(TAG, "Found NO overlapping entry. Add basal item unchanged.");
                     diaryEvents.add(lastItem);
+                }
+                if (item.duration < 0.01) {
+                    // item with 0 duration should just cancel the tmp basal before ...
+                    lastItem = null;
+                    //TODO this is untested as I don't have testdata at the moment
+                } else {
+                    lastItem = item;
+                }
+            } else {
                 lastItem = item;
             }
+        }
+        if (lastItem != null) {
+            diaryEvents.add(lastItem);
         }
         diaryEvents.sort((a, b) -> b.timestamp.compareTo(a.timestamp));
 
@@ -268,7 +283,7 @@ public class NightscoutDownloader extends Worker {
         })
 
         @GET("/api/v1/entries.json")
-        Call<List<NsBgEntry>> getEntries(@Header("api-secret") String secret, @Query("find[timestamp][$gte]") String dateString);
+        Call<List<NsBgEntry>> getEntries(@Header("api-secret") String secret, @Query("count") int count);
 
         @GET("/api/v1/treatments")
         Call<ResponseBody> getTreatments(@Header("api-secret") String secret, @Query("find[timestamp][$gte]") String dateString);
