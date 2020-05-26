@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.components.LimitLine;
@@ -47,7 +46,7 @@ public class HomeFragment extends Fragment {
     private static WeakReference<HomeFragment> instance;
 
     private HomeViewModel homeViewModel;
-    private CombinedChart chart;
+    private TargetZoneCombinedChart chart;
     private int mBgColor;
     private int mBolusColor;
     private int mBasalColor;
@@ -218,7 +217,7 @@ public class HomeFragment extends Fragment {
         // set prediction marker
         chart.getXAxis().removeAllLimitLines();
         if (!predictionEntries.isEmpty()) {
-            LimitLine predictionLine = new LimitLine(lastBgX + 0.2f, "-->");
+            LimitLine predictionLine = new LimitLine(lastBgX + 0.5f, "-->");
             predictionLine.setLineColor(mPredictionMarkerColor);
             predictionLine.setLineWidth(1.5f);
             predictionLine.enableDashedLine(15f, 5f, 0f);
@@ -252,7 +251,7 @@ public class HomeFragment extends Fragment {
         // setup legend
         chart.getLegend().setOrientation(Legend.LegendOrientation.VERTICAL);
         chart.getLegend().setDrawInside(true);
-        chart.getLegend().setYOffset(79f);
+        chart.getLegend().setYOffset(85f);
         chart.getLegend().setXOffset(36f);
 
         mLegendEntries.add(new LegendEntry(getString(R.string.chart_label_bg), Legend.LegendForm.DEFAULT,
@@ -268,21 +267,11 @@ public class HomeFragment extends Fragment {
         // don't know what description should do...
         chart.getDescription().setEnabled(false);
 
-        // workaround for target range background (as limit line width is limited to 10)
-        // https://stackoverflow.com/questions/37406003/mpandroidchart-set-background-between-limit-lines
-        // TODO make this real code not trial and error until it looks fine ...
         float rangeHigh = 180f;
         float rangeLow = 80f;
-        float increment = (rangeHigh - rangeLow) / 15;
-        float metricLine = rangeLow;
-
-        for (int i = 0; i < 15; i++) {
-            LimitLine llRange = new LimitLine(metricLine, "");
-            llRange.setLineColor(Color.parseColor(getString(R.string.chart_color_target_zone)));
-            llRange.setLineWidth(increment - 1.8f);
-            chart.getAxisLeft().addLimitLine(llRange);
-            metricLine = metricLine + increment;
-        }
+        chart.addTargetZone(new TargetZoneCombinedChart.TargetZone(
+                Color.parseColor(getString(R.string.chart_color_target_zone)),
+                rangeLow, rangeHigh));
 
         // set limit lines for hyper, hypo, and severe hypo
         LimitLine hypoLine = new LimitLine(rangeLow - 2f, "");
