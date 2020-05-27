@@ -39,6 +39,7 @@ import java.util.List;
 import de.heoegbr.diabeatit.R;
 import de.heoegbr.diabeatit.data.container.event.DiaryEvent;
 import de.heoegbr.diabeatit.data.container.event.PredictionEvent;
+import de.heoegbr.diabeatit.python.proxy.PythonPredictionProxy;
 
 
 public class HomeFragment extends Fragment {
@@ -93,8 +94,8 @@ public class HomeFragment extends Fragment {
         Instant firstVisibleBgDate = Instant.now()
                 .minus(12, ChronoUnit.HOURS);
         // calculate x value of newest bg value
-        float lastBgX = diaryEvents.get(0).timestamp.toEpochMilli() - firstVisibleBgDate.toEpochMilli();
-        lastBgX = lastBgX / 300000;
+        float lastEntryX = diaryEvents.get(0).timestamp.toEpochMilli() - firstVisibleBgDate.toEpochMilli();
+        lastEntryX = lastEntryX / 300000;
 
         // prepare data lists
         List<Entry> bgEntries = new ArrayList<>();
@@ -138,10 +139,24 @@ public class HomeFragment extends Fragment {
                         predCount++;
                     }
                     Collections.sort(tmpPrediction, new EntryXComparator());
-                    predictionEntries.add(tmpPrediction);
+                    //predictionEntries.add(tmpPrediction);
                     break;
             }
         }
+
+        // TODO delete me later
+        PythonPredictionProxy python = new PythonPredictionProxy();
+        DiaryEvent[] predInput = diaryEvents.toArray(new DiaryEvent[]{});
+        DiaryEvent[] prediction = python.predict(predInput);
+        List<Entry> tmpPrediction = new ArrayList<>();
+        int predCount = 1;
+        for (DiaryEvent predItem : prediction) {
+            tmpPrediction.add(new Entry(lastEntryX + predCount, (float) predItem.value));
+            predCount++;
+        }
+        Collections.sort(tmpPrediction, new EntryXComparator());
+        predictionEntries.add(tmpPrediction);
+
         // sort x entries because chart will die otherwise
         Collections.sort(bgEntries, new EntryXComparator());
         Collections.sort(basalEntries, new EntryXComparator());
@@ -217,7 +232,7 @@ public class HomeFragment extends Fragment {
         // set prediction marker
         chart.getXAxis().removeAllLimitLines();
         if (!predictionEntries.isEmpty()) {
-            LimitLine predictionLine = new LimitLine(lastBgX + 0.5f, "-->");
+            LimitLine predictionLine = new LimitLine(lastEntryX + 0.5f, "-->");
             predictionLine.setLineColor(mPredictionMarkerColor);
             predictionLine.setLineWidth(1.5f);
             predictionLine.enableDashedLine(15f, 5f, 0f);
@@ -233,8 +248,8 @@ public class HomeFragment extends Fragment {
         chart.getLegend().setEntries(mLegendEntries);
 
         // zoom to current time frame
-        chart.zoom(1.25f, 1f, lastBgX, 180);
-        chart.moveViewToX(lastBgX);
+        chart.zoom(1.25f, 1f, lastEntryX, 180);
+        chart.moveViewToX(lastEntryX);
     }
 
     private void setupChart() {

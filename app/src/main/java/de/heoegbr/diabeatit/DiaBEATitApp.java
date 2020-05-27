@@ -14,6 +14,9 @@ import android.util.Log;
 import androidx.core.content.ContextCompat;
 import androidx.work.Data;
 
+import com.chaquo.python.Python;
+import com.chaquo.python.android.AndroidPlatform;
+
 import net.danlew.android.joda.JodaTimeAndroid;
 
 import de.heoegbr.diabeatit.data.source.cloud.ScheduleSyncHelper;
@@ -39,6 +42,10 @@ public class DiaBEATitApp extends Application {
         ContextCompat.startForegroundService(getApplicationContext(), serviceIntent);
 
         scheduleEnabledBackgroundSync(getApplicationContext());
+
+        // Python environment initialization
+        if (!Python.isStarted())
+            Python.start(new AndroidPlatform(getApplicationContext()));
     }
 
     private void createNotificationChannel() {
