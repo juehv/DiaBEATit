@@ -22,7 +22,7 @@ public abstract class DiaryEvent {
     public static final int TYPE_BG = 1;
     public static final int TYPE_BOLUS = 2;
     public static final int TYPE_BASAL = 3;
-    public static final int TYPE_CARB = 4;
+    public static final int TYPE_MEAL = 4;
     public static final int TYPE_SPORT = 5;
     public static final int TYPE_NOTE = 6;
     public static final int TYPE_HR = 7;
@@ -118,7 +118,7 @@ public abstract class DiaryEvent {
     public abstract void createLayout(Context context, RelativeLayout root, boolean isSelected);
 
     // Declare the @IntDef for these constants
-    @IntDef({TYPE_NONE, TYPE_BG, TYPE_BOLUS, TYPE_BASAL, TYPE_CARB, TYPE_SPORT,
+    @IntDef({TYPE_NONE, TYPE_BG, TYPE_BOLUS, TYPE_BASAL, TYPE_MEAL, TYPE_SPORT,
             TYPE_NOTE, TYPE_HR, TYPE_STRESS, TYPE_BLOOD_PRESSURE, TYPE_WEIGHT, TYPE_PREDICTION})
     @Retention(RetentionPolicy.SOURCE)
     public @interface Type {

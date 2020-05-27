@@ -9,10 +9,10 @@ import androidx.room.Query;
 import java.time.Instant;
 import java.util.List;
 
-import de.heoegbr.diabeatit.data.container.event.CarbEvent;
+import de.heoegbr.diabeatit.data.container.event.MealEvent;
 
 /**
- * Data Access Object used to access the {@link CarbEvent}s stored in the database
+ * Data Access Object used to access the {@link MealEvent}s stored in the database
  */
 @Dao
 public interface CarbsEventDao {
@@ -20,23 +20,23 @@ public interface CarbsEventDao {
      *
      * @return a live dataset with a list of #CarbEvent not older than 12 hours
      */
-    @Query("SELECT * FROM CarbEvent WHERE datetime((timestamp/1000), 'unixepoch', 'localtime') >=  datetime('now', '-12 hours') ORDER BY timestamp DESC")
-    LiveData<List<CarbEvent>> getLiveData();
+    @Query("SELECT * FROM MealEvent WHERE datetime((timestamp/1000), 'unixepoch', 'localtime') >=  datetime('now', '-12 hours') ORDER BY timestamp DESC")
+    LiveData<List<MealEvent>> getLiveData();
 
-    /** Insert a list of {@link CarbEvent}s
+    /** Insert a list of {@link MealEvent}s
      *
-     * @param events List of {@link CarbEvent}s that should be inserted into the database
+     * @param events List of {@link MealEvent}s that should be inserted into the database
      */
     @Insert
-    void insertAll(CarbEvent... events);
+    void insertAll(MealEvent... events);
 
-    /** Delete a {@link CarbEvent} from the database
+    /** Delete a {@link MealEvent} from the database
      *
      * @param event Event that should be deleted
      */
     @Delete
-    void delete(CarbEvent event);
+    void delete(MealEvent event);
 
-    @Query("SELECT * FROM CarbEvent WHERE timestamp BETWEEN :from AND :to ORDER BY timestamp DESC LIMIT 24")
-    List<CarbEvent> getEventInDateTimeRange(Instant from, Instant to);
+    @Query("SELECT * FROM MealEvent WHERE timestamp BETWEEN :from AND :to ORDER BY timestamp DESC LIMIT 24")
+    List<MealEvent> getEventInDateTimeRange(Instant from, Instant to);
 }

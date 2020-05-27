@@ -11,7 +11,7 @@ import de.heoegbr.diabeatit.data.container.Alert;
 import de.heoegbr.diabeatit.data.container.event.BasalEvent;
 import de.heoegbr.diabeatit.data.container.event.BgReadingEvent;
 import de.heoegbr.diabeatit.data.container.event.BolusEvent;
-import de.heoegbr.diabeatit.data.container.event.CarbEvent;
+import de.heoegbr.diabeatit.data.container.event.MealEvent;
 import de.heoegbr.diabeatit.data.container.event.NoteEvent;
 import de.heoegbr.diabeatit.data.container.event.SportsEvent;
 import de.heoegbr.diabeatit.data.dao.AlertDao;
@@ -29,7 +29,7 @@ import de.heoegbr.diabeatit.data.dao.SportsEventDao;
         Alert.class,
         BolusEvent.class,
         BasalEvent.class,
-        CarbEvent.class,
+        MealEvent.class,
         SportsEvent.class,
         NoteEvent.class,
         BgReadingEvent.class
@@ -69,7 +69,7 @@ public abstract class DiabeatitDatabase extends RoomDatabase {
     public abstract BasalEventDao basalEventDao();
 
     /**
-     * Get a data access object for {@link CarbEvent}
+     * Get a data access object for {@link MealEvent}
      */
     public abstract CarbsEventDao carbsEventDao();
 

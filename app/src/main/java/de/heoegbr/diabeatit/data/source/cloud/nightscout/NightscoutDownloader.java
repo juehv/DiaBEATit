@@ -28,8 +28,8 @@ import java.util.Objects;
 import de.heoegbr.diabeatit.BuildConfig;
 import de.heoegbr.diabeatit.data.container.event.BasalEvent;
 import de.heoegbr.diabeatit.data.container.event.BolusEvent;
-import de.heoegbr.diabeatit.data.container.event.CarbEvent;
 import de.heoegbr.diabeatit.data.container.event.DiaryEvent;
+import de.heoegbr.diabeatit.data.container.event.MealEvent;
 import de.heoegbr.diabeatit.data.container.event.NoteEvent;
 import de.heoegbr.diabeatit.data.repository.DiaryRepository;
 import okhttp3.OkHttpClient;
@@ -196,7 +196,7 @@ public class NightscoutDownloader extends Worker {
 
                     try {
                         carbs = tr.getDouble("carbs");
-                        diaryEvents.add(new CarbEvent(DiaryEvent.SOURCE_CLOUD, timestamp,
+                        diaryEvents.add(new MealEvent(DiaryEvent.SOURCE_CLOUD, timestamp,
                                 null, carbs, notes));
 //                        Log.d(TAG, "Created carb event");
                     } catch (JSONException e) {

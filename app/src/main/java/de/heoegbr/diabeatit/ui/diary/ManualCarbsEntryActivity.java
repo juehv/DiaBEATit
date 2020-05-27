@@ -23,8 +23,8 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import de.heoegbr.diabeatit.R;
-import de.heoegbr.diabeatit.data.container.event.CarbEvent;
 import de.heoegbr.diabeatit.data.container.event.DiaryEvent;
+import de.heoegbr.diabeatit.data.container.event.MealEvent;
 import de.heoegbr.diabeatit.data.repository.DiaryRepository;
 
 public class ManualCarbsEntryActivity extends AppCompatActivity {
@@ -149,7 +149,7 @@ public class ManualCarbsEntryActivity extends AppCompatActivity {
                 bm = MediaStore.Images.Media.getBitmap(this.getContentResolver(), currentPicture);
 
             DiaryRepository.getRepository(getApplicationContext())
-                    .insertEvent(new CarbEvent(DiaryEvent.SOURCE_USER, timestamp.toInstant(),
+                    .insertEvent(new MealEvent(DiaryEvent.SOURCE_USER, timestamp.toInstant(),
                             bm, carbs, notes));
 
         } catch (Exception ignored) {

@@ -126,7 +126,7 @@ public class HomeFragment extends Fragment {
                 case DiaryEvent.TYPE_BOLUS:
                     bolusEntries.add(new BarEntry(x + 0.25f, (float) item.value * 10));
                     break;
-                case DiaryEvent.TYPE_CARB:
+                case DiaryEvent.TYPE_MEAL:
                     carbEntries.add(new BarEntry(x - 0.25f, (float) item.value));
                     break;
                 case DiaryEvent.TYPE_PREDICTION:

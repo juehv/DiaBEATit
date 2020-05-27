@@ -21,7 +21,7 @@ import de.heoegbr.diabeatit.R;
  * Event that represents a meal
  */
 @Entity
-public class CarbEvent extends DiaryEvent {
+public class MealEvent extends DiaryEvent {
 
     /**
      * Create a new carbs event
@@ -32,8 +32,8 @@ public class CarbEvent extends DiaryEvent {
      * @param note      Optional note
      */
     @Ignore
-    public CarbEvent(@Source int source, Instant timestamp, Bitmap picture, double carbs, String note) {
-        super(TYPE_CARB, source, R.drawable.ic_fab_carbs, timestamp, carbs, picture, note);
+    public MealEvent(@Source int source, Instant timestamp, Bitmap picture, double carbs, String note) {
+        super(TYPE_MEAL, source, R.drawable.ic_fab_carbs, timestamp, carbs, picture, note);
     }
 
     /**
@@ -47,9 +47,9 @@ public class CarbEvent extends DiaryEvent {
      * @param value      Amount of carbs in grams
      * @param note       Optional note
      */
-    public CarbEvent(@Source int source, long logEventId, int iconId, Instant timestamp,
+    public MealEvent(@Source int source, long logEventId, int iconId, Instant timestamp,
                      Bitmap picture, double value, String note) {
-        super(TYPE_CARB, source, logEventId, iconId, timestamp, value, picture, note);
+        super(TYPE_MEAL, source, logEventId, iconId, timestamp, value, picture, note);
     }
 
     @Override

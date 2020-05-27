@@ -14,8 +14,8 @@ import java.util.List;
 import de.heoegbr.diabeatit.data.container.event.BasalEvent;
 import de.heoegbr.diabeatit.data.container.event.BgReadingEvent;
 import de.heoegbr.diabeatit.data.container.event.BolusEvent;
-import de.heoegbr.diabeatit.data.container.event.CarbEvent;
 import de.heoegbr.diabeatit.data.container.event.DiaryEvent;
+import de.heoegbr.diabeatit.data.container.event.MealEvent;
 import de.heoegbr.diabeatit.data.container.event.SportsEvent;
 import de.heoegbr.diabeatit.data.repository.DiaryRepository;
 
@@ -25,7 +25,7 @@ public class HomeViewModel extends AndroidViewModel {
     private final LiveData<List<BgReadingEvent>> mBgReadings;
     private final LiveData<List<BolusEvent>> mBolusEvents;
     private final LiveData<List<BasalEvent>> mBasalEvents;
-    private final LiveData<List<CarbEvent>> mCarbEvents;
+    private final LiveData<List<MealEvent>> mCarbEvents;
     private final LiveData<List<SportsEvent>> mSportEvents;
 
     private final MediatorLiveData<List<DiaryEvent>> mixed = new MediatorLiveData<>();

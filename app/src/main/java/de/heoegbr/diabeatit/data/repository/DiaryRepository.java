@@ -17,8 +17,8 @@ import java.util.concurrent.Executors;
 import de.heoegbr.diabeatit.data.container.event.BasalEvent;
 import de.heoegbr.diabeatit.data.container.event.BgReadingEvent;
 import de.heoegbr.diabeatit.data.container.event.BolusEvent;
-import de.heoegbr.diabeatit.data.container.event.CarbEvent;
 import de.heoegbr.diabeatit.data.container.event.DiaryEvent;
+import de.heoegbr.diabeatit.data.container.event.MealEvent;
 import de.heoegbr.diabeatit.data.container.event.NoteEvent;
 import de.heoegbr.diabeatit.data.container.event.PredictionEvent;
 import de.heoegbr.diabeatit.data.container.event.SportsEvent;
@@ -52,8 +52,8 @@ public class DiaryRepository {
     private List<BolusEvent> mBolusEventsStatic;
     private LiveData<List<BasalEvent>> mBasalEvents;
     private List<BasalEvent> mBasalEventsStatic;
-    private LiveData<List<CarbEvent>> mCarbEvents;
-    private List<CarbEvent> mCarbEventsStatic;
+    private LiveData<List<MealEvent>> mCarbEvents;
+    private List<MealEvent> mMealEventsStatic;
     private LiveData<List<SportsEvent>> mSportsEvents;
     private List<SportsEvent> mSportsEventsStatic;
     private LiveData<List<NoteEvent>> mNoteEvents;
@@ -85,7 +85,7 @@ public class DiaryRepository {
         });
         mCarbEvents = mCarbsEventDao.getLiveData();
         mCarbEvents.observeForever(carbEvents -> {
-            mCarbEventsStatic = carbEvents;
+            mMealEventsStatic = carbEvents;
         });
         mSportsEvents = mSportsEventDao.getLiveData();
         mSportsEvents.observeForever(sportsEvents -> {
@@ -127,8 +127,8 @@ public class DiaryRepository {
                 case DiaryEvent.TYPE_BASAL:
                     mBasalEventDao.insertAll((BasalEvent) event);
                     break;
-                case DiaryEvent.TYPE_CARB:
-                    mCarbsEventDao.insertAll((CarbEvent) event);
+                case DiaryEvent.TYPE_MEAL:
+                    mCarbsEventDao.insertAll((MealEvent) event);
                     break;
                 case DiaryEvent.TYPE_SPORT:
                     mSportsEventDao.insertAll((SportsEvent) event);
@@ -188,10 +188,10 @@ public class DiaryRepository {
                         mBasalEventDao.insertAll((BasalEvent) event);
                     }
                     break;
-                case DiaryEvent.TYPE_CARB:
-                    List<CarbEvent> carbs = mCarbsEventDao.getEventInDateTimeRange(from, to);
+                case DiaryEvent.TYPE_MEAL:
+                    List<MealEvent> carbs = mCarbsEventDao.getEventInDateTimeRange(from, to);
                     if (carbs.isEmpty()) {
-                        mCarbsEventDao.insertAll((CarbEvent) event);
+                        mCarbsEventDao.insertAll((MealEvent) event);
                     }
                     break;
                 case DiaryEvent.TYPE_SPORT:
@@ -229,8 +229,8 @@ public class DiaryRepository {
                 case DiaryEvent.TYPE_BASAL:
                     mBasalEventDao.delete((BasalEvent) event);
                     break;
-                case DiaryEvent.TYPE_CARB:
-                    mCarbsEventDao.delete((CarbEvent) event);
+                case DiaryEvent.TYPE_MEAL:
+                    mCarbsEventDao.delete((MealEvent) event);
                     break;
                 case DiaryEvent.TYPE_SPORT:
                     mSportsEventDao.delete((SportsEvent) event);
@@ -255,7 +255,7 @@ public class DiaryRepository {
         if (mBgReadingsStatic != null) events.addAll(mBgReadingsStatic);
         if (mBolusEventsStatic != null) events.addAll(mBolusEventsStatic);
         if (mBasalEventsStatic != null) events.addAll(mBasalEventsStatic);
-        if (mCarbEventsStatic != null) events.addAll(mCarbEventsStatic);
+        if (mMealEventsStatic != null) events.addAll(mMealEventsStatic);
         if (mSportsEventsStatic != null) events.addAll(mSportsEventsStatic);
         if (mNoteEventsStatic != null) events.addAll(mNoteEventsStatic);
 
@@ -288,7 +288,7 @@ public class DiaryRepository {
         if (mBgReadingsStatic != null) events.addAll(mBgReadingsStatic);
         if (mBolusEventsStatic != null) events.addAll(mBolusEventsStatic);
         if (mBasalEventsStatic != null) events.addAll(mBasalEventsStatic);
-        if (mCarbEventsStatic != null) events.addAll(mCarbEventsStatic);
+        if (mMealEventsStatic != null) events.addAll(mMealEventsStatic);
         if (mSportsEventsStatic != null) events.addAll(mSportsEventsStatic);
 
         events.addAll(fakePrediction);
@@ -310,7 +310,7 @@ public class DiaryRepository {
         return mBasalEvents;
     }
 
-    public LiveData<List<CarbEvent>> getLiveCarbEvents() {
+    public LiveData<List<MealEvent>> getLiveCarbEvents() {
         return mCarbEvents;
     }
 
