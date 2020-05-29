@@ -37,6 +37,7 @@ import java.util.Date;
 import java.util.List;
 
 import de.heoegbr.diabeatit.R;
+import de.heoegbr.diabeatit.assistant.prediction.python.PythonDiaryDataContainer;
 import de.heoegbr.diabeatit.data.container.event.DiaryEvent;
 import de.heoegbr.diabeatit.data.container.event.PredictionEvent;
 import de.heoegbr.diabeatit.python.proxy.PythonPredictionProxy;
@@ -104,14 +105,21 @@ public class HomeFragment extends Fragment {
         List<List<Entry>> predictionEntries = new ArrayList<>();
         List<BarEntry> bolusEntries = new ArrayList<>();
         List<BarEntry> carbEntries = new ArrayList<>();
+        //TODO move this in background
+        int bgCounter = 0;
+        List<DiaryEvent> diaryEventsPrediction = new ArrayList<>();
+        Instant firstPredictionBgDate = Instant.now()
+                .minus(4, ChronoUnit.HOURS);
         for (DiaryEvent item : diaryEvents) {
             // filter values older than 12h
             if (firstVisibleBgDate.isAfter(item.timestamp)) continue;
 
+            if (firstPredictionBgDate.isBefore(item.timestamp))
+                diaryEventsPrediction.add(item);
+
             // calculate x position
             long offset = item.timestamp.toEpochMilli() - firstVisibleBgDate.toEpochMilli();
             float x = (float) offset / 300000; // 5 min slots
-
             // split data types
             switch (item.type) {
                 case DiaryEvent.TYPE_BG:
@@ -119,6 +127,7 @@ public class HomeFragment extends Fragment {
                     float value = item.value > 430.0 ? 430f : (float) item.value;
                     bgEntries.add(new Entry(x, value));
                     biggestBgValue = item.value > biggestBgValue ? item.value : biggestBgValue;
+                    bgCounter++;
                     break;
                 case DiaryEvent.TYPE_BASAL:
                     basalEntries.add(new Entry(x, (float) item.value * 10));
@@ -145,19 +154,23 @@ public class HomeFragment extends Fragment {
         }
 
         // TODO delete me later
-        PythonPredictionProxy python = new PythonPredictionProxy();
-        DiaryEvent[] predInput = diaryEvents.toArray(new DiaryEvent[]{});
-        DiaryEvent[] prediction = python.predict(predInput);
-        List<Entry> tmpPrediction = new ArrayList<>();
-        int predCount = 1;
-        for (DiaryEvent predItem : prediction) {
-            tmpPrediction.add(new Entry(lastEntryX + predCount, (float) predItem.value));
-            predCount++;
+        if (bgCounter > 24) {
+            PythonPredictionProxy python = new PythonPredictionProxy();
+            PythonDiaryDataContainer container = new PythonDiaryDataContainer(
+                    diaryEventsPrediction.toArray(new DiaryEvent[]{})
+            );
+            float[] result = python.predict(container);
+            List<Entry> tmpPrediction = new ArrayList<>();
+            int predCount = 1;
+            for (float predItem : result) {
+                tmpPrediction.add(new Entry(lastEntryX + predCount, predItem));
+                predCount++;
+            }
+            Collections.sort(tmpPrediction, new EntryXComparator());
+            predictionEntries.add(tmpPrediction);
         }
-        Collections.sort(tmpPrediction, new EntryXComparator());
-        predictionEntries.add(tmpPrediction);
 
-        // sort x entries because chart will die otherwise
+        // sort x entries because chart will crash otherwise
         Collections.sort(bgEntries, new EntryXComparator());
         Collections.sort(basalEntries, new EntryXComparator());
         Collections.sort(bolusEntries, new EntryXComparator());

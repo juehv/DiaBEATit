@@ -1,13 +1,7 @@
 # -*- coding: utf-8 -*-
-import pandas as pd
 import numpy as np
-import math
-
-from keras.models import Sequential
-from keras.models import model_from_json
-
-from scipy.optimize import minimize
 from scipy.optimize import Bounds
+from scipy.optimize import minimize
 
 """# Prediction Model 
 ## Base model from Glucodyn Code
@@ -235,27 +229,27 @@ class Jorisizer:
         X[0:self.totallength] = self.carbValues
         for i in range(0, self.totallength):
             lb[i] = 0
-            ub[i] = max(X[max(i - positionslack, 0):min(i + positionslack,
-                                                        self.totallength)]) * 1.2  # allow adjacent 3 values to be adjusted, with 20% estimation slack
+            ub[i] = 100  # max(X[max(i - positionslack, 0):min(i + positionslack,
+            #                               self.totallength)]) * 1.2  # allow adjacent 3 values to be adjusted, with 20% estimation slack
 
         # Sensitivity values
         X[self.totallength:] = np.ones(self.totallength) * self.sensf
         for i in range(self.totallength, 2 * self.totallength):
-            lb[i] = 0.7  # 0.7 * self.sensf
-            ub[i] = 3  # 1.3 * self.sensf     # allow +-30 percent sensf change
+            lb[i] = 0.3  # 0.7 * self.sensf
+            ub[i] = 1.5 * self.sensf  # allow +-30 percent sensf change
 
         bounds = Bounds(lb, ub)
         return X, bounds
 
     def setparams(self, carbtype=120, sensf=1, idur=180, cratio=1, maxiter=20,
-                  optimizer='L-BFGS-B'):  # , shrinkfactor=1):
+                  optimizer='L-BFGS-B', shrinkfactor=1):
         self.carbtype = carbtype
         self.sensf = sensf
         self.idur = idur
         self.cratio = cratio
         self.maxiter = maxiter
         self.optimizer = optimizer
-        self.shrinkfactor = 1
+        self.shrinkfactor = shrinkfactor
 
     def getValues(self):
         return self.values
