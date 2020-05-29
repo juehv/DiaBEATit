@@ -40,7 +40,7 @@ public class DontDieForegroundService extends LifecycleService {
                 .setContentTitle(getResources().getString(R.string.app_name))
                 .setContentText(getResources().getString(R.string.assistant_sheet_no_alerts))
                 .setContentIntent(pendingIntent)
-                .setSmallIcon(R.drawable.ic_cake)
+                .setSmallIcon(R.drawable.ic_diabeatit)
                 .build();
 
         startForeground(StaticData.FOREGROUND_SERVICE_ID, notification);
