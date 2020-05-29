@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 apply plugin: 'com.chaquo.python'
 
 android {
@@ -101,6 +102,9 @@ dependencies {
 
     // chart library
     implementation 'com.github.PhilJay:MPAndroidChart:3.1.0'
+
+    // open source licenses scanning
+    implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
 
     //################################################
     implementation "com.google.guava:guava:28.2-jre"

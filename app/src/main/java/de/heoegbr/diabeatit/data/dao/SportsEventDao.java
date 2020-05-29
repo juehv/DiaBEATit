@@ -35,6 +35,6 @@ public interface SportsEventDao {
     @Delete
     void delete(SportsEvent event);
 
-    @Query("SELECT * FROM SportsEvent WHERE timestamp BETWEEN :from AND :to ORDER BY timestamp DESC LIMIT 24")
+    @Query("SELECT * FROM SportsEvent WHERE timestamp BETWEEN :from AND :to ORDER BY timestamp DESC")
     List<SportsEvent> getEventInDateTimeRange(Instant from, Instant to);
 }

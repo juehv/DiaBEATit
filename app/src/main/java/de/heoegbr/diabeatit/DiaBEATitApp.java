@@ -12,13 +12,16 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.work.Data;
-
-import com.chaquo.python.Python;
-import com.chaquo.python.android.AndroidPlatform;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
+import java.time.Instant;
+
+import de.heoegbr.diabeatit.assistant.prediction.SchedulePredictionHelper;
+import de.heoegbr.diabeatit.assistant.prediction.python.PythonPredictionWorker;
+import de.heoegbr.diabeatit.data.repository.DiaryRepository;
 import de.heoegbr.diabeatit.data.source.cloud.ScheduleSyncHelper;
 import de.heoegbr.diabeatit.data.source.cloud.nightscout.NightscoutDownloader;
 import de.heoegbr.diabeatit.data.source.xdrip.XdripBgSource;
@@ -28,6 +31,11 @@ import de.heoegbr.diabeatit.service.DontDieForegroundService;
 public class DiaBEATitApp extends Application {
     public static final String DEFAULT_NOTIFICAITON_CHANNEL_ID = "de.heoegbr.diabeatit.notifications";
     private static final String TAG = "MAINAPP";
+
+    // TODO move to preferences
+    private static final int predictionCooldownSeconds = 30;//900; // 15min
+    private Instant lastPrediction = Instant.now().minusSeconds(predictionCooldownSeconds);
+    private MediatorLiveData trigger;
 
     @Override
     public void onCreate() {
@@ -43,9 +51,22 @@ public class DiaBEATitApp extends Application {
 
         scheduleEnabledBackgroundSync(getApplicationContext());
 
-        // Python environment initialization
-        if (!Python.isStarted())
-            Python.start(new AndroidPlatform(getApplicationContext()));
+        // schedule background predicitons
+        PythonPredictionWorker.init(getApplicationContext());
+
+        trigger = DiaryRepository.getRepository(getApplicationContext()).getDataTriggerForPredictions();
+        trigger.observeForever(diaryEvents -> {
+            // check if cooldown is over
+            if (Instant.now().minusSeconds(predictionCooldownSeconds).isAfter(lastPrediction)) {
+                // schedule prediction
+                SchedulePredictionHelper.scheduleOneTimePrediction(getApplicationContext(),
+                        PythonPredictionWorker.class,
+                        PythonPredictionWorker.WORK_NAME,
+                        null);
+
+                lastPrediction = Instant.now();
+            }
+        });
     }
 
     private void createNotificationChannel() {

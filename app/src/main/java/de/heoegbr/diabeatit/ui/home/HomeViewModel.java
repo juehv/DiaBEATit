@@ -16,6 +16,7 @@ import de.heoegbr.diabeatit.data.container.event.BgReadingEvent;
 import de.heoegbr.diabeatit.data.container.event.BolusEvent;
 import de.heoegbr.diabeatit.data.container.event.DiaryEvent;
 import de.heoegbr.diabeatit.data.container.event.MealEvent;
+import de.heoegbr.diabeatit.data.container.event.PredictionEvent;
 import de.heoegbr.diabeatit.data.container.event.SportsEvent;
 import de.heoegbr.diabeatit.data.repository.DiaryRepository;
 
@@ -27,8 +28,10 @@ public class HomeViewModel extends AndroidViewModel {
     private final LiveData<List<BasalEvent>> mBasalEvents;
     private final LiveData<List<MealEvent>> mCarbEvents;
     private final LiveData<List<SportsEvent>> mSportEvents;
+    private final LiveData<List<PredictionEvent>> mPredictionEvents;
 
     private final MediatorLiveData<List<DiaryEvent>> mixed = new MediatorLiveData<>();
+
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
@@ -38,6 +41,7 @@ public class HomeViewModel extends AndroidViewModel {
         mBasalEvents = mDiaryRepository.getLiveBasalEvents();
         mCarbEvents = mDiaryRepository.getLiveCarbEvents();
         mSportEvents = mDiaryRepository.getLiveSportsEvents();
+        mPredictionEvents = mDiaryRepository.getmPredictionEvents();
 
         mixed.addSource(mBgReadings, bgReadingEvents -> {
             mixed.setValue(mDiaryRepository.getPlotEvents());
@@ -52,6 +56,9 @@ public class HomeViewModel extends AndroidViewModel {
             mixed.setValue(mDiaryRepository.getPlotEvents());
         });
         mixed.addSource(mSportEvents, sportsEvents -> {
+            mixed.setValue(mDiaryRepository.getPlotEvents());
+        });
+        mixed.addSource(mPredictionEvents, predictionEvents -> {
             mixed.setValue(mDiaryRepository.getPlotEvents());
         });
     }

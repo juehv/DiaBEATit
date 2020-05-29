@@ -252,7 +252,7 @@ public class HomeActivity extends AppCompatActivity {
 					startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
 					break;
 
-				case R.id.nav_info:
+				case R.id.nav_help:
 					startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(StaticData.HANDBOOK_URL)));
 					break;
 			}

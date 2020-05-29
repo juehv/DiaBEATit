@@ -13,13 +13,15 @@ import de.heoegbr.diabeatit.data.container.event.BgReadingEvent;
 import de.heoegbr.diabeatit.data.container.event.BolusEvent;
 import de.heoegbr.diabeatit.data.container.event.MealEvent;
 import de.heoegbr.diabeatit.data.container.event.NoteEvent;
+import de.heoegbr.diabeatit.data.container.event.PredictionEvent;
 import de.heoegbr.diabeatit.data.container.event.SportsEvent;
 import de.heoegbr.diabeatit.data.dao.AlertDao;
 import de.heoegbr.diabeatit.data.dao.BasalEventDao;
 import de.heoegbr.diabeatit.data.dao.BgReadingDao;
 import de.heoegbr.diabeatit.data.dao.BolusEventDao;
-import de.heoegbr.diabeatit.data.dao.CarbsEventDao;
+import de.heoegbr.diabeatit.data.dao.MealEventDao;
 import de.heoegbr.diabeatit.data.dao.NoteEventDao;
+import de.heoegbr.diabeatit.data.dao.PredictionEventDao;
 import de.heoegbr.diabeatit.data.dao.SportsEventDao;
 
 /**
@@ -32,7 +34,8 @@ import de.heoegbr.diabeatit.data.dao.SportsEventDao;
         MealEvent.class,
         SportsEvent.class,
         NoteEvent.class,
-        BgReadingEvent.class
+        BgReadingEvent.class,
+        PredictionEvent.class
 }, version = 1, exportSchema = false)
 @TypeConverters({de.heoegbr.diabeatit.data.localdb.TypeConverters.class})
 public abstract class DiabeatitDatabase extends RoomDatabase {
@@ -71,7 +74,7 @@ public abstract class DiabeatitDatabase extends RoomDatabase {
     /**
      * Get a data access object for {@link MealEvent}
      */
-    public abstract CarbsEventDao carbsEventDao();
+    public abstract MealEventDao carbsEventDao();
 
     /**
      * Get a data access object for {@link SportsEvent}
@@ -87,5 +90,10 @@ public abstract class DiabeatitDatabase extends RoomDatabase {
      * Get a data access object for {@link BgReadingEvent}
      */
     public abstract BgReadingDao bgReadingDao();
+
+    /**
+     * Get a data access object for {@link PredictionEvent}
+     */
+    public abstract PredictionEventDao predictionEventDao();
 
 }

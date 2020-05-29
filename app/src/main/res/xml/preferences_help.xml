@@ -1,0 +1,29 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Preference
+        app:key="settings_help_manual"
+        app:summary="@string/settings_help_manual_summary"
+        app:title="@string/settings_help_manual_title" />
+
+    <Preference
+        app:key="settings_help_feedback"
+        app:summary="@string/settings_help_feedback_summary"
+        app:title="@string/settings_help_feedback_title" />
+
+    <Preference
+        app:key="settings_help_license"
+        app:summary="@string/settings_help_license_summary"
+        app:title="@string/settings_help_license_title" />
+
+
+    <Preference
+        app:key="settings_help_osslicense"
+        app:summary="@string/settings_help_osslicense_summary"
+        app:title="@string/settings_help_osslicense_title" />
+
+    <Preference
+        app:key="settings_help_version"
+        app:summary="0"
+        app:title="@string/settings_help_version_title" />
+
+</PreferenceScreen>

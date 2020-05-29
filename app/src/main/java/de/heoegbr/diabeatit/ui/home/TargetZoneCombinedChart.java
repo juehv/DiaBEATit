@@ -38,17 +38,19 @@ public class TargetZoneCombinedChart extends CombinedChart {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        for (TargetZone targetZone : mTargetZones) {
-            // prepare coordinates
-            float[] pts = new float[4];
-            pts[1] = targetZone.lowerLimit;
-            pts[3] = targetZone.upperLimit;
-            mLeftAxisTransformer.pointValuesToPixel(pts);
+        if (mData != null) {
+            for (TargetZone targetZone : mTargetZones) {
+                // prepare coordinates
+                float[] pts = new float[4];
+                pts[1] = targetZone.lowerLimit;
+                pts[3] = targetZone.upperLimit;
+                mLeftAxisTransformer.pointValuesToPixel(pts);
 
-            // draw
-            mYAxisSafeZonePaint.setColor(targetZone.color);
-            canvas.drawRect(mViewPortHandler.contentLeft(), pts[1], mViewPortHandler.contentRight(),
-                    pts[3], mYAxisSafeZonePaint);
+                // draw
+                mYAxisSafeZonePaint.setColor(targetZone.color);
+                canvas.drawRect(mViewPortHandler.contentLeft(), pts[1], mViewPortHandler.contentRight(),
+                        pts[3], mYAxisSafeZonePaint);
+            }
         }
         super.onDraw(canvas);
     }

@@ -12,6 +12,9 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.3'
 
+        // Open Source Licenses
+        classpath 'com.google.android.gms:oss-licenses-plugin:0.10.2'
+
         // python backend
         classpath "com.chaquo.python:gradle:7.0.3"
 

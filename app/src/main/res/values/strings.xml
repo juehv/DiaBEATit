@@ -20,7 +20,7 @@
     <string name="nav_assistant">Assistant</string>
     <string name="nav_log">Event Log</string>
     <string name="nav_settings">Settings</string>
-    <string name="nav_help">Help</string>
+    <string name="nav_manual">Online Manual</string>
 
     <!-- DiaryEntry Carbs -->
     <string name="mc_title">Add Carbs Intake</string>
@@ -77,14 +77,23 @@
 
     <!-- Settings -->
     <string name="settings_activity_title">Settings</string>
-    <string name="settings_sync">Sync</string>
-    <string name="settings_prediction">Prediction Settings</string>
+    <string name="settings_sync_title">Sync</string>
+    <string name="settings_prediction_title">Prediction Settings</string>
+    <string name="setting_general_title">General</string>
+    <string name="settings_help_title">Help</string>
+    <string name="setting_demo_title">Demo Mode</string>
+    <string name="setting_demo_summary">Demonstration with fake data</string>
 
-    <!-- About Settings -->
-    <string name="settings_about_title">About</string>
-    <string name="settings_about_feedback_title">Send feedback</string>
-    <string name="settings_about_feedback_summary">Report technical issues or suggest new features</string>
-    <string name="settings_about_version_title">Build version</string>
+    <!-- Help Settings -->
+    <string name="settings_help_feedback_title">Send feedback</string>
+    <string name="settings_help_feedback_summary">Report technical issues or suggest new features</string>
+    <string name="settings_help_version_title">Build version</string>
+    <string name="settings_help_license_title">License</string>
+    <string name="settings_help_license_summary">Show end-user license</string>
+    <string name="settings_help_osslicense_summary">Shows open-source licenses</string>
+    <string name="settings_help_osslicense_title">Open-source Licenses</string>
+    <string name="settings_help_manual_summary">Open app manual</string>
+    <string name="settings_help_manual_title">Manual</string>
 
     <!-- Sync Settings -->
     <string name="settings_sync_ns_rationale">Scheduled sync in background.</string>

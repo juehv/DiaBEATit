@@ -236,7 +236,7 @@ class Jorisizer:
         X[self.totallength:] = np.ones(self.totallength) * self.sensf
         for i in range(self.totallength, 2 * self.totallength):
             lb[i] = 0.3  # 0.7 * self.sensf
-            ub[i] = 1.5 * self.sensf  # allow +-30 percent sensf change
+            ub[i] = 3  # 1.5 * self.sensf  # allow +-30 percent sensf change
 
         bounds = Bounds(lb, ub)
         return X, bounds

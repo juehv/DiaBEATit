@@ -20,7 +20,7 @@ public interface BgReadingDao {
     @Query("SELECT * FROM BgReadingEvent WHERE datetime((timestamp/1000), 'unixepoch', 'localtime') >=  datetime('now', '-12 hours') ORDER BY timestamp DESC")
     LiveData<List<BgReadingEvent>> getLiveReadings();
 
-    @Query("SELECT * FROM BgReadingEvent WHERE timestamp BETWEEN :from AND :to ORDER BY timestamp DESC LIMIT 24")
+    @Query("SELECT * FROM BgReadingEvent WHERE timestamp BETWEEN :from AND :to ORDER BY timestamp DESC")
     List<BgReadingEvent> getEventInDateTimeRange(Instant from, Instant to);
 
     @Insert

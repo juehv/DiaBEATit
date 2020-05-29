@@ -19,7 +19,7 @@ import de.heoegbr.diabeatit.data.source.cloud.nightscout.NightscoutDownloader;
 public class SettingsSyncFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        setPreferencesFromResource(R.xml.d_sync_preferences, rootKey);
+        setPreferencesFromResource(R.xml.preferences_sync, rootKey);
 
         //############# Nightscout ##########
         // regular download

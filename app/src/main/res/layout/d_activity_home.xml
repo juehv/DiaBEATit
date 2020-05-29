@@ -34,6 +34,6 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/d_nav_header_home"
         app:itemTextColor="@color/colorFont"
-        app:menu="@menu/d_activity_home_drawer">
+        app:menu="@menu/drawer_home">
     </com.google.android.material.navigation.NavigationView>
 </androidx.drawerlayout.widget.DrawerLayout>

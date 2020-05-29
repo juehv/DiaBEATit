@@ -7,6 +7,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
 import androidx.room.Ignore;
 
 import java.sql.Date;
@@ -17,9 +19,14 @@ import java.util.Locale;
 
 import de.heoegbr.diabeatit.R;
 
+@Entity
 public class PredictionEvent extends DiaryEvent {
 
+    @ColumnInfo(name = "prediction")
     public final List<Double> prediction;
+
+    @ColumnInfo(name = "simulation")
+    public final List<Double> modelSimulation;
 
     /**
      * Create a new bolus event
@@ -29,9 +36,10 @@ public class PredictionEvent extends DiaryEvent {
      * @param note       Optional note supplied
      */
     @Ignore
-    public PredictionEvent(@Source int source, Instant timestamp, String note, List<Double> prediction) {
+    public PredictionEvent(@Source int source, Instant timestamp, String note, List<Double> prediction, List<Double> modelSimulation) {
         super(TYPE_PREDICTION, source, R.drawable.ic_fab_insulin, timestamp, 0.0, null, note);
         this.prediction = prediction;
+        this.modelSimulation = modelSimulation;
     }
 
     /**
@@ -44,9 +52,10 @@ public class PredictionEvent extends DiaryEvent {
      * @param note       User supplied optional note
      */
     public PredictionEvent(@Source int source, long logEventId, int iconId, Instant timestamp, double value,
-                           Bitmap picture, String note, List<Double> prediction) {
+                           Bitmap picture, String note, List<Double> prediction, List<Double> modelSimulation) {
         super(TYPE_PREDICTION, source, logEventId, iconId, timestamp, value, picture, note);
         this.prediction = prediction;
+        this.modelSimulation = modelSimulation;
     }
 
     @Override

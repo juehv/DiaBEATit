@@ -35,6 +35,6 @@ public interface BolusEventDao {
     @Delete
     void delete(BolusEvent event);
 
-    @Query("SELECT * FROM BolusEvent WHERE timestamp BETWEEN :from AND :to ORDER BY timestamp DESC LIMIT 24")
+    @Query("SELECT * FROM BolusEvent WHERE timestamp BETWEEN :from AND :to ORDER BY timestamp DESC")
     List<BolusEvent> getEventInDateTimeRange(Instant from, Instant to);
 }

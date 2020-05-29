@@ -39,6 +39,6 @@ public interface BasalEventDao {
     @Delete
     void delete(BasalEvent event);
 
-    @Query("SELECT * FROM BasalEvent WHERE timestamp BETWEEN :from AND :to ORDER BY timestamp DESC LIMIT 24")
+    @Query("SELECT * FROM BasalEvent WHERE timestamp BETWEEN :from AND :to ORDER BY timestamp DESC")
     List<BasalEvent> getEventInDateTimeRange(Instant from, Instant to);
 }

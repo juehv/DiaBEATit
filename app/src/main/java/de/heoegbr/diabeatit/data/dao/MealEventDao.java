@@ -15,7 +15,7 @@ import de.heoegbr.diabeatit.data.container.event.MealEvent;
  * Data Access Object used to access the {@link MealEvent}s stored in the database
  */
 @Dao
-public interface CarbsEventDao {
+public interface MealEventDao {
     /**
      *
      * @return a live dataset with a list of #CarbEvent not older than 12 hours
@@ -37,6 +37,6 @@ public interface CarbsEventDao {
     @Delete
     void delete(MealEvent event);
 
-    @Query("SELECT * FROM MealEvent WHERE timestamp BETWEEN :from AND :to ORDER BY timestamp DESC LIMIT 24")
+    @Query("SELECT * FROM MealEvent WHERE timestamp BETWEEN :from AND :to ORDER BY timestamp DESC")
     List<MealEvent> getEventInDateTimeRange(Instant from, Instant to);
 }

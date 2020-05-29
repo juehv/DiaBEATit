@@ -14,6 +14,7 @@ public class StaticData {
 
 	/* URL pointing to the user handbook */
 	public static final String HANDBOOK_URL = "https://diabeatit.de/app-docs/";
+	public static final String FEEDBACK_URL = "https://github.com/juehv/DiaBEATit/issues";
 	/* Contect mail address */
 	public static final String CONTACT_MAIL = "mailto:diabeatit@tk.tu-darmstadt.de";
 	/* Error report mailto */

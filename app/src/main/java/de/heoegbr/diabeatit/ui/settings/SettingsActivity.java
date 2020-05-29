@@ -10,10 +10,13 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
+
 import org.jetbrains.annotations.NotNull;
 
 import de.heoegbr.diabeatit.BuildConfig;
 import de.heoegbr.diabeatit.R;
+import de.heoegbr.diabeatit.StaticData;
 
 public class SettingsActivity extends AppCompatActivity implements
         PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
@@ -87,16 +90,39 @@ public class SettingsActivity extends AppCompatActivity implements
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-            setPreferencesFromResource(R.xml.d_header_preferences, rootKey);
+            setPreferencesFromResource(R.xml.preferences_header_menu, rootKey);
+        }
+    }
 
-            // add listener to send feedback
-            Preference feedback = findPreference("feedback");
-            if (feedback != null) {
-                feedback.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+    public static class GeneralFragment extends PreferenceFragmentCompat {
+
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.preferences_general, rootKey);
+        }
+    }
+
+
+    public static class PredictionsFragment extends PreferenceFragmentCompat {
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.preferences_prediction, rootKey);
+        }
+    }
+
+    public static class HelpFragment extends PreferenceFragmentCompat {
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.preferences_help, rootKey);
+
+            // add listener to open online manual
+            Preference manual = findPreference("settings_help_manual");
+            if (manual != null) {
+                manual.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
-                        // Open Github
-                        String url = "https://github.com/juehv/DiaBEATit/issues";
+                        // Open Webpage
+                        String url = StaticData.HANDBOOK_URL;
                         Intent i = new Intent(Intent.ACTION_VIEW);
                         i.setData(Uri.parse(url));
                         startActivity(i);
@@ -105,27 +131,41 @@ public class SettingsActivity extends AppCompatActivity implements
                 });
             }
 
+            // add listener to send feedback
+            Preference feedback = findPreference("settings_help_feedback");
+            if (feedback != null) {
+                feedback.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        // Open Github
+                        String url = StaticData.FEEDBACK_URL;
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse(url));
+                        startActivity(i);
+                        return true;
+                    }
+                });
+            }
+
+            // add listener to send feedback
+            Preference ossLicenses = findPreference("settings_help_osslicense");
+            if (ossLicenses != null) {
+                ossLicenses.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        startActivity(new Intent(getContext(), OssLicensesMenuActivity.class));
+                        //OssLicensesMenuActivity.setActivityTitle(getString(R.string.custom_license_title));
+                        return true;
+                    }
+                });
+            }
+
+
             // version name
-            Preference buildVersion = findPreference("version");
+            Preference buildVersion = findPreference("settings_help_version");
             if (buildVersion != null) {
                 buildVersion.setSummary(BuildConfig.VERSION_NAME);
             }
-        }
-    }
-
-    public static class GeneralFragment extends PreferenceFragmentCompat {
-
-        @Override
-        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-            setPreferencesFromResource(R.xml.d_general_preferences, rootKey);
-        }
-    }
-
-
-    public static class PredictionsFragment extends PreferenceFragmentCompat {
-        @Override
-        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-            setPreferencesFromResource(R.xml.d_prediction_prefs, rootKey);
         }
     }
 }

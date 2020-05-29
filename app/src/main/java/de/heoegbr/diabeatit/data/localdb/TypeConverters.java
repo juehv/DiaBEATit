@@ -5,9 +5,14 @@ import android.graphics.BitmapFactory;
 
 import androidx.room.TypeConverter;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.ByteArrayOutputStream;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 import de.heoegbr.diabeatit.data.container.Alert;
 
@@ -116,5 +121,18 @@ public class TypeConverters {
 
         Bitmap bmp = BitmapFactory.decodeByteArray(value, 0, value.length);
         return bmp;
+    }
+
+    @TypeConverter
+    public static String listOfDoubleToJson(List<Double> inputList) {
+        Gson gson = new GsonBuilder().create();
+        return gson.toJson(inputList);
+    }
+
+    @TypeConverter
+    public static List<Double> jsonToListOfDouble(String inputJson) {
+        Gson gson = new GsonBuilder().create();
+        return gson.fromJson(inputJson, new TypeToken<List<Double>>() {
+        }.getType());
     }
 }

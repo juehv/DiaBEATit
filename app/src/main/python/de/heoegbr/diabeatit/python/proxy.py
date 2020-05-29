@@ -1,27 +1,29 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pandas as pd
+from android.util import Log;
 from com.chaquo.python import Python
 from datetime import datetime
-from de.heoegbr.diabeatit.assistant.prediction.python import PythonDiaryDataContainer
+from de.heoegbr.diabeatit.assistant.prediction.python import PythonInputContainer
+from de.heoegbr.diabeatit.assistant.prediction.python import PythonOutputContainer
 from de.heoegbr.diabeatit.assistant.prediction.python import PythonPredictionBase
 from de.heoegbr.diabeatit.data.container.event import DiaryEvent
-from java import jarray, jfloat, Override, static_proxy
+from java import Override, static_proxy
 
 from .predict import Jorisizer
 
 
 class PythonPredictionProxy(static_proxy(PythonPredictionBase)):
 
-    @Override(jarray(jfloat), [PythonDiaryDataContainer])
-    def predict(self, historicEvents):
+    @Override(PythonOutputContainer, [PythonInputContainer])
+    def predict(self, inputContainer):
         # //TODO add safety mechanism (in Java) to not call when cgm is old or has gaps
         # Read diary events into a dataframe
         rawDf = pd.DataFrame(columns=['ts', 'cgm', 'bolus', 'basal', 'meal'])
 
         # // TODO try a real implementation for time zone offset instead of faking ...
         zoneOffset = 7200;
-        for x in historicEvents.events:
+        for x in inputContainer.events:
             if (x.type == DiaryEvent.TYPE_BG):
                 rawDf = rawDf.append(
                     {'ts': datetime.utcfromtimestamp(x.timestamp.getEpochSecond() + zoneOffset),
@@ -54,7 +56,7 @@ class PythonPredictionProxy(static_proxy(PythonPredictionBase)):
         resampledDf['cgm'] = resampledDf['cgm'].interpolate(method='akima',
                                                             limit=6)  # , limit_direction='forward') # good: akima
 
-        # Log.e("PYTHON", str(resampledDf))
+        Log.e("PYTHON", str(resampledDf))
 
         # export dataframe to file (for usage in colabs)
         files_dir = str(
@@ -68,15 +70,24 @@ class PythonPredictionProxy(static_proxy(PythonPredictionBase)):
             carbValues=resampledDf['meal']
         )
 
-        optimizer.setparams(carbtype=30,
-                            sensf=1,
+        optimizer.setparams(carbtype=105,
+                            sensf=30,
                             idur=180,
-                            cratio=3,
+                            cratio=1.7,
                             optimizer='L-BFGS-B',
                             # optimizer='SLSQP',
-                            maxiter=20,
-                            shrinkfactor=1)
+                            maxiter=10,
+                            shrinkfactor=2)
 
-        simulation, prediction = optimizer.optimizeAndPredict()
+        simulation, prediction = optimizer.optimizeAndPredict(predictionsteps=18)
 
-        return np.rint(simulation)  # np.rint(prediction)
+        simulation = np.rint(np.nan_to_num(simulation))
+        prediction = np.rint(np.nan_to_num(prediction))
+
+        outputEvents = []
+        outputEvents.append(PythonOutputContainer.constructPredictionEvent(
+            inputContainer.timestamp,
+            prediction.tolist(),
+            simulation.tolist()))
+
+        return PythonOutputContainer(outputEvents)

@@ -1,0 +1,35 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--    <Preference-->
+    <!--        android:fragment="de.heoegbr.diabeatit.ui.settings.SettingsActivity$GeneralFragment"-->
+    <!--        app:icon="@drawable/ic_general_settings"-->
+    <!--        app:key="settings_header_general"-->
+    <!--        app:title="@string/setting_general_title" />-->
+
+    <Preference
+        android:fragment="de.heoegbr.diabeatit.ui.settings.SettingsSyncFragment"
+        app:icon="@drawable/ic_sync"
+        app:key="settings_header_sync"
+        app:title="@string/settings_sync_title" />
+
+    <!--    <Preference-->
+    <!--        android:fragment="de.heoegbr.diabeatit.ui.settings.SettingsActivity$PredictionsFragment"-->
+    <!--        app:icon="@drawable/ic_prediction"-->
+    <!--        app:key="settings_header_model"-->
+    <!--        app:title="@string/settings_prediction_title" />-->
+
+    <Preference
+        android:fragment="de.heoegbr.diabeatit.ui.settings.SettingsActivity$HelpFragment"
+        app:icon="@drawable/ic_help"
+        app:key="settings_header_help"
+        app:title="@string/settings_help_title" />
+
+    <SwitchPreferenceCompat
+        app:icon="@drawable/ic_demo_mode"
+        app:key="demo_mode"
+        app:summary="@string/setting_demo_summary"
+        app:title="@string/setting_demo_title" />
+
+
+</PreferenceScreen>

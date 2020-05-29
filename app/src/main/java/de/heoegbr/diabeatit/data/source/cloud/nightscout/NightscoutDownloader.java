@@ -53,9 +53,9 @@ public class NightscoutDownloader extends Worker {
     private final String mHashedSecret;
     private int mNoOfValues;
 
-    public NightscoutDownloader(Context mContext, WorkerParameters workerParams) {
-        super(mContext, workerParams);
-        this.mContext = mContext;
+    public NightscoutDownloader(Context context, WorkerParameters workerParams) {
+        super(context, workerParams);
+        this.mContext = context;
         this.mNoOfValues = getInputData().getInt(KEY_NO_OF_VALUE, 24);
 
         Retrofit retrofit = initRetrofit();
@@ -66,7 +66,7 @@ public class NightscoutDownloader extends Worker {
         }
 
         // set password
-        String apiSecret = PreferenceManager.getDefaultSharedPreferences(mContext)
+        String apiSecret = PreferenceManager.getDefaultSharedPreferences(context)
                 .getString("sync_ns_pw", null);
         //noinspection deprecation (NS still uses old hash .. but without salt it's useless anyway)
         mHashedSecret = apiSecret != null ?

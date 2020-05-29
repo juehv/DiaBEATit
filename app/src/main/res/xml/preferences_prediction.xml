@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android" >
-
+    <!--TODO clean-->
     <ListPreference
         android:summary="@string/settings_prediction_model_select_description"
         android:key="d_selected_model_type"

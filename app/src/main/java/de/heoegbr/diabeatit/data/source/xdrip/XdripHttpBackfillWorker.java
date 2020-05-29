@@ -13,9 +13,9 @@ import androidx.work.WorkerParameters;
 import java.io.IOException;
 import java.util.List;
 
-import de.heoegbr.diabeatit.data.source.cloud.nightscout.NsBgEntry;
 import de.heoegbr.diabeatit.data.container.event.DiaryEvent;
 import de.heoegbr.diabeatit.data.repository.DiaryRepository;
+import de.heoegbr.diabeatit.data.source.cloud.nightscout.NsBgEntry;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -63,6 +63,8 @@ public class XdripHttpBackfillWorker extends Worker {
         return Result.success();
     }
 
+    //https://github.com/NightscoutFoundation/xDrip/blob/master/Documentation/technical/Local_Web_Services.md
+    // requests 24 values as backfill
     public interface XdripWebService {
         @GET("sgv.json")
         Call<List<NsBgEntry>> requestBg();

@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 
@@ -23,6 +24,7 @@ public class BasalEvent extends DiaryEvent {
      * Duration of an Basal event in minutes
      * (in case of an insulin pump, insulin acting time for ICT)
      */
+    @ColumnInfo(name = "duration")
     public final double duration;
 
     /**
