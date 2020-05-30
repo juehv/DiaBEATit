@@ -356,7 +356,7 @@ class Jorisizer:
                                                    simulationinterval=simulationinterval
                                                    )
 
-        return np.rint(simulation), np.rint(prediction)
+        return np.rint(simulation), np.rint(prediction), carbEvents, sensfValues
 
     # def plotresults(self, trueprediction=[]):
     # if(len(trueprediction)>0):

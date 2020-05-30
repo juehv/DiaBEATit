@@ -103,6 +103,8 @@ public class HomeFragment extends Fragment {
         List<List<Entry>> predictionEntries = new ArrayList<>();
         List<BarEntry> bolusEntries = new ArrayList<>();
         List<BarEntry> carbEntries = new ArrayList<>();
+        List<List<BarEntry>> generatedCarbEntries = new ArrayList<>();
+        List<List<BarEntry>> generatedIsfEntries = new ArrayList<>();
         for (DiaryEvent item : diaryEvents) {
             // filter values older than 12h
             if (firstVisibleBgDate.isAfter(item.timestamp)) continue;
@@ -130,18 +132,46 @@ public class HomeFragment extends Fragment {
                 case DiaryEvent.TYPE_PREDICTION:
                     // Prediction entries are a complete dataset on its own
                     // --> create one dataset per entry
+                    PredictionEvent pEvent = (PredictionEvent) item;
+                    // carbs
+                    if (pEvent.carbSimulation != null) {
+                        List<BarEntry> tmpGenCarbEntries = new ArrayList<>();
+                        int simCount = pEvent.carbSimulation.size();
+                        for (Double simItem : pEvent.carbSimulation) {
+                            tmpGenCarbEntries.add(new BarEntry(x - simCount--, simItem.floatValue() * 10));
+                        }
+                        Collections.sort(tmpGenCarbEntries, new EntryXComparator());
+                        generatedCarbEntries.add(tmpGenCarbEntries);
+                    }
+                    // ISF
+                    if (pEvent.isfSimulation != null) {
+                        List<BarEntry> tmpIsfCarbEntries = new ArrayList<>();
+                        int simCount = pEvent.isfSimulation.size();
+                        for (Double simItem : pEvent.isfSimulation) {
+                            tmpIsfCarbEntries.add(new BarEntry(x - simCount--, simItem.floatValue() * 50));
+                        }
+                        Collections.sort(tmpIsfCarbEntries, new EntryXComparator());
+                        generatedIsfEntries.add(tmpIsfCarbEntries);
+                    }
+                    // cgm
                     List<Entry> tmpPrediction = new ArrayList<>();
                     int predCount = 1;
-                    int simCount = ((PredictionEvent) item).modelSimulation.size();
-                    for (Double simItem : ((PredictionEvent) item).modelSimulation) {
-                        tmpPrediction.add(new Entry(x - simCount--, simItem.floatValue()));
+                    if (pEvent.cgmSimulation != null) {
+                        int simCount = pEvent.cgmSimulation.size();
+                        for (Double simItem : pEvent.cgmSimulation) {
+                            tmpPrediction.add(new Entry(x - simCount--, simItem.floatValue()));
+                        }
+                        Collections.sort(tmpPrediction, new EntryXComparator());
                     }
-                    for (Double predItem : ((PredictionEvent) item).prediction) {
-                        tmpPrediction.add(new Entry(x + predCount, predItem.floatValue()));
-                        predCount++;
+                    if (pEvent.prediction != null) {
+                        for (Double predItem : ((PredictionEvent) item).prediction) {
+                            tmpPrediction.add(new Entry(x + predCount, predItem.floatValue()));
+                            predCount++;
+                        }
+                        Collections.sort(tmpPrediction, new EntryXComparator());
                     }
-                    Collections.sort(tmpPrediction, new EntryXComparator());
-                    predictionEntries.add(tmpPrediction);
+                    if (!tmpPrediction.isEmpty())
+                        predictionEntries.add(tmpPrediction);
                     break;
             }
         }
@@ -195,6 +225,24 @@ public class HomeFragment extends Fragment {
         bd.addDataSet(bolusDataSet);
         bd.addDataSet(carbDataSet);
 
+        if (!generatedCarbEntries.isEmpty()) {
+            for (List<BarEntry> generatedCarbEntry : generatedCarbEntries) {
+                BarDataSet predDataSet = new BarDataSet(generatedCarbEntry, "");
+                predDataSet.setColor(Color.parseColor("#88681299"));
+                predDataSet.setDrawValues(false);
+                bd.addDataSet(predDataSet);
+            }
+        }
+
+        if (!generatedIsfEntries.isEmpty()) {
+            for (List<BarEntry> generatedIsfEntry : generatedIsfEntries) {
+                BarDataSet predDataSet = new BarDataSet(generatedIsfEntry, "");
+                predDataSet.setColor(Color.parseColor("#44000ecf"));
+                predDataSet.setDrawValues(false);
+                bd.addDataSet(predDataSet);
+            }
+        }
+
         // combine datasets
         CombinedData combinedData = new CombinedData();
         combinedData.setData(ld);
@@ -238,6 +286,7 @@ public class HomeFragment extends Fragment {
         chart.getLegend().setEntries(mLegendEntries);
 
         // zoom to current time frame
+        // todo calculate zoom
         //chart.zoom(1.2f, 1f, 0, 160, YAxis.AxisDependency.LEFT);
         chart.moveViewToX(lastEntryX - 5f);
     }

@@ -25,8 +25,14 @@ public class PredictionEvent extends DiaryEvent {
     @ColumnInfo(name = "prediction")
     public final List<Double> prediction;
 
-    @ColumnInfo(name = "simulation")
-    public final List<Double> modelSimulation;
+    @ColumnInfo(name = "cgm_sim")
+    public final List<Double> cgmSimulation;
+
+    @ColumnInfo(name = "carb_sim")
+    public final List<Double> carbSimulation;
+
+    @ColumnInfo(name = "isf_sim")
+    public final List<Double> isfSimulation;
 
     /**
      * Create a new bolus event
@@ -36,10 +42,13 @@ public class PredictionEvent extends DiaryEvent {
      * @param note       Optional note supplied
      */
     @Ignore
-    public PredictionEvent(@Source int source, Instant timestamp, String note, List<Double> prediction, List<Double> modelSimulation) {
+    public PredictionEvent(@Source int source, Instant timestamp, String note, List<Double> prediction,
+                           List<Double> cgmSimulation, List<Double> carbSimulation, List<Double> isfSimulation) {
         super(TYPE_PREDICTION, source, R.drawable.ic_fab_insulin, timestamp, 0.0, null, note);
         this.prediction = prediction;
-        this.modelSimulation = modelSimulation;
+        this.cgmSimulation = cgmSimulation;
+        this.carbSimulation = carbSimulation;
+        this.isfSimulation = isfSimulation;
     }
 
     /**
@@ -51,12 +60,17 @@ public class PredictionEvent extends DiaryEvent {
      * @param value      ignored
      * @param note       User supplied optional note
      */
-    public PredictionEvent(@Source int source, long logEventId, int iconId, Instant timestamp, double value,
-                           Bitmap picture, String note, List<Double> prediction, List<Double> modelSimulation) {
+    public PredictionEvent(@Source int source, long logEventId, int iconId, Instant timestamp,
+                           double value, Bitmap picture, String note, List<Double> prediction,
+                           List<Double> cgmSimulation, List<Double> carbSimulation,
+                           List<Double> isfSimulation) {
         super(TYPE_PREDICTION, source, logEventId, iconId, timestamp, value, picture, note);
         this.prediction = prediction;
-        this.modelSimulation = modelSimulation;
+        this.cgmSimulation = cgmSimulation;
+        this.carbSimulation = carbSimulation;
+        this.isfSimulation = isfSimulation;
     }
+
 
     @Override
     public void createLayout(Context context, RelativeLayout root, boolean isSelected) {

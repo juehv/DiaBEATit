@@ -78,15 +78,20 @@ class PythonPredictionProxy(static_proxy(PythonPredictionBase)):
                             maxiter=30,
                             shrinkfactor=1)
 
-        simulation, prediction = optimizer.optimizeAndPredict(predictionsteps=12)
+        simulation, prediction, carbEvents, sensfValues = optimizer.optimizeAndPredict(
+            predictionsteps=12)
 
         simulation = np.rint(np.nan_to_num(simulation))
         prediction = np.rint(np.nan_to_num(prediction))
+        carbEvents = np.nan_to_num(carbEvents)
+        sensfValues = np.nan_to_num(sensfValues)
 
         outputEvents = []
         outputEvents.append(PythonOutputContainer.constructPredictionEvent(
             inputContainer.timestamp,
             prediction.tolist(),
-            simulation.tolist()))
+            simulation.tolist(),
+            carbEvents.tolist(),
+            sensfValues.tolist()))
 
         return PythonOutputContainer(outputEvents)
