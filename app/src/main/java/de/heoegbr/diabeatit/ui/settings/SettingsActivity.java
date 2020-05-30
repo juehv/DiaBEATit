@@ -5,7 +5,9 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -14,9 +16,13 @@ import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+
 import de.heoegbr.diabeatit.BuildConfig;
 import de.heoegbr.diabeatit.R;
 import de.heoegbr.diabeatit.StaticData;
+import de.heoegbr.diabeatit.assistant.prediction.python.PythonInputContainer;
+import de.heoegbr.diabeatit.data.source.demo.DemoMode;
 
 public class SettingsActivity extends AppCompatActivity implements
         PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
@@ -91,6 +97,61 @@ public class SettingsActivity extends AppCompatActivity implements
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.preferences_header_menu, rootKey);
+
+            // add listener to send a dataframe for prediction
+            Preference sendDataframe = findPreference("settings_send_dataframe");
+            if (sendDataframe != null) {
+                sendDataframe.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        File filelocation = new File(PythonInputContainer.dataFrameExportPath);
+                        if (filelocation.exists()) {
+                            Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                            // set type to email
+                            emailIntent.setType("message/rfc822");
+                            String[] to = {"info@diabeatit.de"};
+                            emailIntent.putExtra(Intent.EXTRA_EMAIL, to);
+                            // the attachment
+                            Uri path = FileProvider.getUriForFile(getContext(),
+                                    getContext().getApplicationContext().getPackageName() + ".provider",
+                                    filelocation);
+                            emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            emailIntent.putExtra(Intent.EXTRA_STREAM, path);
+                            // the mail subject
+                            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "[DiaBEATit] Dataframe export");
+                            startActivity(Intent.createChooser(emailIntent, "Send email..."));
+                        }
+                        //TODO replace with file provider
+                        // https://developer.android.com/training/secure-file-sharing
+                        // https://stackoverflow.com/questions/9974987/how-to-send-an-email-with-a-file-attachment-in-android
+
+                        return true;
+                    }
+                });
+            }
+
+            // add listener to send feedback
+            Preference startDemoMode = findPreference("settings_demo_mode");
+            if (startDemoMode != null) {
+                startDemoMode.setOnPreferenceChangeListener((preference, newValue) -> {
+                    if ((Boolean) newValue) {
+                        // show warning
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setTitle("Activate Demo Mode");
+                        builder.setMessage("Demo Mode will clear your data and preferences. Continue?");
+                        builder.setPositiveButton("Yes", (dialogInterface, i) -> {
+                            // start demo mode
+                            DemoMode.setConfigurationToDemoMode(getContext());
+                        });
+
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    } else {
+                        DemoMode.clearConfiguration(getContext());
+                    }
+                    return true;
+                });
+            }
         }
     }
 
@@ -147,7 +208,7 @@ public class SettingsActivity extends AppCompatActivity implements
                 });
             }
 
-            // add listener to send feedback
+            // add listener to show open source licenses
             Preference ossLicenses = findPreference("settings_help_osslicense");
             if (ossLicenses != null) {
                 ossLicenses.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

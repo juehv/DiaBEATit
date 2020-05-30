@@ -25,9 +25,15 @@
         app:key="settings_header_help"
         app:title="@string/settings_help_title" />
 
+    <Preference
+        app:icon="@drawable/ic_mail"
+        app:key="settings_send_dataframe"
+        app:summary="Share last used dataframe"
+        app:title="Send Dataframe" />
+
     <SwitchPreferenceCompat
         app:icon="@drawable/ic_demo_mode"
-        app:key="demo_mode"
+        app:key="settings_demo_mode"
         app:summary="@string/setting_demo_summary"
         app:title="@string/setting_demo_title" />
 

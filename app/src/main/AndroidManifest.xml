@@ -106,5 +106,15 @@
             android:label="@string/title_activity_alert_history"
             android:parentActivityName=".ui.home.HomeActivity"
             android:theme="@style/diabeatit"/>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
     </application>
 </manifest>

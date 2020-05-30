@@ -2,7 +2,6 @@
 import numpy as np
 import pandas as pd
 from android.util import Log;
-from com.chaquo.python import Python
 from datetime import datetime
 from de.heoegbr.diabeatit.assistant.prediction.python import PythonInputContainer
 from de.heoegbr.diabeatit.assistant.prediction.python import PythonOutputContainer
@@ -59,9 +58,9 @@ class PythonPredictionProxy(static_proxy(PythonPredictionBase)):
         Log.e("PYTHON", str(resampledDf))
 
         # export dataframe to file (for usage in colabs)
-        files_dir = str(
-            Python.getPlatform().getApplication().getExternalFilesDir("")) + '/dataframe.csv'
-        resampledDf.to_csv(files_dir, encoding='utf-8')
+        files_dir = inputContainer.dataFrameExportPath
+        if (files_dir):
+            resampledDf.to_csv(files_dir, encoding='utf-8')
 
         optimizer = Jorisizer(
             resampledDf['cgm'],
@@ -70,16 +69,16 @@ class PythonPredictionProxy(static_proxy(PythonPredictionBase)):
             carbValues=resampledDf['meal']
         )
 
-        optimizer.setparams(carbtype=105,
+        optimizer.setparams(carbtype=90,
                             sensf=30,
                             idur=180,
                             cratio=1.7,
                             optimizer='L-BFGS-B',
                             # optimizer='SLSQP',
-                            maxiter=10,
-                            shrinkfactor=2)
+                            maxiter=30,
+                            shrinkfactor=1)
 
-        simulation, prediction = optimizer.optimizeAndPredict(predictionsteps=18)
+        simulation, prediction = optimizer.optimizeAndPredict(predictionsteps=12)
 
         simulation = np.rint(np.nan_to_num(simulation))
         prediction = np.rint(np.nan_to_num(prediction))

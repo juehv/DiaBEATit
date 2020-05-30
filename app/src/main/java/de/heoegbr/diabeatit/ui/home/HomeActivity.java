@@ -1,11 +1,15 @@
 package de.heoegbr.diabeatit.ui.home;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
@@ -46,6 +51,7 @@ import de.heoegbr.diabeatit.ui.diary.ManualSportsEntryActivity;
 import de.heoegbr.diabeatit.ui.settings.SettingsActivity;
 
 public class HomeActivity extends AppCompatActivity {
+	private static final String TAG = "HOME_ACTIVITY";
 	public LinearLayout assistantPeekEnveloped;
 
 	private AppBarConfiguration mAppBarConfiguration;
@@ -74,6 +80,8 @@ public class HomeActivity extends AppCompatActivity {
 		Intent intent = getIntent();
 		if (intent != null && intent.getAction() != null && intent.getAction().equals(StaticData.ASSISTANT_INTENT_CODE))
 			expandAssistant();
+
+		isStoragePermissionGranted();
 	}
 
 	private void setupManualEntry() {
@@ -310,6 +318,33 @@ public class HomeActivity extends AppCompatActivity {
 		NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 		return NavigationUI.navigateUp(navController, mAppBarConfiguration)
 				|| super.onSupportNavigateUp();
+	}
+
+	public boolean isStoragePermissionGranted() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+					== PackageManager.PERMISSION_GRANTED) {
+				Log.v(TAG, "Permission is granted");
+				return true;
+			} else {
+
+				Log.v(TAG, "Permission is revoked");
+				ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+				return false;
+			}
+		} else { //permission is automatically granted on sdk<23 upon installation
+			Log.v(TAG, "Permission is granted");
+			return true;
+		}
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+			Log.v(TAG, "Permission: " + permissions[0] + "was " + grantResults[0]);
+			//resume tasks needing this permission
+		}
 	}
 }
 

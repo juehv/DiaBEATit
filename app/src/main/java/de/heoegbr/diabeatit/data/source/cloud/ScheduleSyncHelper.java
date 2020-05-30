@@ -42,12 +42,29 @@ public class ScheduleSyncHelper {
             @NonNull @NotNull Class<? extends androidx.work.ListenableWorker> workerClass,
             @NonNull @NotNull String uniqueWorkName,
             Data data) {
+        schedulePeriodicCustomSync(context, workerClass, uniqueWorkName, data,
+                1, TimeUnit.HOURS);
+    }
+
+    public static void stopPeriodicSync(
+            @NonNull @NotNull Context context,
+            @NonNull @NotNull String uniqueWorkName) {
+        WorkManager.getInstance(context).cancelUniqueWork(uniqueWorkName);
+    }
+
+    public static void schedulePeriodicCustomSync(
+            @NonNull @NotNull Context context,
+            @NonNull @NotNull Class<? extends androidx.work.ListenableWorker> workerClass,
+            @NonNull @NotNull String uniqueWorkName,
+            Data data,
+            int repeatInterval,
+            TimeUnit timeUnit) {
         Constraints constraints = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .setRequiresBatteryNotLow(true)
                 .build();
         PeriodicWorkRequest.Builder requestBuilder = new PeriodicWorkRequest.Builder(workerClass,
-                1, TimeUnit.HOURS);
+                repeatInterval, timeUnit);
         requestBuilder.addTag(uniqueWorkName);
         requestBuilder.setConstraints(constraints);
         if (data != null) {
@@ -59,11 +76,5 @@ public class ScheduleSyncHelper {
                 ExistingPeriodicWorkPolicy.REPLACE,
                 periodicWorkRequest);
         Log.d(TAG, "*Periodic* cloud sync scheduled");
-    }
-
-    public static void stopPeriodicSync(
-            @NonNull @NotNull Context context,
-            @NonNull @NotNull String uniqueWorkName) {
-        WorkManager.getInstance(context).cancelUniqueWork(uniqueWorkName);
     }
 }

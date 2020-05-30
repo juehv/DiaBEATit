@@ -132,6 +132,10 @@ public class HomeFragment extends Fragment {
                     // --> create one dataset per entry
                     List<Entry> tmpPrediction = new ArrayList<>();
                     int predCount = 1;
+                    int simCount = ((PredictionEvent) item).modelSimulation.size();
+                    for (Double simItem : ((PredictionEvent) item).modelSimulation) {
+                        tmpPrediction.add(new Entry(x - simCount--, simItem.floatValue()));
+                    }
                     for (Double predItem : ((PredictionEvent) item).prediction) {
                         tmpPrediction.add(new Entry(x + predCount, predItem.floatValue()));
                         predCount++;
@@ -226,17 +230,16 @@ public class HomeFragment extends Fragment {
         }
 
         // update chart data
-        chart.resetZoom();
+        //chart.resetZoom();
         chart.setData(combinedData);
-        chart.invalidate();
-        chart.resetZoom();
+        //chart.invalidate(); // <-- this is called by modeView
 
         // reset legend
         chart.getLegend().setEntries(mLegendEntries);
 
         // zoom to current time frame
-        chart.zoom(1.2f, 1f, lastEntryX, 180);
-        chart.moveViewToX(lastEntryX);
+        //chart.zoom(1.2f, 1f, 0, 160, YAxis.AxisDependency.LEFT);
+        chart.moveViewToX(lastEntryX - 5f);
     }
 
     private void setupChart() {

@@ -35,6 +35,9 @@ public class PythonPredictionWorker extends Worker {
             Python.start(new AndroidPlatform(context));
             Log.d(TAG, "Python environment Initialized");
         }
+
+        // Init cache path
+        PythonInputContainer.dataFrameExportPath = context.getFilesDir().getAbsolutePath() + "/dataframe.csv";
     }
 
     @NonNull
@@ -44,7 +47,7 @@ public class PythonPredictionWorker extends Worker {
         Log.d(TAG, "Query input data");
         DiaryRepository repo = DiaryRepository.getRepository(mContext);
         List<DiaryEvent> diaryEvents = repo.getPredictionEventsInSameThread(Instant.now()
-                .minus(5, ChronoUnit.HOURS));
+                .minus(4, ChronoUnit.HOURS));
         PythonInputContainer inputData = new PythonInputContainer(
                 Instant.now().getEpochSecond(),
                 diaryEvents.toArray(new DiaryEvent[]{}));
