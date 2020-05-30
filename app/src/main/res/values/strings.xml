@@ -1790,6 +1790,8 @@
     <string name="format_carbs">%1$dg</string>
     <string name="common_on">On</string>
     <string name="common_off">Off</string>
+    <string name="settings_demo_mode_warning_title">Activate Demo Mode</string>
+    <string name="settings_demo_mode_warning_text">Demo Mode will clear your data and preferences. Continue?</string>
 
 
 </resources>

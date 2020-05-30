@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
@@ -22,7 +21,6 @@ import de.heoegbr.diabeatit.BuildConfig;
 import de.heoegbr.diabeatit.R;
 import de.heoegbr.diabeatit.StaticData;
 import de.heoegbr.diabeatit.assistant.prediction.python.PythonInputContainer;
-import de.heoegbr.diabeatit.data.source.demo.DemoMode;
 
 public class SettingsActivity extends AppCompatActivity implements
         PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
@@ -121,37 +119,40 @@ public class SettingsActivity extends AppCompatActivity implements
                             emailIntent.putExtra(Intent.EXTRA_SUBJECT, "[DiaBEATit] Dataframe export");
                             startActivity(Intent.createChooser(emailIntent, "Send email..."));
                         }
-                        //TODO replace with file provider
-                        // https://developer.android.com/training/secure-file-sharing
-                        // https://stackoverflow.com/questions/9974987/how-to-send-an-email-with-a-file-attachment-in-android
 
                         return true;
                     }
                 });
             }
 
-            // add listener to send feedback
-            Preference startDemoMode = findPreference("settings_demo_mode");
-            if (startDemoMode != null) {
-                startDemoMode.setOnPreferenceChangeListener((preference, newValue) -> {
-                    if ((Boolean) newValue) {
-                        // show warning
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                        builder.setTitle("Activate Demo Mode");
-                        builder.setMessage("Demo Mode will clear your data and preferences. Continue?");
-                        builder.setPositiveButton("Yes", (dialogInterface, i) -> {
-                            // start demo mode
-                            DemoMode.setConfigurationToDemoMode(getContext());
-                        });
-
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-                    } else {
-                        DemoMode.clearConfiguration(getContext());
-                    }
-                    return true;
-                });
-            }
+//            // add listener to start demo mode
+//            // TODO make this part of setup assistent
+//            Preference startDemoMode = findPreference("settings_demo_mode");
+//            if (startDemoMode != null) {
+//                startDemoMode.setOnPreferenceChangeListener((preference, newValue) -> {
+//                    if ((Boolean) newValue) {
+//                        // show warning
+//                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//                        builder.setTitle(R.string.settings_demo_mode_warning_title);
+//                        builder.setMessage(R.string.settings_demo_mode_warning_text);
+//                        builder.setPositiveButton(R.string.yes, (dialogInterface, i) -> {
+//                            // start demo mode
+//                            DemoMode.setConfigurationToDemoMode(getContext());
+//                        });
+//                        builder.setNegativeButton(R.string.no,(dialogInterface, i) -> {
+//                            // reset setting
+//                            PreferenceManager.getDefaultSharedPreferences(getContext())
+//                                    .edit().putBoolean(preference.getKey(),false).apply();
+//                            });
+//
+//                        AlertDialog dialog = builder.create();
+//                        dialog.show();
+//                    } else {
+//                        //DemoMode.clearConfiguration(getContext());
+//                    }
+//                    return true;
+//                });
+//            }
         }
     }
 

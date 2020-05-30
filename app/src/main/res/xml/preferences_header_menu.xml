@@ -31,11 +31,11 @@
         app:summary="Share last used dataframe"
         app:title="Send Dataframe" />
 
-    <SwitchPreferenceCompat
-        app:icon="@drawable/ic_demo_mode"
-        app:key="settings_demo_mode"
-        app:summary="@string/setting_demo_summary"
-        app:title="@string/setting_demo_title" />
+    <!--    <SwitchPreferenceCompat-->
+    <!--        app:icon="@drawable/ic_demo_mode"-->
+    <!--        app:key="settings_demo_mode"-->
+    <!--        app:summary="@string/setting_demo_summary"-->
+    <!--        app:title="@string/setting_demo_title" />-->
 
 
 </PreferenceScreen>
