@@ -2,6 +2,7 @@ package de.heoegbr.diabeatit.ui.home;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -101,6 +102,7 @@ public class HomeFragment extends Fragment {
         double biggestBgValue = 0;
         List<Entry> basalEntries = new ArrayList<>();
         List<List<Entry>> predictionEntries = new ArrayList<>();
+        List<List<Entry>> predictionSimulationEntries = new ArrayList<>();
         List<BarEntry> bolusEntries = new ArrayList<>();
         List<BarEntry> carbEntries = new ArrayList<>();
         List<List<BarEntry>> generatedCarbEntries = new ArrayList<>();
@@ -154,24 +156,30 @@ public class HomeFragment extends Fragment {
                         generatedIsfEntries.add(tmpIsfCarbEntries);
                     }
                     // cgm
-                    List<Entry> tmpPrediction = new ArrayList<>();
-                    int predCount = 1;
                     if (pEvent.cgmSimulation != null) {
+                        List<Entry> tmpSimulation = new ArrayList<>();
+                        int predCount = 1;
                         int simCount = pEvent.cgmSimulation.size();
                         for (Double simItem : pEvent.cgmSimulation) {
-                            tmpPrediction.add(new Entry(x - simCount--, simItem.floatValue()));
+                            tmpSimulation.add(new Entry(x - simCount--, simItem.floatValue()));
                         }
-                        Collections.sort(tmpPrediction, new EntryXComparator());
+                        if (!tmpSimulation.isEmpty()) {
+                            Collections.sort(tmpSimulation, new EntryXComparator());
+                            predictionSimulationEntries.add(tmpSimulation);
+                        }
                     }
                     if (pEvent.prediction != null) {
+                        List<Entry> tmpPrediction = new ArrayList<>();
+                        int predCount = 1;
                         for (Double predItem : ((PredictionEvent) item).prediction) {
                             tmpPrediction.add(new Entry(x + predCount, predItem.floatValue()));
                             predCount++;
                         }
-                        Collections.sort(tmpPrediction, new EntryXComparator());
+                        if (!tmpPrediction.isEmpty()) {
+                            Collections.sort(tmpPrediction, new EntryXComparator());
+                            predictionEntries.add(tmpPrediction);
+                        }
                     }
-                    if (!tmpPrediction.isEmpty())
-                        predictionEntries.add(tmpPrediction);
                     break;
             }
         }
@@ -225,22 +233,39 @@ public class HomeFragment extends Fragment {
         bd.addDataSet(bolusDataSet);
         bd.addDataSet(carbDataSet);
 
-        if (!generatedCarbEntries.isEmpty()) {
-            for (List<BarEntry> generatedCarbEntry : generatedCarbEntries) {
-                BarDataSet predDataSet = new BarDataSet(generatedCarbEntry, "");
-                predDataSet.setColor(Color.parseColor("#88681299"));
-                predDataSet.setDrawValues(false);
-                bd.addDataSet(predDataSet);
+        // plot prediction data if activated
+        if (PreferenceManager.getDefaultSharedPreferences(getContext())
+                .getBoolean("settings_general_plot_debug", false)) {
+            if (!predictionSimulationEntries.isEmpty()) {
+                for (List<Entry> simulationEntrie : predictionSimulationEntries) {
+                    LineDataSet predDataSet = new LineDataSet(simulationEntrie, "");
+                    predDataSet.setColor(Color.parseColor("#de2323"));
+//                    predDataSet.setCircleColor(mPredictionColor);
+                    predDataSet.setDrawCircles(false);
+                    predDataSet.setLineWidth(4f);
+                    predDataSet.setDrawValues(false);
+                    ld.addDataSet(predDataSet);
+                }
             }
-        }
 
-        if (!generatedIsfEntries.isEmpty()) {
-            for (List<BarEntry> generatedIsfEntry : generatedIsfEntries) {
-                BarDataSet predDataSet = new BarDataSet(generatedIsfEntry, "");
-                predDataSet.setColor(Color.parseColor("#44000ecf"));
-                predDataSet.setDrawValues(false);
-                bd.addDataSet(predDataSet);
+            if (!generatedCarbEntries.isEmpty()) {
+                for (List<BarEntry> generatedCarbEntry : generatedCarbEntries) {
+                    BarDataSet predDataSet = new BarDataSet(generatedCarbEntry, "");
+                    predDataSet.setColor(Color.parseColor("#88681299"));
+                    predDataSet.setDrawValues(false);
+                    bd.addDataSet(predDataSet);
+                }
             }
+
+            if (!generatedIsfEntries.isEmpty()) {
+                for (List<BarEntry> generatedIsfEntry : generatedIsfEntries) {
+                    BarDataSet predDataSet = new BarDataSet(generatedIsfEntry, "");
+                    predDataSet.setColor(Color.parseColor("#441aa123"));
+                    predDataSet.setDrawValues(false);
+                    bd.addDataSet(predDataSet);
+                }
+            }
+
         }
 
         // combine datasets
