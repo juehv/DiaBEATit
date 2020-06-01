@@ -106,6 +106,8 @@ dependencies {
     // open source licenses scanning
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
 
+    // dot indicator
+    implementation 'com.tbuonomo.andrui:viewpagerdotsindicator:4.1.2'
     //################################################
     implementation "com.google.guava:guava:28.2-jre"
 

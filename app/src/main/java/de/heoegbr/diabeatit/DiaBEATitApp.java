@@ -26,6 +26,7 @@ import de.heoegbr.diabeatit.data.source.cloud.ScheduleSyncHelper;
 import de.heoegbr.diabeatit.data.source.cloud.nightscout.NightscoutDownloader;
 import de.heoegbr.diabeatit.data.source.xdrip.XdripBgSource;
 import de.heoegbr.diabeatit.service.DontDieForegroundService;
+import de.heoegbr.diabeatit.ui.setup.SetupActivity;
 
 
 public class DiaBEATitApp extends Application {
@@ -67,6 +68,10 @@ public class DiaBEATitApp extends Application {
                 lastPrediction = Instant.now();
             }
         });
+
+        //FIXME remove
+        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit()
+                .putInt(SetupActivity.SETUP_COMPLETE_KEY, 0).apply();
     }
 
     private void createNotificationChannel() {

@@ -102,6 +102,11 @@
             android:parentActivityName=".ui.home.HomeActivity" />
 
         <activity
+            android:name=".ui.setup.SetupActivity"
+            android:parentActivityName=".ui.home.HomeActivity"
+            android:theme="@style/diabeatit" />
+
+        <activity
             android:name=".ui.AlertHistoryActivity"
             android:label="@string/title_activity_alert_history"
             android:parentActivityName=".ui.home.HomeActivity"
