@@ -188,7 +188,7 @@
     <string name="setupwizard_storagepermission_text">### Backup Service  \nThe app will save its gathered data, settings, evaluation results, and your progress on the phones storage. Therefore we need storage permission.</string>
     <string name="setupwizard_locationpermission_text">### Suggestion Service  \nThe assistent service of this app will generate suggestions and reminders for treatments. Therefore the assistent will observer health data and your daily routine including locations. Therefore we need location permission. This data will not be shared.</string>
     <string name="setupwizard_demomode_text">### App Demonstration  \nFor demonstration purposes you can start the app in Demo-Mode. The app will behave identically but will use fake data. We desined the fake data input in a way to demonstrate all functions of the app within a week. We took care that you will not get disturbed at night.  \n\n**Note:** To deactivate the demonstration mode, please reinstall the app to ensure a consistent database.</string>
-    <string name="setupwizard_thankyou_text">### Setup completed!  \nAll done!  \n\n You may want to take a look into the settings and set up your cloud sync options.  \n\nWe wish you much fun using our app!</string>
+    <string name="setupwizard_thankyou_text">### Setup completed!  \nAll done! **Please reopen the App after pressing the finish button.**  \n\n You may want to take a look into the settings and set up your cloud sync options.  \n\nWe wish you much fun using our app!</string>
 
     <string name="permission">Permission</string>
     <string name="askforpermission">Ask for permission</string>

@@ -1,5 +1,6 @@
 package de.heoegbr.diabeatit;
 
+import android.Manifest;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -7,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -37,28 +39,16 @@ public class DiaBEATitApp extends Application {
     private Instant mLastPrediction = Instant.now().minusSeconds(PREDICTION_COOLDOWN_SECONDS);
     private MediatorLiveData mDataChangeTrigger;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        Context context = getApplicationContext();
-
-        JodaTimeAndroid.init(context);
-
-        if (!PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(SetupActivity.SETUP_DEMO_MODE_KEY, false)) {
-            // don't start this in demo mode
-            Log.e("dd", "NO DEMO MODE");
-            registerBroadcastReceivers(context);
-            scheduleEnabledBackgroundSync(context);
-        }
-
-        scheduleBackgroundPredicitons(context);
-
-        // start "don't die" service
-        createNotificationChannel();
-        Intent serviceIntent = new Intent(context, DontDieForegroundService.class);
-        ContextCompat.startForegroundService(context, serviceIntent);
+    public static boolean isPermissionsGrandedAndSetupWizardCompleted(Context context) {
+        return context.checkSelfPermission(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED
+                &&
+                context.checkSelfPermission(
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED
+                && PreferenceManager.getDefaultSharedPreferences(context)
+                .getInt(SetupActivity.SETUP_COMPLETE_KEY, 0) == BuildConfig.VERSION_CODE;
     }
 
     private void createNotificationChannel() {
@@ -108,6 +98,34 @@ public class DiaBEATitApp extends Application {
                 mLastPrediction = Instant.now();
             }
         });
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        Log.e(TAG, "ON CREATE ############################");
+
+        Context context = getApplicationContext();
+
+        JodaTimeAndroid.init(context);
+
+        if (isPermissionsGrandedAndSetupWizardCompleted(context)) {
+            if (!PreferenceManager.getDefaultSharedPreferences(context)
+                    .getBoolean(SetupActivity.SETUP_DEMO_MODE_KEY, false)) {
+                // don't start this in demo mode
+                Log.e("dd", "NO DEMO MODE");
+                registerBroadcastReceivers(context);
+                scheduleEnabledBackgroundSync(context);
+            }
+
+            scheduleBackgroundPredicitons(context);
+
+            // start "don't die" service
+            createNotificationChannel();
+            Intent serviceIntent = new Intent(context, DontDieForegroundService.class);
+            ContextCompat.startForegroundService(context, serviceIntent);
+        }
     }
 
 }

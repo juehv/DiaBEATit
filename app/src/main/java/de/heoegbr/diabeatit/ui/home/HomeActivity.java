@@ -38,7 +38,7 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.navigation.NavigationView;
 
-import de.heoegbr.diabeatit.BuildConfig;
+import de.heoegbr.diabeatit.DiaBEATitApp;
 import de.heoegbr.diabeatit.R;
 import de.heoegbr.diabeatit.StaticData;
 import de.heoegbr.diabeatit.assistant.alert.AlertStoreListener;
@@ -61,37 +61,36 @@ public class HomeActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private FloatingActionsMenu entryMenu;
 
-    private AlertStore mAlertStore;
+    private AlertStore mAlertStore; //TODO model view?
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAlertStore = AlertStore.getRepository(getApplicationContext());
 
-        setContentView(R.layout.d_activity_home);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle(getResources().getString(R.string.title_activity_home));
-        setSupportActionBar(toolbar);
-
-        // TODO what is this good for ?
-        getSystemService(android.app.NotificationManager.class).cancelAll();
-
-        assistantPeekEnveloped = findViewById(R.id.assistant_peek_master);
-
-        setupManualEntry();
-        setupAssistant();
-        setupDrawer();
-
-        Intent intent = getIntent();
-        if (intent != null && intent.getAction() != null && intent.getAction().equals(StaticData.ASSISTANT_INTENT_CODE))
-            expandAssistant();
-
-        //TODO checks for version, if higher show update message, if not set show welcome screen and showcase
-        if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-                .getInt(SetupActivity.SETUP_COMPLETE_KEY, 0) != BuildConfig.VERSION_CODE) {
+        // don't build this gui if we go to setup wizard
+        if (!DiaBEATitApp.isPermissionsGrandedAndSetupWizardCompleted(getApplicationContext())) {
             startActivity(new Intent(HomeActivity.this, SetupActivity.class));
+        } else {
+            mAlertStore = AlertStore.getRepository(getApplicationContext());
+
+            setContentView(R.layout.d_activity_home);
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            toolbar.setTitle(getResources().getString(R.string.title_activity_home));
+            setSupportActionBar(toolbar);
+
+            // TODO what is this good for ?
+            getSystemService(android.app.NotificationManager.class).cancelAll();
+
+            assistantPeekEnveloped = findViewById(R.id.assistant_peek_master);
+
+            setupManualEntry();
+            setupAssistant();
+            setupDrawer();
+
+            Intent intent = getIntent();
+            if (intent != null && intent.getAction() != null && intent.getAction().equals(StaticData.ASSISTANT_INTENT_CODE))
+                expandAssistant();
         }
-        // TODO check if demo mode is active && new version --> show reinstallation screen
     }
 
     private void setupManualEntry() {

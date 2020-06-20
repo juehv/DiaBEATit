@@ -1,7 +1,9 @@
 package de.heoegbr.diabeatit.ui.setup;
 
 import android.Manifest;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -47,13 +49,16 @@ public class SetupActivity extends FragmentActivity {
     private SharedPreferences prefs;
     private String[] viewPagerTitle;
     private Boolean[] setupWizardStageCompleted;
+    private boolean wasDemoModeActiveInitially = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        // TODO check if it is an update or initial installtion (based on version code from prefs)
+        // TODO check if demo mode is active && new version --> show reinstallation screen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
+        wasDemoModeActiveInitially = prefs.getBoolean(SETUP_DEMO_MODE_KEY, false);
 
         viewPager = findViewById(R.id.pager);
         dotsIndicator = findViewById(R.id.setup_dots_indicator);
@@ -124,10 +129,11 @@ public class SetupActivity extends FragmentActivity {
             viewPager.setCurrentItem(pageNo, true);
         } else {
             // --> finish button mode
+            Context context = getApplicationContext();
             // check permissions
-            if ((getApplicationContext().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            if ((context.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED)
-                    || (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                    || (context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED)) {
                 // inform user that he has to give permissions to finish
                 AlertDialog.Builder builder = new AlertDialog.Builder(SetupActivity.this);
@@ -151,14 +157,24 @@ public class SetupActivity extends FragmentActivity {
                 builder.create().show();
             } else {
                 // finish setup wizard
-                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit()
+                PreferenceManager.getDefaultSharedPreferences(context).edit()
                         .putInt(SETUP_COMPLETE_KEY, BuildConfig.VERSION_CODE).apply();
                 if (prefs.getBoolean(SETUP_DEMO_MODE_KEY, false)) {
-                    DemoMode.setConfigurationToDemoModeInYourThread(getApplicationContext());
+                    DemoMode.setConfigurationToDemoModeInYourThread(context);
                 }
 
-                // go to main activity
-                startActivity(new Intent(SetupActivity.this, HomeActivity.class));
+                // restart app
+//                startActivity(new Intent(SetupActivity.this, HomeActivity.class));
+                // todo find a real restart function ... as this is not working
+                Intent initIntent = new Intent(SetupActivity.this, HomeActivity.class);
+                PendingIntent restartIntent = PendingIntent.getActivity(context,
+                        255, initIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+                AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, restartIntent);
+
+                finishAffinity();
+                //finishAndRemoveTask();
             }
         }
 
@@ -268,8 +284,19 @@ public class SetupActivity extends FragmentActivity {
                             true,
                             R.string.activate,
                             (compoundButton, b) -> {
-                                // setup app for demo mode
-                                prefs.edit().putBoolean(SETUP_DEMO_MODE_KEY, b).apply();
+
+                                if (wasDemoModeActiveInitially
+                                        && !b) {
+                                    // when user wants to deactive demo mode after app was running in demo mode
+//TODO show message
+                                    // demo mode was active before and wrote data to the database
+                                    // please reinstall the app to deactivate demo mode
+                                    // demo mode stays active
+                                    compoundButton.setChecked(true);
+                                } else {
+                                    // setup app for demo mode
+                                    prefs.edit().putBoolean(SETUP_DEMO_MODE_KEY, b).apply();
+                                }
                             },
                             prefs.getBoolean(SETUP_DEMO_MODE_KEY, false));
                     break;
