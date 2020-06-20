@@ -7,7 +7,6 @@ buildscript {
         jcenter()
         // Python
         maven { url "https://chaquo.com/maven" }
-        
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.3'

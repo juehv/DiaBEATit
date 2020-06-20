@@ -6,7 +6,6 @@
     android:keepScreenOn="true"
     android:orientation="vertical">
 
-
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/setup_toolbar"
         android:layout_width="match_parent"
@@ -17,19 +16,24 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title="Setup Wizard" />
 
+    <!-- added padding as constrained does not work somehow ...-->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/pager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginTop="58dp"
+        android:layout_marginBottom="45dp"
+        app:layout_constraintBottom_toTopOf="@id/setup_bottom_toolbar"
         app:layout_constraintTop_toBottomOf="@id/setup_toolbar" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/setup_bottom_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
         android:orientation="horizontal"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
+        android:paddingLeft="1dp"
+        android:paddingRight="1dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <Button

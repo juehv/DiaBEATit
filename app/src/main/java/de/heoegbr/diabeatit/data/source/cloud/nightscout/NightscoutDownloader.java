@@ -47,6 +47,7 @@ public class NightscoutDownloader extends Worker {
 
     public static final String WORK_NAME = "NS_SYNC_WORKER";
     public static final String KEY_NO_OF_VALUE = "noOfValues";
+    public static final String KEY_SYNC_NS_URL = "sync_ns_url";
     private static final String TAG = "NS-CLIENT";
     private final Context mContext;
     private final Nightscout mService;
@@ -77,7 +78,7 @@ public class NightscoutDownloader extends Worker {
     private Retrofit initRetrofit() throws IllegalArgumentException {
         // Check URL and try autofix if not correct
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-        String url = prefs.getString("sync_ns_url", "");
+        String url = prefs.getString(KEY_SYNC_NS_URL, "");
         if (url == null || url.isEmpty() || !url.contains("http")) {
             Log.d(TAG, "Empty url - cannot create instance");
             return null;

@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -85,13 +86,12 @@ public class HomeActivity extends AppCompatActivity {
         if (intent != null && intent.getAction() != null && intent.getAction().equals(StaticData.ASSISTANT_INTENT_CODE))
             expandAssistant();
 
-        // FIXME find appropriate place for the following stuff ....
-        isStoragePermissionGranted();
-
-        if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext()) //TODO checks for version, if higher show update message, if not set show welcome screen and showcase
+        //TODO checks for version, if higher show update message, if not set show welcome screen and showcase
+        if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
                 .getInt(SetupActivity.SETUP_COMPLETE_KEY, 0) != BuildConfig.VERSION_CODE) {
             startActivity(new Intent(HomeActivity.this, SetupActivity.class));
         }
+        // TODO check if demo mode is active && new version --> show reinstallation screen
     }
 
     private void setupManualEntry() {
@@ -267,7 +267,12 @@ public class HomeActivity extends AppCompatActivity {
                     break;
 
                 case R.id.nav_settings:
-                    startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
+                    if (PreferenceManager.getDefaultSharedPreferences(this)
+                            .getBoolean(SetupActivity.SETUP_DEMO_MODE_KEY, false)) {
+                        Toast.makeText(this, "Disabled in Demo Mode.", Toast.LENGTH_LONG).show();
+                    } else {
+                        startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
+                    }
                     break;
 
                 case R.id.nav_help:

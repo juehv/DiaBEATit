@@ -171,9 +171,48 @@
     <string name="restart_app">Restarting app</string>
     <string name="title_activity_home">DiaBEATit</string>
 
+    <string name="setupwizard_welcome_title">Setup Wizard</string>
+    <string name="setupwizard_permission_title">Permission Request</string>
+    <string name="setupwizard_datacontribution_title">Data Contribution</string>
+    <string name="setupwizard_demo_title">Demo Mode</string>
+    <string name="setupwizard_completed_title">Wizard Completed</string>
+    <string name="setupwizard_licenseagreement_title">License Agreement</string>
 
+    <string name="setupwizard_welcome_text">"### Welcome to DiaBEATit!  \nWe appreciate that you want to support our research to improve diabetes therapy!  \n\nAfter a few simple setup steps the app is ready to use. This setup wizard will guide you through the setup process."</string>
+    <string name="setupwizard_licenseagreement_text">
+        ### License Agreement of DiaBEATit  \n
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  \n\n
+        Click [here](https://github.com/juehv/DiaBEATit/blob/master/LICENSE.txt) for the full license text.
+    </string>
+    <string name="setupwizard_datacontribution_text">The DiaBEATit app is intended for demonstration purposes and as research tool. This means in particular:  \n* It **MUST NOT** be used to make medical decisions.  \n* It will run experimental algorithms which are potentially not bug free  \n* It will gather your health data and send it to us in anonymised form.</string>
+    <string name="setupwizard_storagepermission_text">### Backup Service  \nThe app will save its gathered data, settings, evaluation results, and your progress on the phones storage. Therefore we need storage permission.</string>
+    <string name="setupwizard_locationpermission_text">### Suggestion Service  \nThe assistent service of this app will generate suggestions and reminders for treatments. Therefore the assistent will observer health data and your daily routine including locations. Therefore we need location permission. This data will not be shared.</string>
+    <string name="setupwizard_demomode_text">### App Demonstration  \nFor demonstration purposes you can start the app in Demo-Mode. The app will behave identically but will use fake data. We desined the fake data input in a way to demonstrate all functions of the app within a week. We took care that you will not get disturbed at night.  \n\n**Note:** To deactivate the demonstration mode, please reinstall the app to ensure a consistent database.</string>
+    <string name="setupwizard_thankyou_text">### Setup completed!  \nAll done!  \n\n You may want to take a look into the settings and set up your cloud sync options.  \n\nWe wish you much fun using our app!</string>
+
+    <string name="permission">Permission</string>
+    <string name="askforpermission">Ask for permission</string>
+    <string name="activate">Activate</string>
+    <string name="i_understand_and_agree">I understand and agree</string>
+
+    <string name="settings_demo_mode_warning_title">Activate Demo Mode</string>
+    <string name="settings_demo_mode_warning_text">Demo Mode will clear your data and preferences. Continue?</string>
+
+    <string name="setupwizard_error_permission_missing_title">Permission Missing</string>
+    <string name="setupwizard_error_permission_missing_text">You have to grand requested permissions to finish the setup.</string>
+    <string name="setupwizard_error_license_missing_title">License agreements not accepted</string>
+    <string name="setupwizard_error_license_missing_text">You have to read and accept the license agreements</string>
+    <string name="setupwizard_error_datacontribution_missing_title">Data contribution terms not accepted</string>
+    <string name="setupwizard_error_datacontribution_missing_text">You have to read and accept the data contribution agreements</string>
 
     <!-- Backend & Legacy UI -->
+    <!--#########################################################################################-->
+    <!--#########################################################################################-->
+    <!--#########################################################################################-->
+    <!--#########################################################################################-->
+    <!--#########################################################################################-->
+    <!--#########################################################################################-->
+
 
     <string name="en_lang" translatable="false">English</string>
     <string name="cs_lang" translatable="false">Czech</string>
@@ -442,9 +481,7 @@
     <string name="connected">Connected</string>
     <string name="disconnected">Disconnected</string>
     <string name="danar_pump_settings">DanaR pump settings</string>
-    <string name="end_user_license_agreement">End User License Agreement</string>
-    <string name="end_user_license_agreement_text">MUST NOT BE USED TO MAKE MEDICAL DECISIONS. THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.</string>
-    <string name="end_user_license_agreement_i_understand">I UNDERSTAND AND AGREE</string>
+
     <string name="save">Save</string>
     <string name="nobtadapter">No bluetooth adapter found</string>
     <string name="devicenotfound">Selected device not found</string>
@@ -1250,7 +1287,6 @@
     <string name="wear_display_settings">Display Settings</string>
     <string name="wear_general_settings">General Settings</string>
     <string name="enable_nsclient">Enable NSClient</string>
-    <string name="welcometosetupwizard">Welcome to setup wizard. It will guide you through the setup process\n</string>
     <string name="pumpsetup">Pump setup</string>
     <string name="readstatus">Read status</string>
     <string name="adjustprofileinns">Changes must be done in NS</string>
@@ -1267,10 +1303,6 @@
     <string name="setupwizard_profile_description">Please select source of profile. If patient is a child you should use NS profile. If there is nobody following you on Nightscout you will probably prefer Local profile. Please remember that you are only selecting the profile source. To use it you must activate it by executing \"Profile switch\"</string>
     <string name="setupwizard_aps_description">Select one from availables algorithms. They are sorted from oldest to newest. Newer algorithm is usually more powerful and more aggressive. Thus if you are new looper you may probably start with AMA and not with latest one. Do not forget to read the OpenAPS documentation and configure it before use.</string>
     <string name="startobjective">Start your first objective</string>
-    <string name="permission">Permission</string>
-    <string name="askforpermission">Ask for permission</string>
-    <string name="needlocationpermission">Application needs location permission for BT scan</string>
-    <string name="needstoragepermission">Application needs storage permission to be able store log files</string>
     <string name="request">Request</string>
     <string name="insulinsourcesetup">Configure Insulin plugin</string>
     <string name="exit">Exit</string>
@@ -1790,8 +1822,5 @@
     <string name="format_carbs">%1$dg</string>
     <string name="common_on">On</string>
     <string name="common_off">Off</string>
-    <string name="settings_demo_mode_warning_title">Activate Demo Mode</string>
-    <string name="settings_demo_mode_warning_text">Demo Mode will clear your data and preferences. Continue?</string>
-
 
 </resources>

@@ -33,45 +33,32 @@ public class DiaBEATitApp extends Application {
     public static final String DEFAULT_NOTIFICAITON_CHANNEL_ID = "de.heoegbr.diabeatit.notifications";
     private static final String TAG = "MAINAPP";
 
-    // TODO move to preferences
-    private static final int predictionCooldownSeconds = 30;//900; // 15min
-    private Instant lastPrediction = Instant.now().minusSeconds(predictionCooldownSeconds);
-    private MediatorLiveData trigger;
+    private static final int PREDICTION_COOLDOWN_SECONDS = 120; // 2min
+    private Instant mLastPrediction = Instant.now().minusSeconds(PREDICTION_COOLDOWN_SECONDS);
+    private MediatorLiveData mDataChangeTrigger;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "OnCreate");
-        JodaTimeAndroid.init(getApplicationContext());
 
-        registerBroadcastReceivers(getApplicationContext());
+        Context context = getApplicationContext();
 
+        JodaTimeAndroid.init(context);
+
+        if (!PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(SetupActivity.SETUP_DEMO_MODE_KEY, false)) {
+            // don't start this in demo mode
+            Log.e("dd", "NO DEMO MODE");
+            registerBroadcastReceivers(context);
+            scheduleEnabledBackgroundSync(context);
+        }
+
+        scheduleBackgroundPredicitons(context);
+
+        // start "don't die" service
         createNotificationChannel();
-        Intent serviceIntent = new Intent(getApplicationContext(), DontDieForegroundService.class);
-        ContextCompat.startForegroundService(getApplicationContext(), serviceIntent);
-
-        scheduleEnabledBackgroundSync(getApplicationContext());
-
-        // schedule background predicitons
-        PythonPredictionWorker.init(getApplicationContext());
-
-        trigger = DiaryRepository.getRepository(getApplicationContext()).getDataTriggerForPredictions();
-        trigger.observeForever(diaryEvents -> {
-            // check if cooldown is over
-            if (Instant.now().minusSeconds(predictionCooldownSeconds).isAfter(lastPrediction)) {
-                // schedule prediction
-                SchedulePredictionHelper.scheduleOneTimePrediction(getApplicationContext(),
-                        PythonPredictionWorker.class,
-                        PythonPredictionWorker.WORK_NAME,
-                        null);
-
-                lastPrediction = Instant.now();
-            }
-        });
-
-        //FIXME remove
-        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit()
-                .putInt(SetupActivity.SETUP_COMPLETE_KEY, 0).apply();
+        Intent serviceIntent = new Intent(context, DontDieForegroundService.class);
+        ContextCompat.startForegroundService(context, serviceIntent);
     }
 
     private void createNotificationChannel() {
@@ -103,6 +90,24 @@ public class DiaBEATitApp extends Application {
                     NightscoutDownloader.WORK_NAME,
                     data.build());
         }
+    }
+
+    private void scheduleBackgroundPredicitons(Context context) {
+        PythonPredictionWorker.init(context);
+
+        mDataChangeTrigger = DiaryRepository.getRepository(context).getDataTriggerForPredictions();
+        mDataChangeTrigger.observeForever(diaryEvents -> {
+            // check if cooldown is over
+            if (Instant.now().minusSeconds(PREDICTION_COOLDOWN_SECONDS).isAfter(mLastPrediction)) {
+                // schedule prediction
+                SchedulePredictionHelper.scheduleOneTimePrediction(context,
+                        PythonPredictionWorker.class,
+                        PythonPredictionWorker.WORK_NAME,
+                        null);
+
+                mLastPrediction = Instant.now();
+            }
+        });
     }
 
 }

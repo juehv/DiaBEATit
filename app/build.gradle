@@ -100,14 +100,19 @@ dependencies {
     // Time management magic
     implementation 'net.danlew:android.joda:2.10.6'
 
-    // chart library
+    // chart library https://github.com/PhilJay/MPAndroidChart
     implementation 'com.github.PhilJay:MPAndroidChart:3.1.0'
 
     // open source licenses scanning
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
 
-    // dot indicator
+    // dot indicator https://github.com/tommybuonomo/dotsindicator
     implementation 'com.tbuonomo.andrui:viewpagerdotsindicator:4.1.2'
+
+    // Markdown support
+    final def  markwon_version = "4.4.0" //'latest_version'
+    implementation  "io.noties.markwon:core:$markwon_version"
+
     //################################################
     implementation "com.google.guava:guava:28.2-jre"
 

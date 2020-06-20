@@ -342,6 +342,7 @@ public class HomeFragment extends Fragment {
         mLegendEntries.add(new LegendEntry(getString(R.string.chart_label_carbs), Legend.LegendForm.DEFAULT,
                 8f, 1f, null, mCarbsColor));
         chart.getLegend().setEntries(mLegendEntries);
+        chart.getLegend().setEnabled(false);
 
         // don't know what description should do...
         chart.getDescription().setEnabled(false);
