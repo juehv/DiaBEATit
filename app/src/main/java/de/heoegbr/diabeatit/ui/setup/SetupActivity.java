@@ -288,10 +288,11 @@ public class SetupActivity extends FragmentActivity {
                                 if (wasDemoModeActiveInitially
                                         && !b) {
                                     // when user wants to deactive demo mode after app was running in demo mode
-//TODO show message
-                                    // demo mode was active before and wrote data to the database
-                                    // please reinstall the app to deactivate demo mode
-                                    // demo mode stays active
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(SetupActivity.this);
+                                    builder.setMessage(R.string.setupwizard_demomode_warning_text)
+                                            .setTitle(R.string.setupwizard_demomode_warning_title)
+                                            .setPositiveButton(R.string.ok, null);
+                                    builder.create().show();
                                     compoundButton.setChecked(true);
                                 } else {
                                     // setup app for demo mode

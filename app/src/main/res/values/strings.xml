@@ -167,10 +167,7 @@
     <string name="model_activation_failed_send">SEND</string>
     <string name="model_activation_failed_dont_send">IGNORE</string>
 
-    <!-- Misc -->
-    <string name="restart_app">Restarting app</string>
-    <string name="title_activity_home">DiaBEATit</string>
-
+    <!-- Setup Wizard" -->
     <string name="setupwizard_welcome_title">Setup Wizard</string>
     <string name="setupwizard_permission_title">Permission Request</string>
     <string name="setupwizard_datacontribution_title">Data Contribution</string>
@@ -190,13 +187,8 @@
     <string name="setupwizard_demomode_text">### App Demonstration  \nFor demonstration purposes you can start the app in Demo-Mode. The app will behave identically but will use fake data. We desined the fake data input in a way to demonstrate all functions of the app within a week. We took care that you will not get disturbed at night.  \n\n**Note:** To deactivate the demonstration mode, please reinstall the app to ensure a consistent database.</string>
     <string name="setupwizard_thankyou_text">### Setup completed!  \nAll done! **Please reopen the App after pressing the finish button.**  \n\n You may want to take a look into the settings and set up your cloud sync options.  \n\nWe wish you much fun using our app!</string>
 
-    <string name="permission">Permission</string>
-    <string name="askforpermission">Ask for permission</string>
-    <string name="activate">Activate</string>
-    <string name="i_understand_and_agree">I understand and agree</string>
-
-    <string name="settings_demo_mode_warning_title">Activate Demo Mode</string>
-    <string name="settings_demo_mode_warning_text">Demo Mode will clear your data and preferences. Continue?</string>
+    <string name="setupwizard_demomode_warning_text">The Demo Mode already wrote data to the database. To disable Demo Mode please reinstall the app. This ensures database consistency.</string>
+    <string name="setupwizard_demomode_warning_title">Can\'t disable Demo Mode</string>
 
     <string name="setupwizard_error_permission_missing_title">Permission Missing</string>
     <string name="setupwizard_error_permission_missing_text">You have to grand requested permissions to finish the setup.</string>
@@ -204,6 +196,16 @@
     <string name="setupwizard_error_license_missing_text">You have to read and accept the license agreements</string>
     <string name="setupwizard_error_datacontribution_missing_title">Data contribution terms not accepted</string>
     <string name="setupwizard_error_datacontribution_missing_text">You have to read and accept the data contribution agreements</string>
+
+    <!-- Misc -->
+    <string name="restart_app">Restarting app</string>
+    <string name="title_activity_home">DiaBEATit</string>
+
+    <string name="permission">Permission</string>
+    <string name="askforpermission">Ask for permission</string>
+    <string name="activate">Activate</string>
+    <string name="i_understand_and_agree">I understand and agree</string>
+
 
     <!-- Backend & Legacy UI -->
     <!--#########################################################################################-->
