@@ -104,7 +104,7 @@ public class SetupActivity extends FragmentActivity {
                 if (position == 0) {
                     prefButton.setVisibility(View.INVISIBLE);
                 } else if (position == NUM_PAGES - 1) {
-                    nextButton.setText(R.string.setupwizard_finish);
+                    nextButton.setText(R.string.finish_button);
                 } else {
                     nextButton.setText(R.string.next_button);
                     prefButton.setVisibility(View.VISIBLE);
@@ -139,21 +139,21 @@ public class SetupActivity extends FragmentActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(SetupActivity.this);
                 builder.setMessage(R.string.setupwizard_error_permission_missing_text)
                         .setTitle(R.string.setupwizard_error_permission_missing_title)
-                        .setPositiveButton(R.string.ok, null);
+                        .setPositiveButton(R.string.ok_button, null);
                 builder.create().show();
             } else if (!prefs.getBoolean(SETUP_LICENCE_AGEED_KEY, false)) {
                 // inform user
                 AlertDialog.Builder builder = new AlertDialog.Builder(SetupActivity.this);
                 builder.setMessage(R.string.setupwizard_error_license_missing_text)
                         .setTitle(R.string.setupwizard_error_license_missing_title)
-                        .setPositiveButton(R.string.ok, null);
+                        .setPositiveButton(R.string.ok_button, null);
                 builder.create().show();
             } else if (!prefs.getBoolean(SETUP_DATACONTRIBUTION_AGEED_KEY, false)) {
                 // inform user
                 AlertDialog.Builder builder = new AlertDialog.Builder(SetupActivity.this);
                 builder.setMessage(R.string.setupwizard_error_datacontribution_missing_text)
                         .setTitle(R.string.setupwizard_error_datacontribution_missing_title)
-                        .setPositiveButton(R.string.ok, null);
+                        .setPositiveButton(R.string.ok_button, null);
                 builder.create().show();
             } else {
                 // finish setup wizard
@@ -291,7 +291,7 @@ public class SetupActivity extends FragmentActivity {
                                     AlertDialog.Builder builder = new AlertDialog.Builder(SetupActivity.this);
                                     builder.setMessage(R.string.setupwizard_demomode_warning_text)
                                             .setTitle(R.string.setupwizard_demomode_warning_title)
-                                            .setPositiveButton(R.string.ok, null);
+                                            .setPositiveButton(R.string.ok_button, null);
                                     builder.create().show();
                                     compoundButton.setChecked(true);
                                 } else {
