@@ -1,9 +1,7 @@
 package de.heoegbr.diabeatit.ui.setup;
 
 import android.Manifest;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,6 +23,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import de.heoegbr.diabeatit.BuildConfig;
+import de.heoegbr.diabeatit.DiaBEATitApp;
 import de.heoegbr.diabeatit.R;
 import de.heoegbr.diabeatit.data.source.demo.DemoMode;
 import de.heoegbr.diabeatit.ui.home.HomeActivity;
@@ -50,6 +49,14 @@ public class SetupActivity extends FragmentActivity {
     private String[] viewPagerTitle;
     private Boolean[] setupWizardStageCompleted;
     private boolean wasDemoModeActiveInitially = false;
+
+    @Override
+    public void onBackPressed() {
+        if (viewPager != null) {
+            int pageNo = viewPager.getCurrentItem() - 1;
+            viewPager.setCurrentItem(pageNo, true);
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -163,18 +170,11 @@ public class SetupActivity extends FragmentActivity {
                     DemoMode.setConfigurationToDemoModeInYourThread(context);
                 }
 
-                // restart app
-//                startActivity(new Intent(SetupActivity.this, HomeActivity.class));
-                // todo find a real restart function ... as this is not working
-                Intent initIntent = new Intent(SetupActivity.this, HomeActivity.class);
-                PendingIntent restartIntent = PendingIntent.getActivity(context,
-                        255, initIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-                AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, restartIntent);
-
-                finishAffinity();
-                //finishAndRemoveTask();
+                // inizialize App
+                if (context instanceof DiaBEATitApp) {
+                    ((DiaBEATitApp) context).initializeApp(context);
+                }
+                startActivity(new Intent(SetupActivity.this, HomeActivity.class));
             }
         }
 

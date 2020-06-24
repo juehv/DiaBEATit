@@ -100,6 +100,23 @@ public class DiaBEATitApp extends Application {
         });
     }
 
+    public void initializeApp(Context context) {
+        if (!PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(SetupActivity.SETUP_DEMO_MODE_KEY, false)) {
+            // don't start this in demo mode
+            Log.e(TAG, "NO DEMO MODE");
+            registerBroadcastReceivers(context);
+            scheduleEnabledBackgroundSync(context);
+        }
+
+        scheduleBackgroundPredicitons(context);
+
+        // start "don't die" service
+        createNotificationChannel();
+        Intent serviceIntent = new Intent(context, DontDieForegroundService.class);
+        ContextCompat.startForegroundService(context, serviceIntent);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -111,20 +128,7 @@ public class DiaBEATitApp extends Application {
         JodaTimeAndroid.init(context);
 
         if (isPermissionsGrandedAndSetupWizardCompleted(context)) {
-            if (!PreferenceManager.getDefaultSharedPreferences(context)
-                    .getBoolean(SetupActivity.SETUP_DEMO_MODE_KEY, false)) {
-                // don't start this in demo mode
-                Log.e("dd", "NO DEMO MODE");
-                registerBroadcastReceivers(context);
-                scheduleEnabledBackgroundSync(context);
-            }
-
-            scheduleBackgroundPredicitons(context);
-
-            // start "don't die" service
-            createNotificationChannel();
-            Intent serviceIntent = new Intent(context, DontDieForegroundService.class);
-            ContextCompat.startForegroundService(context, serviceIntent);
+            initializeApp(context);
         }
     }
 
