@@ -29,6 +29,7 @@ public class HomeViewModel extends AndroidViewModel {
     private final LiveData<List<MealEvent>> mCarbEvents;
     private final LiveData<List<SportsEvent>> mSportEvents;
     private final LiveData<List<PredictionEvent>> mPredictionEvents;
+    private double bgValue = 0;
 
     private final MediatorLiveData<List<DiaryEvent>> mixed = new MediatorLiveData<>();
 
@@ -45,6 +46,7 @@ public class HomeViewModel extends AndroidViewModel {
 
         mixed.addSource(mBgReadings, bgReadingEvents -> {
             mixed.setValue(mDiaryRepository.getPlotEvents());
+            bgValue = bgReadingEvents.get(0).value;
         });
         mixed.addSource(mBolusEvents, bolusEvents -> {
             mixed.setValue(mDiaryRepository.getPlotEvents());
@@ -65,5 +67,10 @@ public class HomeViewModel extends AndroidViewModel {
 
     public void observeData(LifecycleOwner owner, Observer<List<DiaryEvent>> observer) {
         mixed.observe(owner, observer);
+    }
+
+    public double getCurrentBgValue() {
+        // todo make life data and kill too old data (10 min)
+        return bgValue;
     }
 }

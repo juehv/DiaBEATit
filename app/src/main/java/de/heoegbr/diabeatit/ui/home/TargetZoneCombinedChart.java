@@ -42,8 +42,8 @@ public class TargetZoneCombinedChart extends CombinedChart {
             for (TargetZone targetZone : mTargetZones) {
                 // prepare coordinates
                 float[] pts = new float[4];
-                pts[1] = targetZone.lowerLimit;
-                pts[3] = targetZone.upperLimit;
+                pts[1] = mAxisLeft.mAxisMinimum < targetZone.lowerLimit ? targetZone.lowerLimit : mAxisLeft.mAxisMinimum;
+                pts[3] = mAxisLeft.mAxisMaximum > targetZone.upperLimit ? targetZone.upperLimit : mAxisLeft.mAxisMaximum;
                 mLeftAxisTransformer.pointValuesToPixel(pts);
 
                 // draw

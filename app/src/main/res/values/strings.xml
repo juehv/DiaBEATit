@@ -146,7 +146,7 @@
     <string name="bolus_limit_exceeded_label">Limit exceeded</string>
     <string name="recommended_dosage_label">Recommended dosage</string>
     <string name="tap_label">(Tap for more details)</string>
-    <string name="bolus_calculator_title">Bolus Calculator</string>
+    <string name="bolus_calculator_nobolus">none</string>
     <string name="carbs_label">How many carbs?</string>
     <string name="bg_label">BG level (optional)</string>
     <string name="time_label">Carbs time (optional)</string>

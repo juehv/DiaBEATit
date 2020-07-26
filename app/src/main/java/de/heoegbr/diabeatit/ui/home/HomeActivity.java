@@ -16,7 +16,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +26,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -37,6 +37,8 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.navigation.NavigationView;
+
+import java.lang.ref.WeakReference;
 
 import de.heoegbr.diabeatit.DiaBEATitApp;
 import de.heoegbr.diabeatit.R;
@@ -56,12 +58,17 @@ import de.heoegbr.diabeatit.ui.setup.SetupActivity;
 
 public class HomeActivity extends AppCompatActivity {
     private static final String TAG = "HOME_ACTIVITY";
-    public LinearLayout assistantPeekEnveloped;
+    private static WeakReference<HomeActivity> instance;
+    public NestedScrollView assistantPeekEnveloped;
 
     private AppBarConfiguration mAppBarConfiguration;
     private FloatingActionsMenu entryMenu;
 
     private AlertStore mAlertStore; //TODO model view?
+
+    public static HomeActivity getInstance() {
+        return instance.get();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +88,7 @@ public class HomeActivity extends AppCompatActivity {
             // TODO what is this good for ?
             getSystemService(android.app.NotificationManager.class).cancelAll();
 
-            assistantPeekEnveloped = findViewById(R.id.assistant_peek_master);
+            assistantPeekEnveloped = findViewById(R.id.assistant_scrollview);
 
             setupManualEntry();
             setupAssistant();
@@ -91,6 +98,8 @@ public class HomeActivity extends AppCompatActivity {
             if (intent != null && intent.getAction() != null && intent.getAction().equals(StaticData.ASSISTANT_INTENT_CODE))
                 expandAssistant();
         }
+
+        instance = new WeakReference<>(this);
     }
 
     private void setupManualEntry() {
@@ -245,7 +254,7 @@ public class HomeActivity extends AppCompatActivity {
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
         final NavigationView navView = findViewById(R.id.nav_view);
 
-        mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.nav_assistant, R.id.nav_settings)
+        mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.nav_assistant)
                 .setDrawerLayout(drawer)
                 .build();
 
@@ -307,7 +316,11 @@ public class HomeActivity extends AppCompatActivity {
             drawer.closeDrawer(GravityCompat.START);
         else if (assistant.getState() == BottomSheetBehavior.STATE_EXPANDED)
             assistant.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        else
+        else if (HomeFragment.getInstance().isExpanded()) {
+            HomeFragment.getInstance().reduceView();
+            entryMenu.setVisibility(View.VISIBLE);
+            assistantPeekEnveloped.setVisibility(View.VISIBLE);
+        } else
             super.onBackPressed();
     }
 
@@ -334,6 +347,7 @@ public class HomeActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
+    //FIXME use somewhere else ?
     public boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -360,6 +374,24 @@ public class HomeActivity extends AppCompatActivity {
             //resume tasks needing this permission
         }
     }
+
+    // this method is called by fragment_bolus_calculator's text view
+    public void onClickBolusExpand(View v) {
+        HomeFragment homeFragment = HomeFragment.getInstance();
+        if (homeFragment == null) return;
+
+        if (homeFragment.isExpanded()) {
+            homeFragment.reduceView();
+            entryMenu.setVisibility(View.VISIBLE);
+            assistantPeekEnveloped.setVisibility(View.VISIBLE);
+        } else {
+            homeFragment.expandView();
+            entryMenu.setVisibility(View.GONE);
+            assistantPeekEnveloped.setVisibility(View.GONE);
+        }
+    }
+
+
 }
 
 /* Class from https://gist.github.com/nesquena/ed58f34791da00da9751 under MIT license */
@@ -428,4 +460,5 @@ class OnSwipeTouchListener implements View.OnTouchListener {
             return result;
         }
     }
+
 }

@@ -11,7 +11,6 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
@@ -44,7 +43,7 @@ public class SetupActivity extends FragmentActivity {
     private Button nextButton;
     // TODO move to viewmodel?
     private static final int NUM_PAGES = 7;
-    private Toolbar toolbar;
+//    private Toolbar toolbar;
     private SharedPreferences prefs;
     private String[] viewPagerTitle;
     private Boolean[] setupWizardStageCompleted;
@@ -63,7 +62,7 @@ public class SetupActivity extends FragmentActivity {
         // TODO check if it is an update or initial installtion (based on version code from prefs)
         // TODO check if demo mode is active && new version --> show reinstallation screen
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setup);
+        setContentView(R.layout.activity_setup_wizard);
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         wasDemoModeActiveInitially = prefs.getBoolean(SETUP_DEMO_MODE_KEY, false);
 
@@ -71,7 +70,7 @@ public class SetupActivity extends FragmentActivity {
         dotsIndicator = findViewById(R.id.setup_dots_indicator);
         prefButton = findViewById(R.id.setup_prev_button);
         nextButton = findViewById(R.id.setup_next_button);
-        toolbar = findViewById(R.id.setup_toolbar);
+//        toolbar = findViewById(R.id.setup_toolbar);
 
         pagerAdapter = new ScreenSlidePagerAdapter(this);
         viewPager.setAdapter(pagerAdapter);
@@ -120,7 +119,7 @@ public class SetupActivity extends FragmentActivity {
 
                 // set title of current screen
                 if (viewPagerTitle.length >= position) {
-                    toolbar.setTitle(viewPagerTitle[position]);
+//                    toolbar.setTitle(viewPagerTitle[position]);
                 }
             }
         });
@@ -173,8 +172,11 @@ public class SetupActivity extends FragmentActivity {
                 // inizialize App
                 if (context instanceof DiaBEATitApp) {
                     ((DiaBEATitApp) context).initializeApp(context);
+                    startActivity(new Intent(SetupActivity.this, HomeActivity.class));
+                } else {
+                    // hack .. will most probably restart the app
+                    System.exit(0);
                 }
-                startActivity(new Intent(SetupActivity.this, HomeActivity.class));
             }
         }
 
