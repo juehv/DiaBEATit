@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    style="@style/diabeatit.Container" >
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/mn_title"
@@ -13,7 +11,6 @@
         android:gravity="center_horizontal"
         android:layout_margin="8dp"
         android:textSize="24sp"
-        android:textColor="@color/colorFont"
         android:text="@string/mn_title" />
 
     <EditText
@@ -23,8 +20,6 @@
         android:layout_below="@id/mn_title"
         android:gravity="center_horizontal"
         android:layout_marginHorizontal="16dp"
-        style="@style/diabeatit.EditText"
-        android:textColor="@color/colorFont"
         android:textColorHint="#777777"
         android:hint="@string/mn_notes_hint" />
 
@@ -44,12 +39,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="4dp"
             android:padding="8dp"
-            android:background="#EFEFEF"
             android:drawableStart="@drawable/ic_date"
-            android:drawableTint="#777777"
             android:drawablePadding="8dp"
-            android:textColor="#777777"
-            android:textStyle="bold"
             android:text="--.--.----" />
 
         <Button
@@ -59,12 +50,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginStart="4dp"
             android:padding="8dp"
-            android:background="#EFEFEF"
             android:drawableStart="@drawable/ic_time"
-            android:drawableTint="#777777"
             android:drawablePadding="8dp"
-            android:textColor="#777777"
-            android:textStyle="bold"
             android:text="--:--" />
 
     </LinearLayout>

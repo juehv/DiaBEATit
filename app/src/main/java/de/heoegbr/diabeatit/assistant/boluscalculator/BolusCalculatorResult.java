@@ -1,5 +1,5 @@
 package de.heoegbr.diabeatit.assistant.boluscalculator;
 
-public class BolusResult {
+public class BolusCalculatorResult {
     public double bolus;
 }

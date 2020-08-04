@@ -22,7 +22,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
@@ -81,9 +80,9 @@ public class HomeActivity extends AppCompatActivity {
             mAlertStore = AlertStore.getRepository(getApplicationContext());
 
             setContentView(R.layout.d_activity_home);
-            Toolbar toolbar = findViewById(R.id.toolbar);
-            toolbar.setTitle(getResources().getString(R.string.title_activity_home));
-            setSupportActionBar(toolbar);
+//            Toolbar toolbar = findViewById(R.id.toolbar);
+//            toolbar.setTitle(getResources().getString(R.string.title_activity_home));
+//            setSupportActionBar(toolbar);
 
             // TODO what is this good for ?
             getSystemService(android.app.NotificationManager.class).cancelAll();
@@ -314,12 +313,13 @@ public class HomeActivity extends AppCompatActivity {
 
         if (drawer.isDrawerOpen(GravityCompat.START))
             drawer.closeDrawer(GravityCompat.START);
-        else if (assistant.getState() == BottomSheetBehavior.STATE_EXPANDED)
+        else if (assistant.getState() == BottomSheetBehavior.STATE_EXPANDED) {
             assistant.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        else if (HomeFragment.getInstance().isExpanded()) {
-            HomeFragment.getInstance().reduceView();
-            entryMenu.setVisibility(View.VISIBLE);
-            assistantPeekEnveloped.setVisibility(View.VISIBLE);
+
+//        } else if (HomeFragment.getInstance().isExpanded()) {
+//            HomeFragment.getInstance().reduceView();
+//            entryMenu.setVisibility(View.VISIBLE);
+//            assistantPeekEnveloped.setVisibility(View.VISIBLE);
         } else
             super.onBackPressed();
     }
@@ -377,18 +377,18 @@ public class HomeActivity extends AppCompatActivity {
 
     // this method is called by fragment_bolus_calculator's text view
     public void onClickBolusExpand(View v) {
-        HomeFragment homeFragment = HomeFragment.getInstance();
-        if (homeFragment == null) return;
-
-        if (homeFragment.isExpanded()) {
-            homeFragment.reduceView();
-            entryMenu.setVisibility(View.VISIBLE);
-            assistantPeekEnveloped.setVisibility(View.VISIBLE);
-        } else {
-            homeFragment.expandView();
-            entryMenu.setVisibility(View.GONE);
-            assistantPeekEnveloped.setVisibility(View.GONE);
-        }
+//        HomeFragment homeFragment = HomeFragment.getInstance();
+//        if (homeFragment == null) return;
+//
+//        if (homeFragment.isExpanded()) {
+//            homeFragment.reduceView();
+//            entryMenu.setVisibility(View.VISIBLE);
+//            assistantPeekEnveloped.setVisibility(View.VISIBLE);
+//        } else {
+//            homeFragment.expandView();
+//            entryMenu.setVisibility(View.GONE);
+//            assistantPeekEnveloped.setVisibility(View.GONE);
+//        }
     }
 
 

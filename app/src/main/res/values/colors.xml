@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
-    <color name="colorBackground">#FFFFFF</color>
-    <color name="colorFont">#202020</color>
-    <color name="colorLightGray">#d8d8d8</color>
+    <color name="background">#FAFAFA</color>
+
+    <color name="colorAssistantFront">#202020</color>
 
     <!-- Colors for chart in home activity -->
     <string name="chart_color_target_zone">#33b5eb45</string>
@@ -18,4 +15,10 @@
     <string name="chart_color_bolus">#00BB00</string>
     <string name="chart_color_carbs">#FF0000</string>
     <string name="chart_color_prediction_marker">#707070</string>
+
+
+    <color name="d_info">#C0C0C0</color>
+    <color name="d_warning">#F9A825</color>
+    <color name="d_important">#FF5555</color>
+
 </resources>

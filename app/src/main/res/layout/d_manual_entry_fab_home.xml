@@ -15,7 +15,6 @@
     fab:fab_addButtonColorPressed="@android:color/background_light"
     fab:fab_addButtonPlusIconColor="#E65100"
     fab:fab_addButtonSize="normal"
-    fab:fab_labelStyle="@style/menu_labels_style"
     fab:fab_labelsPosition="left" >
 
     <com.getbase.floatingactionbutton.FloatingActionButton

@@ -1,46 +1,17 @@
 package de.heoegbr.diabeatit.ui.home;
 
-import android.Manifest;
-import android.content.Context;
-import android.content.pm.PackageManager;
+import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.ImageFormat;
-import android.graphics.SurfaceTexture;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CameraMetadata;
-import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.TotalCaptureResult;
-import android.hardware.camera2.params.StreamConfigurationMap;
-import android.media.Image;
-import android.media.ImageReader;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.preference.PreferenceManager;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.util.Size;
-import android.util.SparseIntArray;
 import android.view.LayoutInflater;
-import android.view.Surface;
-import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -59,45 +30,28 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.EntryXComparator;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.lang.ref.WeakReference;
-import java.nio.ByteBuffer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import de.heoegbr.diabeatit.R;
-import de.heoegbr.diabeatit.assistant.boluscalculator.BolusResult;
+import de.heoegbr.diabeatit.assistant.boluscalculator.BolusCalculatorResult;
 import de.heoegbr.diabeatit.assistant.boluscalculator.SimpleBolusCalculator;
-import de.heoegbr.diabeatit.data.container.event.BolusEvent;
 import de.heoegbr.diabeatit.data.container.event.DiaryEvent;
 import de.heoegbr.diabeatit.data.container.event.PredictionEvent;
+import de.heoegbr.diabeatit.ui.boluscalculator.BolusCalculatorActivity;
 
 
 public class HomeFragment extends Fragment {
     private static final String TAG = "HOME_FRAGMENT";
     private static WeakReference<HomeFragment> instance;
 
-    // camera feature
-    // copied from https://inducesmile.com/android/android-camera2-api-example-tutorial/
-    // FIXME bring in clean form
-    // * clean code
-    // * disable camera when invisible
-    // * reset with expand
-    // * make picture fices after shot
-    // * delete picture with additional click and start capturing again
-    private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
-    private static final int REQUEST_CAMERA_PERMISSION = 200;
     private int mBgColor;
     private int mBolusColor;
     private int mBasalColor;
@@ -106,24 +60,8 @@ public class HomeFragment extends Fragment {
     private int mPredictionColor;
     private int mPredictionMarkerColor;
     private List<LegendEntry> mLegendEntries;
-
-    static {
-        ORIENTATIONS.append(Surface.ROTATION_0, 90);
-        ORIENTATIONS.append(Surface.ROTATION_90, 0);
-        ORIENTATIONS.append(Surface.ROTATION_180, 270);
-        ORIENTATIONS.append(Surface.ROTATION_270, 180);
-    }
-
     public TargetZoneCombinedChart cgmChart;
-    protected CameraDevice cameraDevice;
-    protected CameraCaptureSession cameraCaptureSessions;
-    protected CaptureRequest captureRequest;
-    protected CaptureRequest.Builder captureRequestBuilder;
-    // fixme is this business logic?
-    // todo get propper patient information
-    SimpleBolusCalculator bCalc = new SimpleBolusCalculator(100, 30, 7);
-    BolusResult bolusResult = null;
-    List<DiaryEvent> bolusPreviewEvents = null;
+
 
     //    @Override
 //    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -135,119 +73,15 @@ public class HomeFragment extends Fragment {
 //    }
     // Fixme implement model view pattern correctly
     private HomeViewModel homeViewModel;
-    // FIXME find propper solution for the cool boolus popup feature (make chart with getter?)
-    // bolus calculator
-    private boolean mExpanded = false;
-    private TargetZoneCombinedChart bolusChart;
-    private TextView bolusText;
-    private EditText carbs;
-    private EditText correction;
-    private ConstraintLayout extraInput;
-    private TextureView cameraCaptureView;
-    private String cameraId;
-    private Size imageDimension;
-    private ImageReader imageReader;
-    private File file;
-    private boolean mFlashSupported;
-    private Handler mBackgroundHandler;
-    private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
-        @Override
-        public void onOpened(CameraDevice camera) {
-            //This is called when the camera is open
-            Log.e(TAG, "onOpened");
-            cameraDevice = camera;
-            createCameraPreview();
-        }
-
-        @Override
-        public void onDisconnected(CameraDevice camera) {
-            cameraDevice.close();
-        }
-
-        @Override
-        public void onError(CameraDevice camera, int error) {
-            cameraDevice.close();
-            cameraDevice = null;
-        }
-    };
-    final CameraCaptureSession.CaptureCallback captureCallbackListener = new CameraCaptureSession.CaptureCallback() {
-        @Override
-        public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
-            super.onCaptureCompleted(session, request, result);
-            Toast.makeText(getContext(), "Saved:" + file, Toast.LENGTH_SHORT).show();
-            createCameraPreview();
-        }
-    };
-    private HandlerThread mBackgroundThread;
+    // todo get propper patient information
+    SimpleBolusCalculator bCalc = new SimpleBolusCalculator(100, 30, 7);
 
     @Nullable
     public static HomeFragment getInstance() {
         return instance.get();
     }
 
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle _b) {
-        View root = inflater.inflate(R.layout.d_fragment_home, container, false);
-
-        cgmChart = root.findViewById(R.id.chart_bg);
-        mBgColor = Color.parseColor(getString(R.string.chart_color_bg));
-        mBolusColor = Color.parseColor(getString(R.string.chart_color_bolus));
-        mBasalColor = Color.parseColor(getString(R.string.chart_color_basal));
-        mBasalFillColor = Color.parseColor(getString(R.string.chart_color_basal_fill));
-        mCarbsColor = Color.parseColor(getString(R.string.chart_color_carbs));
-        mPredictionColor = Color.parseColor(getString(R.string.chart_color_prediction));
-        mPredictionMarkerColor = Color.parseColor(getString(R.string.chart_color_prediction_marker));
-        mLegendEntries = new ArrayList<>();
-        setupChart(cgmChart);
-
-        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-        homeViewModel.observeData(getViewLifecycleOwner(), diaryEvents -> {
-            updateChart(cgmChart, diaryEvents, true);
-            Log.d(TAG, "updated main chart");
-
-            runBolusCalculation(homeViewModel.getCurrentBgValue());
-            updateBolusChart(diaryEvents);
-        });
-
-        // bolus calculator
-        bolusChart = root.findViewById(R.id.bc_chart);
-        bolusText = root.findViewById(R.id.bc_title);
-        carbs = root.findViewById(R.id.bc_carbs_input);
-        correction = root.findViewById(R.id.bc_extra_correction_input);
-        extraInput = root.findViewById(R.id.bc_extra_input_layout);
-        cameraCaptureView = root.findViewById(R.id.bc_camera_capture);
-        cameraCaptureView.setOnClickListener(view -> {
-            takePicture();
-        });
-        carbs.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                runBolusCalculation(homeViewModel.getCurrentBgValue());
-                updateBolusChart();
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
-        correction.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                runBolusCalculation(homeViewModel.getCurrentBgValue());
-                updateBolusChart();
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
-        setupChart(bolusChart);
-
-        instance = new WeakReference<>(this);
-        return root;
-    }
+    private Button bolusSuggestionButton;
 
     private void updateChart(TargetZoneCombinedChart chart, List<DiaryEvent> diaryEvents
             , boolean debugEnable) {
@@ -540,326 +374,373 @@ public class HomeFragment extends Fragment {
         chart.getAxisLeft().setDrawLimitLinesBehindData(true);
     }
 
-    public void expandView() {
-        mExpanded = true;
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle _b) {
+        View root = inflater.inflate(R.layout.d_fragment_home, container, false);
 
-        cgmChart.setVisibility(View.GONE);
+        cgmChart = root.findViewById(R.id.chart_bg);
+        mBgColor = Color.parseColor(getString(R.string.chart_color_bg));
+        mBolusColor = Color.parseColor(getString(R.string.chart_color_bolus));
+        mBasalColor = Color.parseColor(getString(R.string.chart_color_basal));
+        mBasalFillColor = Color.parseColor(getString(R.string.chart_color_basal_fill));
+        mCarbsColor = Color.parseColor(getString(R.string.chart_color_carbs));
+        mPredictionColor = Color.parseColor(getString(R.string.chart_color_prediction));
+        mPredictionMarkerColor = Color.parseColor(getString(R.string.chart_color_prediction_marker));
+        mLegendEntries = new ArrayList<>();
+        setupChart(cgmChart);
 
-        extraInput.setVisibility(View.VISIBLE);
-        bolusChart.setVisibility(View.VISIBLE);
+        bolusSuggestionButton = root.findViewById(R.id.bolus_calculator_button);
+        bolusSuggestionButton.setOnClickListener(view -> {
+            startActivity(new Intent(getContext(), BolusCalculatorActivity.class));
+        });
 
-        carbs.requestFocus();
-        carbs.postDelayed(() -> {
-            InputMethodManager keyboard = (InputMethodManager) getActivity().getSystemService(
-                    Context.INPUT_METHOD_SERVICE);
-            keyboard.showSoftInput(carbs, 0);
-        }, 200);
+        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        homeViewModel.observeData(getViewLifecycleOwner(), diaryEvents -> {
+            updateChart(cgmChart, diaryEvents, true);
+            Log.d(TAG, "updated main chart");
 
-        cameraCaptureView.setSurfaceTextureListener(buildListener());
-        openCamera();
-    }
+            runBolusCalculation(homeViewModel.getCurrentBgValue());
+        });
 
-    public void reduceView() {
-        mExpanded = false;
-
-        cgmChart.setVisibility(View.VISIBLE);
-
-        extraInput.setVisibility(View.GONE);
-        bolusChart.setVisibility(View.GONE);
-
-        InputMethodManager keyboard = (InputMethodManager) getActivity().getSystemService(
-                Context.INPUT_METHOD_SERVICE);
-        keyboard.hideSoftInputFromWindow(getView().getWindowToken(), 0);
-
-        carbs.setText("");
-        carbs.clearFocus();
-        correction.setText("");
-        correction.clearFocus();
-
-        closeCamera();
-    }
-
-    public boolean isExpanded() {
-        return mExpanded;
+        instance = new WeakReference<>(this);
+        return root;
     }
 
     private void runBolusCalculation(double bg) {
-        double carbsDouble = 0;
-        double correctionDouble = 0;
         double iob = 0;
 
-        try {
-            carbsDouble = Double.parseDouble(carbs.getText().toString());
-        } catch (Exception ignored) {
-        }
-        try {
-            correctionDouble = Double.parseDouble(correction.getText().toString());
-        } catch (Exception ignored) {
-        }
-
         if (bg > 0) {
-            bolusResult = bCalc.calculateBolus(bg, 100, iob, carbsDouble, correctionDouble);
+            BolusCalculatorResult bolusCalculatorResult = bCalc.calculateBolus(bg, 100, iob, 0, 0);
             // TODO respect localized format (, or .)
-            bolusText.setText(String.format("%.2f", bolusResult.bolus) + " I.E.");
+            bolusSuggestionButton.setText(String.format("%.2f", bolusCalculatorResult.bolus) + " I.E.");
         } else {
-            bolusText.setText(R.string.bolus_calculator_nobolus);
+            bolusSuggestionButton.setText(R.string.bolus_calculator_nobolus);
         }
 
     }
+//
+//    public void expandView() {
+//        mExpanded = true;
+//
+//        cgmChart.setVisibility(View.GONE);
+//
+//        extraInput.setVisibility(View.VISIBLE);
+//        bolusChart.setVisibility(View.VISIBLE);
+//
+//        carbs.requestFocus();
+//        carbs.postDelayed(() -> {
+//            InputMethodManager keyboard = (InputMethodManager) getActivity().getSystemService(
+//                    Context.INPUT_METHOD_SERVICE);
+//            keyboard.showSoftInput(carbs, 0);
+//        }, 200);
+//
+////        cameraCaptureView.setSurfaceTextureListener(buildListener());
+////        openCamera();
+//    }
+//
+//    public void reduceView() {
+//        mExpanded = false;
+//
+//        cgmChart.setVisibility(View.VISIBLE);
+//
+//        extraInput.setVisibility(View.GONE);
+//        bolusChart.setVisibility(View.GONE);
+//
+//        InputMethodManager keyboard = (InputMethodManager) getActivity().getSystemService(
+//                Context.INPUT_METHOD_SERVICE);
+//        keyboard.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+//
+//        carbs.setText("");
+//        carbs.clearFocus();
+//        correction.setText("");
+//        correction.clearFocus();
+//
+////        closeCamera();
+//    }
 
-    private void updateBolusChart() {
-        if (bolusPreviewEvents != null) {
-            List<DiaryEvent> bolusPreviewEventsTmp = new ArrayList<>();
+//    public boolean isExpanded() {
+//        return mExpanded;
+//    }
 
-            Instant firstVisibleBgDate = Instant.now()
-                    .minus(2, ChronoUnit.HOURS);
-            for (DiaryEvent item : bolusPreviewEvents) {
-                // filter values older than 2h
-                if (firstVisibleBgDate.isAfter(item.timestamp)) continue;
-                bolusPreviewEventsTmp.add(item);
-            }
 
-            if (bolusResult != null) {
-                DiaryEvent event = new BolusEvent(DiaryEvent.SOURCE_USER,
-                        Instant.now(),
-                        bolusResult.bolus,
-                        null);
-                bolusPreviewEventsTmp.add(event);
-            }
-
-            // TODO make propper axis calculation depending on showed values
-            bolusChart.getAxisLeft().setDrawLabels(false);
-            bolusChart.getAxisLeft().setAxisMinimum((float) homeViewModel.getCurrentBgValue() - 80);
-            bolusChart.getAxisLeft().setAxisMaximum((float) homeViewModel.getCurrentBgValue() + 90);
-            bolusChart.getAxisRight().setAxisMinimum((float) homeViewModel.getCurrentBgValue() - 80);
-            bolusChart.getAxisRight().setAxisMaximum((float) homeViewModel.getCurrentBgValue() + 90);
-
-            updateChart(bolusChart, bolusPreviewEventsTmp, false);
-        }
-    }
-
-    private void updateBolusChart(List<DiaryEvent> diaryEvents) {
-        bolusPreviewEvents = diaryEvents;
-        updateBolusChart();
-    }
-
-    TextureView.SurfaceTextureListener buildListener() {
-        return new TextureView.SurfaceTextureListener() {
-            @Override
-            public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-                //open your camera here
-                openCamera();
-            }
-
-            @Override
-            public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-                // Transform you image captured size according to the surface width and height
-            }
-
-            @Override
-            public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-                closeCamera();
-                return false;
-            }
-
-            @Override
-            public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-            }
-        };
-    }
-
-    protected void startBackgroundThread() {
-        mBackgroundThread = new HandlerThread("Camera Background");
-        mBackgroundThread.start();
-        mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
-    }
-
-    protected void stopBackgroundThread() {
-        mBackgroundThread.quitSafely();
-        try {
-            mBackgroundThread.join();
-            mBackgroundThread = null;
-            mBackgroundHandler = null;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    protected void takePicture() {
-        if (null == cameraDevice) {
-            Log.e(TAG, "cameraDevice is null");
-            return;
-        }
-        CameraManager manager = (CameraManager) getActivity().getSystemService(Context.CAMERA_SERVICE);
-        try {
-            CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraDevice.getId());
-            Size[] jpegSizes = null;
-            if (characteristics != null) {
-                jpegSizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG);
-            }
-            int width = 640;
-            int height = 480;
-            if (jpegSizes != null && 0 < jpegSizes.length) {
-                width = jpegSizes[0].getWidth();
-                height = jpegSizes[0].getHeight();
-            }
-            ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
-            List<Surface> outputSurfaces = new ArrayList<Surface>(2);
-            outputSurfaces.add(reader.getSurface());
-            outputSurfaces.add(new Surface(cameraCaptureView.getSurfaceTexture()));
-            final CaptureRequest.Builder captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
-            captureBuilder.addTarget(reader.getSurface());
-            captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-            // Orientation
-            int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
-            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
-            final File file = new File(Environment.getExternalStorageDirectory() + "/pic.jpg");
-            ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
-                @Override
-                public void onImageAvailable(ImageReader reader) {
-                    Image image = null;
-                    try {
-                        image = reader.acquireLatestImage();
-                        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-                        byte[] bytes = new byte[buffer.capacity()];
-                        buffer.get(bytes);
-                        save(bytes);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        if (image != null) {
-                            image.close();
-                        }
-                    }
-                }
-
-                private void save(byte[] bytes) throws IOException {
-                    OutputStream output = null;
-                    try {
-                        output = new FileOutputStream(file);
-                        output.write(bytes);
-                    } finally {
-                        if (null != output) {
-                            output.close();
-                        }
-                    }
-                }
-            };
-            reader.setOnImageAvailableListener(readerListener, mBackgroundHandler);
-            final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
-                @Override
-                public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
-                    super.onCaptureCompleted(session, request, result);
-                    Toast.makeText(getContext(), "Saved:" + file, Toast.LENGTH_SHORT).show();
-                    createCameraPreview();
-                }
-            };
-            cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
-                @Override
-                public void onConfigured(CameraCaptureSession session) {
-                    try {
-                        session.capture(captureBuilder.build(), captureListener, mBackgroundHandler);
-                    } catch (CameraAccessException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void onConfigureFailed(CameraCaptureSession session) {
-                }
-            }, mBackgroundHandler);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-    protected void createCameraPreview() {
-        try {
-            SurfaceTexture texture = cameraCaptureView.getSurfaceTexture();
-            assert texture != null;
-            texture.setDefaultBufferSize(imageDimension.getWidth(), imageDimension.getHeight());
-            Surface surface = new Surface(texture);
-            captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-            captureRequestBuilder.addTarget(surface);
-            cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
-                @Override
-                public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
-                    //The camera is already closed
-                    if (null == cameraDevice) {
-                        return;
-                    }
-                    // When the session is ready, we start displaying the preview.
-                    cameraCaptureSessions = cameraCaptureSession;
-                    updatePreview();
-                }
-
-                @Override
-                public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
-                    Toast.makeText(getContext(), "Configuration change", Toast.LENGTH_SHORT).show();
-                }
-            }, null);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void openCamera() {
-        CameraManager manager = (CameraManager) getActivity().getSystemService(Context.CAMERA_SERVICE);
-        Log.e(TAG, "is camera open");
-        try {
-            cameraId = manager.getCameraIdList()[0];
-            CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
-            StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-            assert map != null;
-            imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
-            // Add permission for camera and let user grant the permission
-            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
-                return;
-            }
-            manager.openCamera(cameraId, stateCallback, null);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-        Log.e(TAG, "openCamera X");
-    }
-
-    protected void updatePreview() {
-        if (null == cameraDevice) {
-            Log.e(TAG, "updatePreview error, return");
-        }
-        captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-        try {
-            cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), null, mBackgroundHandler);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-    // TODO call on app pause--> take a look at the ref how they did solve it...
-    private void closeCamera() {
-        Log.e(getTag(), "close camera");
-        if (null != cameraDevice) {
-            cameraDevice.close();
-            cameraDevice = null;
-        }
-        if (null != imageReader) {
-            imageReader.close();
-            imageReader = null;
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_CAMERA_PERMISSION) {
-            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                // close the app
-                Toast.makeText(getContext(), "Sorry!!!, you can't use this app without granting permission", Toast.LENGTH_LONG).show();
-                //finish();
-            }
-        }
-    }
+//    private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
+//    private static final int REQUEST_CAMERA_PERMISSION = 200;
+//    static {
+//        ORIENTATIONS.append(Surface.ROTATION_0, 90);
+//        ORIENTATIONS.append(Surface.ROTATION_90, 0);
+//        ORIENTATIONS.append(Surface.ROTATION_180, 270);
+//        ORIENTATIONS.append(Surface.ROTATION_270, 180);
+//    }
+//
+//    protected CameraDevice cameraDevice;
+//    protected CameraCaptureSession cameraCaptureSessions;
+//    protected CaptureRequest captureRequest;
+//    protected CaptureRequest.Builder captureRequestBuilder;
+//    private TextureView cameraCaptureView;
+//    private String cameraId;
+//    private Size imageDimension;
+//    private ImageReader imageReader;
+//    private File file;
+//    private boolean mFlashSupported;
+//    private Handler mBackgroundHandler;
+//    private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
+//        @Override
+//        public void onOpened(CameraDevice camera) {
+//            //This is called when the camera is open
+//            Log.e(TAG, "onOpened");
+//            cameraDevice = camera;
+//            createCameraPreview();
+//        }
+//
+//        @Override
+//        public void onDisconnected(CameraDevice camera) {
+//            cameraDevice.close();
+//        }
+//
+//        @Override
+//        public void onError(CameraDevice camera, int error) {
+//            cameraDevice.close();
+//            cameraDevice = null;
+//        }
+//    };
+//    final CameraCaptureSession.CaptureCallback captureCallbackListener = new CameraCaptureSession.CaptureCallback() {
+//        @Override
+//        public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
+//            super.onCaptureCompleted(session, request, result);
+//            Toast.makeText(getContext(), "Saved:" + file, Toast.LENGTH_SHORT).show();
+//            createCameraPreview();
+//        }
+//    };
+//    private HandlerThread mBackgroundThread;
+    // camera feature
+    // copied from https://inducesmile.com/android/android-camera2-api-example-tutorial/
+    // FIXME bring in clean form
+    // FIXME drains the battery very fast (even when not visible ..)
+    // cooler version -_> https://material.io/collections/machine-learning/object-detection-live-camera.html#usage
+    // runde ecken --> https://github.com/developer-anees/android-round-camera2video-preview/tree/master/app/src/main/java/in/round/camera/preview
+    // * clean code
+    // * disable camera when invisible
+    // * reset with expand
+    // * make picture fices after shot
+    // * delete picture with additional click
+//
+//    TextureView.SurfaceTextureListener buildListener() {
+//        return new TextureView.SurfaceTextureListener() {
+//            @Override
+//            public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+//                //open your camera here
+//                openCamera();
+//            }
+//
+//            @Override
+//            public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+//                // Transform you image captured size according to the surface width and height
+//            }
+//
+//            @Override
+//            public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+//                closeCamera();
+//                return false;
+//            }
+//
+//            @Override
+//            public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+//            }
+//        };
+//    }
+//
+//    protected void startBackgroundThread() {
+//        mBackgroundThread = new HandlerThread("Camera Background");
+//        mBackgroundThread.start();
+//        mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
+//    }
+//
+//    protected void stopBackgroundThread() {
+//        mBackgroundThread.quitSafely();
+//        try {
+//            mBackgroundThread.join();
+//            mBackgroundThread = null;
+//            mBackgroundHandler = null;
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    protected void takePicture() {
+//        if (null == cameraDevice) {
+//            Log.e(TAG, "cameraDevice is null");
+//            return;
+//        }
+//        CameraManager manager = (CameraManager) getActivity().getSystemService(Context.CAMERA_SERVICE);
+//        try {
+//            CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraDevice.getId());
+//            Size[] jpegSizes = null;
+//            if (characteristics != null) {
+//                jpegSizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG);
+//            }
+//            int width = 640;
+//            int height = 480;
+//            if (jpegSizes != null && 0 < jpegSizes.length) {
+//                width = jpegSizes[0].getWidth();
+//                height = jpegSizes[0].getHeight();
+//            }
+//            ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
+//            List<Surface> outputSurfaces = new ArrayList<Surface>(2);
+//            outputSurfaces.add(reader.getSurface());
+//            outputSurfaces.add(new Surface(cameraCaptureView.getSurfaceTexture()));
+//            final CaptureRequest.Builder captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+//            captureBuilder.addTarget(reader.getSurface());
+//            captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
+//            // Orientation
+//            int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
+//            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
+//            final File file = new File(Environment.getExternalStorageDirectory() + "/pic.jpg");
+//            ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
+//                @Override
+//                public void onImageAvailable(ImageReader reader) {
+//                    Image image = null;
+//                    try {
+//                        image = reader.acquireLatestImage();
+//                        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+//                        byte[] bytes = new byte[buffer.capacity()];
+//                        buffer.get(bytes);
+//                        save(bytes);
+//                    } catch (FileNotFoundException e) {
+//                        e.printStackTrace();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    } finally {
+//                        if (image != null) {
+//                            image.close();
+//                        }
+//                    }
+//                }
+//
+//                private void save(byte[] bytes) throws IOException {
+//                    OutputStream output = null;
+//                    try {
+//                        output = new FileOutputStream(file);
+//                        output.write(bytes);
+//                    } finally {
+//                        if (null != output) {
+//                            output.close();
+//                        }
+//                    }
+//                }
+//            };
+//            reader.setOnImageAvailableListener(readerListener, mBackgroundHandler);
+//            final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
+//                @Override
+//                public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
+//                    super.onCaptureCompleted(session, request, result);
+//                    Toast.makeText(getContext(), "Saved:" + file, Toast.LENGTH_SHORT).show();
+//                    createCameraPreview();
+//                }
+//            };
+//            cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
+//                @Override
+//                public void onConfigured(CameraCaptureSession session) {
+//                    try {
+//                        session.capture(captureBuilder.build(), captureListener, mBackgroundHandler);
+//                    } catch (CameraAccessException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//
+//                @Override
+//                public void onConfigureFailed(CameraCaptureSession session) {
+//                }
+//            }, mBackgroundHandler);
+//        } catch (CameraAccessException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    protected void createCameraPreview() {
+//        try {
+//            SurfaceTexture texture = cameraCaptureView.getSurfaceTexture();
+//            assert texture != null;
+//            texture.setDefaultBufferSize(imageDimension.getWidth(), imageDimension.getHeight());
+//            Surface surface = new Surface(texture);
+//            captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+//            captureRequestBuilder.addTarget(surface);
+//            cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
+//                @Override
+//                public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
+//                    //The camera is already closed
+//                    if (null == cameraDevice) {
+//                        return;
+//                    }
+//                    // When the session is ready, we start displaying the preview.
+//                    cameraCaptureSessions = cameraCaptureSession;
+//                    updatePreview();
+//                }
+//
+//                @Override
+//                public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
+//                    Toast.makeText(getContext(), "Configuration change", Toast.LENGTH_SHORT).show();
+//                }
+//            }, null);
+//        } catch (CameraAccessException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    private void openCamera() {
+//        CameraManager manager = (CameraManager) getActivity().getSystemService(Context.CAMERA_SERVICE);
+//        Log.e(TAG, "is camera open");
+//        try {
+//            cameraId = manager.getCameraIdList()[0];
+//            CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
+//            StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+//            assert map != null;
+//            imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
+//            // Add permission for camera and let user grant the permission
+//            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
+//                return;
+//            }
+//            manager.openCamera(cameraId, stateCallback, null);
+//        } catch (CameraAccessException e) {
+//            e.printStackTrace();
+//        }
+//        Log.e(TAG, "openCamera X");
+//    }
+//
+//    protected void updatePreview() {
+//        if (null == cameraDevice) {
+//            Log.e(TAG, "updatePreview error, return");
+//        }
+//        captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
+//        try {
+//            cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), null, mBackgroundHandler);
+//        } catch (CameraAccessException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    // TODO call on app pause--> take a look at the ref how they did solve it...
+//    private void closeCamera() {
+//        Log.e(getTag(), "close camera");
+//        if (null != cameraDevice) {
+//            cameraDevice.close();
+//            cameraDevice = null;
+//        }
+//        if (null != imageReader) {
+//            imageReader.close();
+//            imageReader = null;
+//        }
+//    }
+//
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+//            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+//                // close the app
+//                Toast.makeText(getContext(), "Sorry!!!, you can't use this app without granting permission", Toast.LENGTH_LONG).show();
+//                //finish();
+//            }
+//        }
+//    }
 
 }

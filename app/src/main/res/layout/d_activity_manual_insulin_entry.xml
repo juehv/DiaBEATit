@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    style="@style/diabeatit.Container" >
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/mi_title"
@@ -13,7 +11,6 @@
         android:gravity="center_horizontal"
         android:layout_margin="8dp"
         android:textSize="24sp"
-        android:textColor="@color/colorFont"
         android:text="@string/mi_title" />
 
     <EditText
@@ -23,9 +20,7 @@
         android:layout_below="@id/mi_title"
         android:gravity="center_horizontal"
         android:layout_marginHorizontal="16dp"
-        style="@style/diabeatit.EditText"
         android:inputType="numberDecimal"
-        android:textColor="@color/colorFont"
         android:textColorHint="#777777"
         android:hint="@string/mi_input_hint" />
 
@@ -36,8 +31,6 @@
         android:layout_below="@id/mi_input"
         android:gravity="center_horizontal"
         android:layout_marginHorizontal="16dp"
-        style="@style/diabeatit.EditText"
-        android:textColor="@color/colorFont"
         android:textColorHint="#777777"
         android:hint="@string/mi_notes_hint" />
 

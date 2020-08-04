@@ -32,7 +32,7 @@ public class SettingsActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.d_settings_activity);
+        setContentView(R.layout.activity_settings);
         getSupportActionBar().setTitle(getResources().getString(R.string.settings_activity_title));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);

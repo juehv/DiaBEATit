@@ -12,8 +12,8 @@ public class SimpleBolusCalculator {
         this.mIcr = mIcr;
     }
 
-    public BolusResult calculateBolus(double bg, double target, double iob, double carb, double correction) {
-        BolusResult result = new BolusResult();
+    public BolusCalculatorResult calculateBolus(double bg, double target, double iob, double carb, double correction) {
+        BolusCalculatorResult result = new BolusCalculatorResult();
         result.bolus = (bg - target) / mIsf + carb / mIcr + correction - iob;
         return result;
     }

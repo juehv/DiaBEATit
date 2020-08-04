@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <de.heoegbr.diabeatit.ui.home.TargetZoneCombinedChart
+        android:id="@+id/bc_chart"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginRight="5dp"
+        android:gravity="center_horizontal"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/bc_bolus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="@string/bolus_calculator_nobolus"
+        android:textSize="42sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/bc_chart" />
+
+
+    <ImageView
+        android:id="@+id/bc_carbs_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintBottom_toBottomOf="@id/bc_carbs_input"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/d_ic_fab_carbs" />
+
+    <EditText
+        android:id="@+id/bc_carbs_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:ems="10"
+        android:hint="@string/carbs_label"
+        android:inputType="numberDecimal"
+        app:layout_constraintStart_toEndOf="@id/bc_carbs_icon"
+        app:layout_constraintTop_toBottomOf="@id/bc_bolus" />
+
+    <ImageButton
+        android:id="@+id/bc_camera_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bc_bolus"
+        app:srcCompat="@drawable/ic_camera" />
+
+    <ImageView
+        android:id="@+id/bc_correction_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintBottom_toBottomOf="@id/bc_correction_input"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/d_ic_timeline" />
+
+
+    <EditText
+        android:id="@+id/bc_correction_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:ems="10"
+        android:hint="@string/correction_label"
+        android:inputType="numberDecimal|numberSigned"
+        app:layout_constraintStart_toEndOf="@id/bc_correction_icon"
+        app:layout_constraintTop_toBottomOf="@+id/bc_carbs_input" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/bc_cam_preview_container"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="10dp"
+        android:visibility="invisible"
+        app:cardCornerRadius="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bc_correction_input">
+
+        <ImageView
+            android:id="@+id/bc_cam_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

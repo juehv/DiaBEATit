@@ -146,13 +146,13 @@
     <string name="bolus_limit_exceeded_label">Limit exceeded</string>
     <string name="recommended_dosage_label">Recommended dosage</string>
     <string name="tap_label">(Tap for more details)</string>
-    <string name="bolus_calculator_nobolus">none</string>
-    <string name="carbs_label">How many carbs?</string>
+    <string name="bolus_calculator_nobolus">---</string>
+    <string name="carbs_label">Had a meal?</string>
     <string name="bg_label">BG level (optional)</string>
     <string name="time_label">Carbs time (optional)</string>
     <string name="correction_label">Correction (optional)</string>
     <string name="developer_mode_opening">Opening developer interface</string>
-    <string name="bolus_explanation_title">Bolus calculation details</string>
+    <string name="bolus_calculator_title">Bolus Calculation</string>
     <string name="bolus_explanation_back_button">Close</string>
     <string name="bolus_explanation"><![CDATA[<b>Trend</b>: %1$.3f<br/><b>Carbs I/C</b>: %2$.3f<br/><b>Blood Glucose</b>: %3$.3f]]></string>
 

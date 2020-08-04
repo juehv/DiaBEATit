@@ -46,7 +46,8 @@ public class HomeViewModel extends AndroidViewModel {
 
         mixed.addSource(mBgReadings, bgReadingEvents -> {
             mixed.setValue(mDiaryRepository.getPlotEvents());
-            bgValue = bgReadingEvents.get(0).value;
+            if (bgReadingEvents != null && !bgReadingEvents.isEmpty())
+                bgValue = bgReadingEvents.get(0).value;
         });
         mixed.addSource(mBolusEvents, bolusEvents -> {
             mixed.setValue(mDiaryRepository.getPlotEvents());
