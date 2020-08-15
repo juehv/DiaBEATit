@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -13,15 +12,18 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -34,6 +36,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.EntryXComparator;
+import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,7 +55,10 @@ import de.heoegbr.diabeatit.assistant.boluscalculator.SimpleBolusCalculator;
 import de.heoegbr.diabeatit.assistant.prediction.ModelGlucodyn;
 import de.heoegbr.diabeatit.data.container.event.BolusEvent;
 import de.heoegbr.diabeatit.data.container.event.DiaryEvent;
+import de.heoegbr.diabeatit.data.container.event.MealEvent;
 import de.heoegbr.diabeatit.data.container.event.PredictionEvent;
+import de.heoegbr.diabeatit.data.repository.DiaryRepository;
+import de.heoegbr.diabeatit.ui.home.HomeActivity;
 import de.heoegbr.diabeatit.ui.home.HomeViewModel;
 import de.heoegbr.diabeatit.ui.home.TargetZoneCombinedChart;
 import de.heoegbr.diabeatit.util.NativeArrayConverter;
@@ -65,7 +71,8 @@ public class BolusCalculatorActivity extends AppCompatActivity {
     ModelGlucodyn predictModel = new ModelGlucodyn(90, 30, 180, 7);
     BolusCalculatorResult bolusCalculatorResult = null;
     List<DiaryEvent> bolusPreviewEvents = null;
-    double carbsDouble;
+    private double carbsDouble = 0;
+    private double bolusDouble = 0;
     private int mBgColor;
     private int mBolusColor;
     private int mBasalColor;
@@ -81,11 +88,15 @@ public class BolusCalculatorActivity extends AppCompatActivity {
     private EditText carbs;
     private EditText correction;
     private ImageButton cameraButton;
-    private ImageView cameraPreview;
-    private CardView cameraPreviewContainer;
+    //    private ImageView cameraPreview;
+//    private CardView cameraPreviewContainer;
+    private ImageView cameraPreviewIcon;
+    private RoundedImageView cameraPreview2;
+    private MultiAutoCompleteTextView notes;
+
     private double currentBG = 100;
     private HomeViewModel homeViewModel;
-    private String currentPhotoPath;
+    private String currentPhotoPath = null;
 
     public static Bitmap rotateImage(Bitmap source, float angle) {
         if (angle == 0) return source;
@@ -96,6 +107,42 @@ public class BolusCalculatorActivity extends AppCompatActivity {
                 matrix, true);
     }
 
+    private Context getContext() {
+        return this;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.actionbar_ok, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // we have only one item so no switch statement
+        if (item.getItemId() == R.id.actionbar_ok_item) {
+            String noteString = notes.getText().toString();
+            if (bolusDouble > 0) {
+                BolusEvent bolusEvent = new BolusEvent(DiaryEvent.SOURCE_USER,
+                        Instant.now(), bolusDouble, noteString);
+                DiaryRepository.getRepository(getContext()).insertEvent(bolusEvent);
+            }
+            if (carbsDouble > 0) {
+                String imagePath = "";
+                if (currentPhotoPath != null && !currentPhotoPath.isEmpty())
+                    imagePath = currentPhotoPath;
+
+                MealEvent mealEvent = new MealEvent(DiaryEvent.SOURCE_USER, Instant.now(),
+                        imagePath, carbsDouble, noteString);
+                DiaryRepository.getRepository(getContext()).insertEvent(mealEvent);
+            }
+            startActivity(new Intent(getContext(), HomeActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,7 +150,6 @@ public class BolusCalculatorActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(getResources().getString(R.string.bolus_calculator_title));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
 
 //        if (savedInstanceState == null) {
 //            getSupportFragmentManager()
@@ -127,14 +173,15 @@ public class BolusCalculatorActivity extends AppCompatActivity {
 
         // bolus calculator
         bolusChart = findViewById(R.id.bc_chart);
-        mBgColor = Color.parseColor(getString(R.string.chart_color_bg));
-        mBolusColor = Color.parseColor(getString(R.string.chart_color_bolus));
-        mBasalColor = Color.parseColor(getString(R.string.chart_color_basal));
-        mBasalFillColor = Color.parseColor(getString(R.string.chart_color_basal_fill));
-        mCarbsColor = Color.parseColor(getString(R.string.chart_color_carbs));
-        mPredictionColor = Color.parseColor(getString(R.string.chart_color_prediction));
-        mPredictionMarkerColor = Color.parseColor(getString(R.string.chart_color_prediction_marker));
-        setupChart(bolusChart);
+        mBgColor = getColor(R.color.chart_color_bg);
+        mBolusColor = getColor(R.color.chart_color_bolus);
+        mBasalColor = getColor(R.color.chart_color_basal);
+        mBasalFillColor = getColor(R.color.chart_color_basal_fill);
+        mCarbsColor = getColor(R.color.chart_color_carbs);
+        mPredictionColor = getColor(R.color.chart_color_prediction);
+        mPredictionMarkerColor = getColor(R.color.chart_color_prediction_marker);
+        double target = 100; //TODO target should come from profile
+        setupChart(bolusChart, target);
 
         bolusText = findViewById(R.id.bc_bolus);
         carbs = findViewById(R.id.bc_carbs_input);
@@ -184,7 +231,7 @@ public class BolusCalculatorActivity extends AppCompatActivity {
                 }
                 // Continue only if the File was successfully created
                 if (photoFile != null) {
-                    Uri photoURI = FileProvider.getUriForFile(this,
+                    Uri photoURI = FileProvider.getUriForFile(getContext(),
                             getApplicationContext().getPackageName() + ".provider",
                             photoFile);
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
@@ -193,11 +240,17 @@ public class BolusCalculatorActivity extends AppCompatActivity {
             }
 
         });
-        cameraPreview = findViewById(R.id.bc_cam_preview);
-        cameraPreviewContainer = findViewById(R.id.bc_cam_preview_container);
+//        cameraPreview = findViewById(R.id.bc_cam_preview);
+//        cameraPreviewContainer = findViewById(R.id.bc_cam_preview_container);
+        cameraPreviewIcon = findViewById(R.id.bc_cam_preview_icon);
+        cameraPreview2 = findViewById(R.id.bc_cam_preview_round);
+
+        notes = findViewById(R.id.bc_note_input);
+        // todo add auto complete code
 
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         homeViewModel.observeData(this, diaryEvents -> {
+            currentBG = homeViewModel.getCurrentBgValue();
             runBolusCalculation(homeViewModel.getCurrentBgValue());
             updateBolusChart(diaryEvents, homeViewModel.getCurrentBgValue());
         });
@@ -244,7 +297,7 @@ public class BolusCalculatorActivity extends AppCompatActivity {
         File f = new File(currentPhotoPath);
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
-        this.sendBroadcast(mediaScanIntent);
+        sendBroadcast(mediaScanIntent);
     }
 
     private void setPic() throws IOException {
@@ -275,11 +328,11 @@ public class BolusCalculatorActivity extends AppCompatActivity {
         int targetW;
         int targetH;
         if (rotation == 0 || rotation == 180) {
-            targetW = cameraPreview.getWidth();
-            targetH = cameraPreview.getHeight();
+            targetW = cameraPreview2.getWidth();
+            targetH = cameraPreview2.getHeight();
         } else {
-            targetW = cameraPreview.getHeight();
-            targetH = cameraPreview.getWidth();
+            targetW = cameraPreview2.getHeight();
+            targetH = cameraPreview2.getWidth();
         }
 
         // Get the dimensions of the bitmap
@@ -297,8 +350,10 @@ public class BolusCalculatorActivity extends AppCompatActivity {
         bmOptions.inSampleSize = scaleFactor;
 
         Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
-        cameraPreview.setImageBitmap(rotateImage(bitmap, rotation));
-        cameraPreviewContainer.setVisibility(View.VISIBLE);
+//        cameraPreview.setImageBitmap(rotateImage(bitmap, rotation));
+//        cameraPreviewContainer.setVisibility(View.GONE);
+        cameraPreviewIcon.setVisibility(View.VISIBLE);
+        cameraPreview2.setImageBitmap(rotateImage(bitmap, rotation));
     }
 
     private void updateChart(TargetZoneCombinedChart chart, List<DiaryEvent> diaryEvents
@@ -475,7 +530,7 @@ public class BolusCalculatorActivity extends AppCompatActivity {
         chart.moveViewToX(lastEntryX - 5f);
     }
 
-    private void setupChart(TargetZoneCombinedChart chart) {
+    private void setupChart(TargetZoneCombinedChart chart, double target) {
         // make y axis fixed to reasonable values
         chart.setScaleYEnabled(false);
         chart.getAxisLeft().setAxisMinimum(0.0f);
@@ -495,24 +550,31 @@ public class BolusCalculatorActivity extends AppCompatActivity {
         float rangeHigh = 180f;
         float rangeLow = 80f;
         chart.addTargetZone(new TargetZoneCombinedChart.TargetZone(
-                Color.parseColor(getString(R.string.chart_color_target_zone)),
+                getColor(R.color.chart_color_target_zone),
                 rangeLow, rangeHigh));
 
         // set limit lines for hyper, hypo, and severe hypo
         LimitLine hypoLine = new LimitLine(rangeLow - 2f, "");
-        hypoLine.setLineColor(Color.parseColor(getString(R.string.chart_color_target_line)));
+        hypoLine.setLineColor(getColor(R.color.chart_color_target_zone_border));
         hypoLine.setLineWidth(1f);
         chart.getAxisLeft().addLimitLine(hypoLine);
 
         LimitLine severeHypoLine = new LimitLine(51f, "");
-        severeHypoLine.setLineColor(Color.parseColor(getString(R.string.chart_color_severe_hypo)));
+        severeHypoLine.setLineColor(getColor(R.color.chart_color_severe_hypo));
         severeHypoLine.setLineWidth(1f);
         chart.getAxisLeft().addLimitLine(severeHypoLine);
 
         LimitLine hyperLine = new LimitLine(rangeHigh - 2f, "");
-        hyperLine.setLineColor(Color.parseColor(getString(R.string.chart_color_target_line)));
+        hyperLine.setLineColor(getColor(R.color.chart_color_target_zone_border));
         hyperLine.setLineWidth(1f);
         chart.getAxisLeft().addLimitLine(hyperLine);
+        chart.getAxisLeft().setDrawLimitLinesBehindData(true);
+
+        // set target line
+        LimitLine targetLine = new LimitLine((float) target, "target");
+        targetLine.setLineColor(getColor(R.color.chart_color_target_line));
+        targetLine.setLineWidth(2f);
+        chart.getAxisLeft().addLimitLine(targetLine);
         chart.getAxisLeft().setDrawLimitLinesBehindData(true);
     }
 
@@ -534,6 +596,7 @@ public class BolusCalculatorActivity extends AppCompatActivity {
             bolusCalculatorResult = bCalc.calculateBolus(bg, 100, iob, carbsDouble, correctionDouble);
             // TODO respect localized format (, or .)
             bolusText.setText(String.format("%.2f", bolusCalculatorResult.bolus) + " I.E.");
+            bolusDouble = bolusCalculatorResult.bolus;
         } else {
             bolusText.setText(R.string.bolus_calculator_nobolus);
         }
@@ -569,11 +632,12 @@ public class BolusCalculatorActivity extends AppCompatActivity {
             }
 
             // TODO make propper axis calculation depending on showed values
+            // TODO streamline drawing (a lot of stuff is done twise)
             bolusChart.getAxisLeft().setDrawLabels(false);
-            bolusChart.getAxisLeft().setAxisMinimum((float) bg - 80);
-            bolusChart.getAxisLeft().setAxisMaximum((float) bg + 90);
-            bolusChart.getAxisRight().setAxisMinimum((float) bg - 80);
-            bolusChart.getAxisRight().setAxisMaximum((float) bg + 90);
+//            bolusChart.getAxisLeft().setAxisMinimum((float) bg - 80);
+//            bolusChart.getAxisLeft().setAxisMaximum((float) bg + 90);
+//            bolusChart.getAxisRight().setAxisMinimum((float) bg - 80);
+//            bolusChart.getAxisRight().setAxisMaximum((float) bg + 90);
 
             updateChart(bolusChart, bolusPreviewEventsTmp, false);
         }

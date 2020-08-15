@@ -1,7 +1,6 @@
 package de.heoegbr.diabeatit.data.container.event;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -45,8 +44,8 @@ public class BolusEvent extends DiaryEvent {
      * @param note       User supplied optional note
      */
     public BolusEvent(@Source int source, long logEventId, int iconId, Instant timestamp, double value,
-                      Bitmap picture, String note) {
-        super(TYPE_BOLUS, source, logEventId, iconId, timestamp, value, picture, note);
+                      String picturePath, String note) {
+        super(TYPE_BOLUS, source, logEventId, iconId, timestamp, value, picturePath, note);
     }
 
     @Override
@@ -63,7 +62,12 @@ public class BolusEvent extends DiaryEvent {
         timeV.setText(new SimpleDateFormat("dd.MM.YYYY HH:mm", Locale.GERMAN).format(Date.from(timestamp)));
 
         contentV.setVisibility(View.VISIBLE);
-        noteV.setVisibility(!note.isEmpty() ? View.VISIBLE : View.GONE);
+        if (note == null)
+            noteV.setVisibility(View.GONE);
+        else {
+            noteV.setVisibility(!note.isEmpty() ? View.VISIBLE : View.GONE);
+            noteV.setText(note);
+        }
         imgV.setVisibility(View.GONE);
 
         root.setBackgroundResource(isSelected ? R.drawable.log_event_selected_background : R.drawable.log_event_background);

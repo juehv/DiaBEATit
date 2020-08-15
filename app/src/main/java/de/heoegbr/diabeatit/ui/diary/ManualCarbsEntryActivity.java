@@ -3,7 +3,6 @@ package de.heoegbr.diabeatit.ui.diary;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -23,9 +22,6 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import de.heoegbr.diabeatit.R;
-import de.heoegbr.diabeatit.data.container.event.DiaryEvent;
-import de.heoegbr.diabeatit.data.container.event.MealEvent;
-import de.heoegbr.diabeatit.data.repository.DiaryRepository;
 
 public class ManualCarbsEntryActivity extends AppCompatActivity {
 
@@ -143,14 +139,14 @@ public class ManualCarbsEntryActivity extends AppCompatActivity {
         try {
             int carbs = Integer.parseInt(carbsInput.getText().toString());
             String notes = notesInput.getText().toString();
-
-            Bitmap bm = null;
-            if (currentPicture != null)
-                bm = MediaStore.Images.Media.getBitmap(this.getContentResolver(), currentPicture);
-
-            DiaryRepository.getRepository(getApplicationContext())
-                    .insertEvent(new MealEvent(DiaryEvent.SOURCE_USER, timestamp.toInstant(),
-                            bm, carbs, notes));
+//
+//            Bitmap bm = null;
+//            if (currentPicture != null)
+//                bm = MediaStore.Images.Media.getBitmap(this.getContentResolver(), currentPicture);
+//
+//            DiaryRepository.getRepository(getApplicationContext())
+//                    .insertEvent(new MealEvent(DiaryEvent.SOURCE_USER, timestamp.toInstant(),
+//                            bm, carbs, notes));
 
         } catch (Exception ignored) {
             return;

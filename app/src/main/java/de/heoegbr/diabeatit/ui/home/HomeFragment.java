@@ -353,22 +353,22 @@ public class HomeFragment extends Fragment {
         float rangeHigh = 180f;
         float rangeLow = 80f;
         chart.addTargetZone(new TargetZoneCombinedChart.TargetZone(
-                Color.parseColor(getString(R.string.chart_color_target_zone)),
+                getContext().getColor(R.color.chart_color_target_zone),
                 rangeLow, rangeHigh));
 
         // set limit lines for hyper, hypo, and severe hypo
         LimitLine hypoLine = new LimitLine(rangeLow - 2f, "");
-        hypoLine.setLineColor(Color.parseColor(getString(R.string.chart_color_target_line)));
+        hypoLine.setLineColor(getContext().getColor(R.color.chart_color_target_zone_border));
         hypoLine.setLineWidth(1f);
         chart.getAxisLeft().addLimitLine(hypoLine);
 
         LimitLine severeHypoLine = new LimitLine(51f, "");
-        severeHypoLine.setLineColor(Color.parseColor(getString(R.string.chart_color_severe_hypo)));
+        severeHypoLine.setLineColor(getContext().getColor(R.color.chart_color_severe_hypo));
         severeHypoLine.setLineWidth(1f);
         chart.getAxisLeft().addLimitLine(severeHypoLine);
 
         LimitLine hyperLine = new LimitLine(rangeHigh - 2f, "");
-        hyperLine.setLineColor(Color.parseColor(getString(R.string.chart_color_target_line)));
+        hyperLine.setLineColor(getContext().getColor(R.color.chart_color_target_zone_border));
         hyperLine.setLineWidth(1f);
         chart.getAxisLeft().addLimitLine(hyperLine);
         chart.getAxisLeft().setDrawLimitLinesBehindData(true);
@@ -379,13 +379,13 @@ public class HomeFragment extends Fragment {
         View root = inflater.inflate(R.layout.d_fragment_home, container, false);
 
         cgmChart = root.findViewById(R.id.chart_bg);
-        mBgColor = Color.parseColor(getString(R.string.chart_color_bg));
-        mBolusColor = Color.parseColor(getString(R.string.chart_color_bolus));
-        mBasalColor = Color.parseColor(getString(R.string.chart_color_basal));
-        mBasalFillColor = Color.parseColor(getString(R.string.chart_color_basal_fill));
-        mCarbsColor = Color.parseColor(getString(R.string.chart_color_carbs));
-        mPredictionColor = Color.parseColor(getString(R.string.chart_color_prediction));
-        mPredictionMarkerColor = Color.parseColor(getString(R.string.chart_color_prediction_marker));
+        mBgColor = getContext().getColor(R.color.chart_color_bg);
+        mBolusColor = getContext().getColor(R.color.chart_color_bolus);
+        mBasalColor = getContext().getColor(R.color.chart_color_basal);
+        mBasalFillColor = getContext().getColor(R.color.chart_color_basal_fill);
+        mCarbsColor = getContext().getColor(R.color.chart_color_carbs);
+        mPredictionColor = getContext().getColor(R.color.chart_color_prediction);
+        mPredictionMarkerColor = getContext().getColor(R.color.chart_color_prediction_marker);
         mLegendEntries = new ArrayList<>();
         setupChart(cgmChart);
 

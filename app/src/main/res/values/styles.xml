@@ -16,6 +16,13 @@
         <!--        <item name="colorOnBackground">#212121</item>-->
     </style>
 
+
+    <style name="diabeatit.NoActionBar" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">#bdbdbd</item>
+        <item name="colorOnPrimary">#000000</item>
+        <item name="colorSecondary">#4caf50</item>
+    </style>
+
     <style name="diabeatit.TextOnlyButton" parent="@style/Widget.AppCompat.Button.Borderless">
         <item name="android:textSize">45sp</item>
         <item name="android:textStyle">bold</item>

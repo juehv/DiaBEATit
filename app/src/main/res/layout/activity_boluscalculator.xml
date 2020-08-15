@@ -4,6 +4,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+    <!--    android:theme="@style/diabeatit.NoActionBar"-->
+    <!--    <androidx.appcompat.widget.Toolbar-->
+    <!--        android:id="@+id/bc_toolbar"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="?attr/actionBarSize"-->
+    <!--        android:background="?attr/colorPrimary"-->
+    <!--        android:elevation="4dp"-->
+    <!--        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"-->
+    <!--        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"-->
+    <!--        app:layout_constraintTop_toTopOf="parent">-->
+
+    <!--        <TextView-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:text="@string/bolus_calculator_title"-->
+    <!--            />-->
+
+    <!--    </androidx.appcompat.widget.Toolbar>-->
+
     <de.heoegbr.diabeatit.ui.home.TargetZoneCombinedChart
         android:id="@+id/bc_chart"
         android:layout_width="match_parent"
@@ -34,11 +54,12 @@
         android:layout_marginBottom="12dp"
         app:layout_constraintBottom_toBottomOf="@id/bc_carbs_input"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/d_ic_fab_carbs" />
+        android:alpha="0.5"
+        app:srcCompat="@drawable/ic_cake" />
 
     <EditText
         android:id="@+id/bc_carbs_input"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:ems="10"
@@ -51,9 +72,10 @@
         android:id="@+id/bc_camera_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginLeft="20dp"
+        android:alpha="0.5"
         app:layout_constraintTop_toBottomOf="@id/bc_bolus"
+        app:layout_constraintStart_toEndOf="@id/bc_carbs_input"
         app:srcCompat="@drawable/ic_camera" />
 
     <ImageView
@@ -64,36 +86,86 @@
         android:layout_marginBottom="12dp"
         app:layout_constraintBottom_toBottomOf="@id/bc_correction_input"
         app:layout_constraintStart_toStartOf="parent"
+        android:alpha="0.5"
         app:srcCompat="@drawable/d_ic_timeline" />
 
 
     <EditText
         android:id="@+id/bc_correction_input"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:ems="10"
         android:hint="@string/correction_label"
         android:inputType="numberDecimal|numberSigned"
         app:layout_constraintStart_toEndOf="@id/bc_correction_icon"
-        app:layout_constraintTop_toBottomOf="@+id/bc_carbs_input" />
+        app:layout_constraintTop_toBottomOf="@id/bc_carbs_input" />
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/bc_cam_preview_container"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:layout_marginTop="10dp"
-        android:visibility="invisible"
-        app:cardCornerRadius="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
+    <ImageView
+        android:id="@+id/bc_note_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintBottom_toBottomOf="@id/bc_note_input"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bc_correction_input">
+        app:srcCompat="@drawable/ic_fab_note" />
 
-        <ImageView
-            android:id="@+id/bc_cam_preview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop" />
-    </androidx.cardview.widget.CardView>
+
+    <MultiAutoCompleteTextView
+        android:id="@+id/bc_note_input"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:ems="10"
+        android:hint="@string/mc_notes_hint"
+        app:layout_constraintStart_toEndOf="@id/bc_note_icon"
+        app:layout_constraintTop_toBottomOf="@id/bc_correction_input" />
+
+    <ImageView
+        android:id="@+id/bc_cam_preview_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:alpha="0.5"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/bc_cam_preview_round"
+        app:srcCompat="@drawable/ic_camera" />
+
+    <!--    <androidx.cardview.widget.CardView-->
+    <!--        android:id="@+id/bc_cam_preview_container"-->
+    <!--        android:layout_width="250dp"-->
+    <!--        android:layout_height="250dp"-->
+    <!--        android:layout_marginTop="12dp"-->
+    <!--        android:layout_marginLeft="10dp"-->
+    <!--        android:visibility="invisible"-->
+    <!--        app:cardCornerRadius="8dp"-->
+    <!--        app:layout_constraintStart_toEndOf="@id/bc_cam_preview_icon"-->
+    <!--        app:layout_constraintTop_toBottomOf="@id/bc_correction_input">-->
+
+    <!--        <ImageView-->
+    <!--            android:id="@+id/bc_cam_preview"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="match_parent"-->
+    <!--            android:scaleType="centerCrop" />-->
+    <!--    </androidx.cardview.widget.CardView>-->
+
+    <com.makeramen.roundedimageview.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/bc_cam_preview_round"
+        android:layout_height="250dp"
+        android:layout_width="250dp"
+        android:layout_marginLeft="10dp"
+        android:padding="4dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toEndOf="@id/bc_cam_preview_icon"
+        app:layout_constraintTop_toBottomOf="@id/bc_note_input"
+        app:riv_border_color="#222222"
+        app:riv_border_width="1dp"
+        android:layout_marginTop="10dp"
+        app:riv_corner_radius="12dp"
+        app:riv_mutate_background="true"
+        app:riv_oval="false" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

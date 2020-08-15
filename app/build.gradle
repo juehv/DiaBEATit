@@ -55,6 +55,8 @@ android {
 repositories {
     // Charts
     maven { url 'https://jitpack.io' }
+    // round corner image view
+    mavenCentral()
 }
 
 dependencies {
@@ -112,6 +114,9 @@ dependencies {
     // Markdown support
     final def  markwon_version = "4.4.0" //'latest_version'
     implementation  "io.noties.markwon:core:$markwon_version"
+
+    // round corner image view
+    implementation 'com.makeramen:roundedimageview:2.3.0'
 
     //################################################
     implementation "com.google.guava:guava:28.2-jre"

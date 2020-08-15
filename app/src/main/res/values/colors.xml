@@ -5,16 +5,17 @@
     <color name="colorAssistantFront">#202020</color>
 
     <!-- Colors for chart in home activity -->
-    <string name="chart_color_target_zone">#33b5eb45</string>
-    <string name="chart_color_target_line">#888888</string>
-    <string name="chart_color_severe_hypo">#88d63131</string>
-    <string name="chart_color_bg">#0000FF</string>
-    <string name="chart_color_basal">#f2ae00</string>
-    <string name="chart_color_basal_fill">#ffcc4a</string>
-    <string name="chart_color_prediction">#b60dbf</string>
-    <string name="chart_color_bolus">#00BB00</string>
-    <string name="chart_color_carbs">#FF0000</string>
-    <string name="chart_color_prediction_marker">#707070</string>
+    <color name="chart_color_target_zone">#33b5eb45</color>
+    <color name="chart_color_target_zone_border">#888888</color>
+    <color name="chart_color_target_line">#92bf36</color>
+    <color name="chart_color_severe_hypo">#88d63131</color>
+    <color name="chart_color_bg">#0000FF</color>
+    <color name="chart_color_basal">#f2ae00</color>
+    <color name="chart_color_basal_fill">#ffcc4a</color>
+    <color name="chart_color_prediction">#b60dbf</color>
+    <color name="chart_color_bolus">#00BB00</color>
+    <color name="chart_color_carbs">#FF0000</color>
+    <color name="chart_color_prediction_marker">#707070</color>
 
 
     <color name="d_info">#C0C0C0</color>

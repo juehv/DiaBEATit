@@ -1,7 +1,6 @@
 package de.heoegbr.diabeatit.data.container.event;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -82,8 +81,8 @@ public class SportsEvent extends DiaryEvent {
      * @param intensity
      */
     public SportsEvent(@Source int source, long logEventId, int iconId, Instant timestamp,
-                       double value, Bitmap picture, String note, @Intensity int intensity) {
-        super(TYPE_SPORT, source, logEventId, iconId, timestamp, value, picture, note);
+                       double value, String picturePath, String note, @Intensity int intensity) {
+        super(TYPE_SPORT, source, logEventId, iconId, timestamp, value, picturePath, note);
         this.intensity = intensity;
     }
 
@@ -101,7 +100,12 @@ public class SportsEvent extends DiaryEvent {
         timeV.setText(new SimpleDateFormat("dd.MM.YYYY HH:mm", Locale.GERMAN).format(Date.from(timestamp)));
 
         contentV.setVisibility(View.VISIBLE);
-        noteV.setVisibility(View.VISIBLE);
+        if (note == null)
+            noteV.setVisibility(View.GONE);
+        else {
+            noteV.setVisibility(!note.isEmpty() ? View.VISIBLE : View.GONE);
+            noteV.setText(note);
+        }
         imgV.setVisibility(View.GONE);
 
         root.setBackgroundResource(isSelected ? R.drawable.log_event_selected_background : R.drawable.log_event_background);

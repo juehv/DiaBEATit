@@ -3,7 +3,6 @@ package de.heoegbr.diabeatit.ui.diary;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -23,9 +22,6 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import de.heoegbr.diabeatit.R;
-import de.heoegbr.diabeatit.data.container.event.DiaryEvent;
-import de.heoegbr.diabeatit.data.container.event.NoteEvent;
-import de.heoegbr.diabeatit.data.repository.DiaryRepository;
 
 public class ManualNoteActivity extends AppCompatActivity {
 
@@ -141,13 +137,13 @@ public class ManualNoteActivity extends AppCompatActivity {
         }
 
         try {
-            Bitmap bm = null;
-            if (currentPicture != null)
-                bm = MediaStore.Images.Media.getBitmap(this.getContentResolver(), currentPicture);
-
-            DiaryRepository.getRepository(getApplicationContext())
-                    .insertEvent(new NoteEvent(DiaryEvent.SOURCE_USER, timestamp.toInstant(), bm,
-                            notesInput.getText().toString()));
+//            Bitmap bm = null;
+//            if (currentPicture != null)
+//                bm = MediaStore.Images.Media.getBitmap(this.getContentResolver(), currentPicture);
+//
+//            DiaryRepository.getRepository(getApplicationContext())
+//                    .insertEvent(new NoteEvent(DiaryEvent.SOURCE_USER, timestamp.toInstant(), bm,
+//                            notesInput.getText().toString()));
         } catch (Exception ignored) {
             return;
         }

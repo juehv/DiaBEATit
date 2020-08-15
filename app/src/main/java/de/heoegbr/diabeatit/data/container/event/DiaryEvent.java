@@ -1,7 +1,6 @@
 package de.heoegbr.diabeatit.data.container.event;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.IntDef;
@@ -61,7 +60,7 @@ public abstract class DiaryEvent {
      * Optional, user supplied Image
      */
     @ColumnInfo(name = "picture")
-    public final Bitmap picture;
+    public final String picturePath;
     /**
      * Optional user supplied note
      */
@@ -79,36 +78,36 @@ public abstract class DiaryEvent {
      * This method is mostly used by the subclasses to initalize the fields when loading an object
      * from the database.
      *
-     * @param logEventId Unique ID of this event, serves as primary key in the database
-     * @param iconId     Resource ID of an icon that might be displayed for this event
-     * @param timestamp  Timestamp of creation
+     * @param logEventId  Unique ID of this event, serves as primary key in the database
+     * @param iconId      Resource ID of an icon that might be displayed for this event
+     * @param timestamp   Timestamp of creation
      * @param value
-     * @param picture
+     * @param picturePath
      * @param note
      */
     public DiaryEvent(@Type int type, @Source int source, long logEventId, int iconId,
-                      Instant timestamp, double value, Bitmap picture, String note) {
-        this(type, source, iconId, timestamp, value, picture, note);
+                      Instant timestamp, double value, String picturePath, String note) {
+        this(type, source, iconId, timestamp, value, picturePath, note);
         this.logEventId = logEventId;
     }
 
     /**
      * Initialize the fields. This method is used by its subclasses to initalize the shared fields
      *
-     * @param iconId    Resource ID of an icon that may be displayed for this event
-     * @param timestamp Timestamp of creation of this event
+     * @param iconId      Resource ID of an icon that may be displayed for this event
+     * @param timestamp   Timestamp of creation of this event
      * @param value
-     * @param picture
+     * @param picturePath
      * @param note
      */
     DiaryEvent(@Type int type, @Source int source, int iconId, Instant timestamp, double value,
-               Bitmap picture, String note) {
+               String picturePath, String note) {
         this.type = type;
         this.source = source;
         this.iconId = iconId;
         this.timestamp = timestamp;
         this.value = value;
-        this.picture = picture;
+        this.picturePath = picturePath;
         this.note = note;
     }
 
