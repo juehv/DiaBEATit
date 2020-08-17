@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -22,6 +24,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
@@ -84,15 +87,15 @@ public class BolusCalculatorActivity extends AppCompatActivity {
     // bolus calculator
     private boolean mExpanded = false;
     private TargetZoneCombinedChart bolusChart;
-    private TextView bolusText;
-    private EditText carbs;
-    private EditText correction;
+    private TextView bolusResultText;
+    private EditText carbsInput;
+    private EditText correctionInput;
     private ImageButton cameraButton;
     //    private ImageView cameraPreview;
 //    private CardView cameraPreviewContainer;
     private ImageView cameraPreviewIcon;
     private RoundedImageView cameraPreview2;
-    private MultiAutoCompleteTextView notes;
+    private MultiAutoCompleteTextView notesInput;
 
     private double currentBG = 100;
     private HomeViewModel homeViewModel;
@@ -122,7 +125,7 @@ public class BolusCalculatorActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // we have only one item so no switch statement
         if (item.getItemId() == R.id.actionbar_ok_item) {
-            String noteString = notes.getText().toString();
+            String noteString = notesInput.getText().toString();
             if (bolusDouble > 0) {
                 BolusEvent bolusEvent = new BolusEvent(DiaryEvent.SOURCE_USER,
                         Instant.now(), bolusDouble, noteString);
@@ -184,15 +187,15 @@ public class BolusCalculatorActivity extends AppCompatActivity {
         double target = 100; //TODO target should come from profile
         setupChart(bolusChart, target);
 
-        bolusText = findViewById(R.id.bc_bolus);
-        carbs = findViewById(R.id.bc_carbs_input);
-        correction = findViewById(R.id.bc_correction_input);
+        bolusResultText = findViewById(R.id.bc_bolus);
+        carbsInput = findViewById(R.id.bc_carbs_input);
+        correctionInput = findViewById(R.id.bc_correction_input);
 //        cameraCaptureView = root.findViewById(R.id.bc_camera_capture);
 //        cameraCaptureView.setOnClickListener(view -> {
 //            takePicture();
 //        });
 
-        carbs.addTextChangedListener(new TextWatcher() {
+        carbsInput.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
                 runBolusCalculation(currentBG);
                 updateBolusChart(currentBG);
@@ -204,7 +207,7 @@ public class BolusCalculatorActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
         });
-        correction.addTextChangedListener(new TextWatcher() {
+        correctionInput.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
                 runBolusCalculation(currentBG);
                 updateBolusChart(currentBG);
@@ -246,7 +249,7 @@ public class BolusCalculatorActivity extends AppCompatActivity {
         cameraPreviewIcon = findViewById(R.id.bc_cam_preview_icon);
         cameraPreview2 = findViewById(R.id.bc_cam_preview_round);
 
-        notes = findViewById(R.id.bc_note_input);
+        notesInput = findViewById(R.id.bc_note_input);
         // todo add auto complete code
 
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
@@ -256,12 +259,22 @@ public class BolusCalculatorActivity extends AppCompatActivity {
             updateBolusChart(diaryEvents, homeViewModel.getCurrentBgValue());
         });
 
-        carbs.requestFocus();
-        carbs.postDelayed(() -> {
+        carbsInput.requestFocus();
+        carbsInput.postDelayed(() -> {
             InputMethodManager keyboard = (InputMethodManager) getSystemService(
                     Context.INPUT_METHOD_SERVICE);
-            keyboard.showSoftInput(carbs, 0);
+            keyboard.showSoftInput(carbsInput, 0);
         }, 200);
+
+
+        // fanciefy text field clearing
+        carbsInput.setOnTouchListener(new ClearInputOnTouchListener());
+        correctionInput.setOnTouchListener(new ClearInputOnTouchListener());
+        notesInput.setOnTouchListener(new ClearInputOnTouchListener());
+
+        carbsInput.addTextChangedListener(new ClearInputTextWatcher(carbsInput));
+        correctionInput.addTextChangedListener(new ClearInputTextWatcher(correctionInput));
+        notesInput.addTextChangedListener(new ClearInputTextWatcher(notesInput));
 
     }
 
@@ -585,21 +598,21 @@ public class BolusCalculatorActivity extends AppCompatActivity {
         double iob = 0;
 
         try {
-            carbsDouble = Double.parseDouble(carbs.getText().toString());
+            carbsDouble = Double.parseDouble(carbsInput.getText().toString());
         } catch (Exception ignored) {
         }
         try {
-            correctionDouble = Double.parseDouble(correction.getText().toString());
+            correctionDouble = Double.parseDouble(correctionInput.getText().toString());
         } catch (Exception ignored) {
         }
 
         if (bg > 0) {
             bolusCalculatorResult = bCalc.calculateBolus(bg, 100, iob, carbsDouble, correctionDouble);
             // TODO respect localized format (, or .)
-            bolusText.setText(String.format("%.2f", bolusCalculatorResult.bolus) + " I.E.");
+            bolusResultText.setText(String.format("%.2f", bolusCalculatorResult.bolus) + " I.E.");
             bolusDouble = bolusCalculatorResult.bolus;
         } else {
-            bolusText.setText(R.string.bolus_calculator_nobolus);
+            bolusResultText.setText(R.string.bolus_calculator_nobolus);
         }
 
     }
@@ -647,5 +660,51 @@ public class BolusCalculatorActivity extends AppCompatActivity {
     private void updateBolusChart(List<DiaryEvent> diaryEvents, double bg) {
         bolusPreviewEvents = diaryEvents;
         updateBolusChart(bg);
+    }
+
+
+    private class ClearInputOnTouchListener implements View.OnTouchListener {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            boolean hasConsumed = false;
+            if (v instanceof EditText) {
+                if (event.getX() >= v.getWidth() - ((EditText) v).getTotalPaddingRight()) {
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        ((EditText) v).getText().clear();
+                    }
+                    hasConsumed = true;
+                }
+            }
+            return hasConsumed;
+        }
+    }
+
+    private class ClearInputTextWatcher implements TextWatcher {
+        private final EditText editText;
+
+        public ClearInputTextWatcher(EditText editText) {
+            this.editText = editText;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (editText.getText().toString().isEmpty()) {
+                editText.setCompoundDrawables(null, null, null, null);
+            } else {
+                Drawable cancel = getDrawable(R.drawable.ic_cancel_black);
+                cancel.setBounds(0, 0, cancel.getIntrinsicWidth(), cancel.getIntrinsicHeight());
+                editText.setCompoundDrawables(null, null, cancel, null);
+            }
+        }
     }
 }
