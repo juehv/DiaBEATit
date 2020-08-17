@@ -179,7 +179,7 @@ public class HomeActivity extends AppCompatActivity {
             int color = amount == 0 ? getColor(android.R.color.holo_green_light) : getColor(urgency.getRawColor());
             String title = amount == 0 ? getString(R.string.assistant_peek_title_none) : getString(urgency.getPeekTitle());
             String desc = mAlertStore.getActiveAlerts().size() + " " + getString(R.string.assistant_peek_description);
-            Drawable icon = amount == 0 ? getDrawable(R.drawable.ic_check) : getDrawable(R.drawable.ic_alert);
+            Drawable icon = amount == 0 ? getDrawable(R.drawable.ic_check_white) : getDrawable(R.drawable.ic_alert);
 
             assistantPeek.setBackgroundColor(color);
             titleV.setText(title);

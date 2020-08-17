@@ -137,7 +137,8 @@ public class BolusCalculatorActivity extends AppCompatActivity {
                         imagePath, carbsDouble, noteString);
                 DiaryRepository.getRepository(getContext()).insertEvent(mealEvent);
             }
-            startActivity(new Intent(getContext(), HomeActivity.class));
+            startActivity(new Intent(getContext(), HomeActivity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
             return true;
         }
         return super.onOptionsItemSelected(item);

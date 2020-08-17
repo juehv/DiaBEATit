@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/actionbar_ok_item"
-        android:icon="@drawable/ic_check"
+        android:icon="@drawable/ic_check_black"
         android:title="@string/ok_button"
         app:showAsAction="always" />
 
