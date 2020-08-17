@@ -4,6 +4,7 @@ apply plugin: 'com.chaquo.python'
 
 android {
     compileSdkVersion 28
+    ndkVersion  "21.3.6528147"
 
     Properties localProperties = new Properties()
     localProperties.load(project.rootProject.file('local.properties').newDataInputStream())
