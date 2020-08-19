@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
@@ -18,6 +19,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
 
+import java.util.HashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -35,6 +37,15 @@ public class SetupActivity extends FragmentActivity {
     public static final String SETUP_DEMO_MODE_KEY = "demo_mode";
     private static final String TAG = "SETUP_WIZARD";
 
+    public static final int SETUP_PAGE_WELCOME = 0;
+    public static final int SETUP_PAGE_LICENSE = 1;
+    public static final int SETUP_PAGE_CONTRIBUTION = 2;
+    public static final int SETUP_PAGE_STORAGE = 3;
+    public static final int SETUP_PAGE_LOCATION = 4;
+    public static final int SETUP_PAGE_CAMERA = 5;
+    public static final int SETUP_PAGE_PROFILE = 6;
+    public static final int SETUP_PAGE_DONE = 7;
+
 
     private ViewPager2 viewPager;
     private FragmentStateAdapter pagerAdapter;
@@ -42,12 +53,13 @@ public class SetupActivity extends FragmentActivity {
     private Button prefButton;
     private Button nextButton;
     // TODO move to viewmodel?
-    private static final int NUM_PAGES = 7;
+    private static final int NUM_PAGES = 8;
 //    private Toolbar toolbar;
     private SharedPreferences prefs;
     private String[] viewPagerTitle;
     private Boolean[] setupWizardStageCompleted;
     private boolean wasDemoModeActiveInitially = false;
+    private HashMap<Integer, Fragment> fragmentStorage = new HashMap<>();
 
     @Override
     public void onBackPressed() {
@@ -77,14 +89,14 @@ public class SetupActivity extends FragmentActivity {
         dotsIndicator.setViewPager2(viewPager);
 
         // setup title for screens
-        viewPagerTitle = new String[NUM_PAGES];
-        viewPagerTitle[0] = getString(R.string.setupwizard_welcome_title);
-        viewPagerTitle[1] = getString(R.string.setupwizard_licenseagreement_title);
-        viewPagerTitle[2] = getString(R.string.setupwizard_datacontribution_title);
-        viewPagerTitle[3] = getString(R.string.setupwizard_permission_title);
-        viewPagerTitle[4] = getString(R.string.setupwizard_permission_title);
-        viewPagerTitle[5] = getString(R.string.setupwizard_demo_title);
-        viewPagerTitle[6] = getString(R.string.setupwizard_completed_title);
+//        viewPagerTitle = new String[NUM_PAGES];
+//        viewPagerTitle[0] = getString(R.string.setupwizard_welcome_title);
+//        viewPagerTitle[1] = getString(R.string.setupwizard_licenseagreement_title);
+//        viewPagerTitle[2] = getString(R.string.setupwizard_datacontribution_title);
+//        viewPagerTitle[3] = getString(R.string.setupwizard_permission_title);
+//        viewPagerTitle[4] = getString(R.string.setupwizard_permission_title);
+//        viewPagerTitle[5] = getString(R.string.setupwizard_demo_title);
+//        viewPagerTitle[6] = getString(R.string.setupwizard_completed_title);
 
         // setup next button
         // initialize from preferences
@@ -118,9 +130,9 @@ public class SetupActivity extends FragmentActivity {
                 }
 
                 // set title of current screen
-                if (viewPagerTitle.length >= position) {
-//                    toolbar.setTitle(viewPagerTitle[position]);
-                }
+//                if (viewPagerTitle.length >= position) {
+////                    toolbar.setTitle(viewPagerTitle[position]);
+//                }
             }
         });
     }
@@ -140,7 +152,10 @@ public class SetupActivity extends FragmentActivity {
             if ((context.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED)
                     || (context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED)) {
+                    != PackageManager.PERMISSION_GRANTED)
+                    || (context.checkSelfPermission(Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED)
+            ) {
                 // inform user that he has to give permissions to finish
                 AlertDialog.Builder builder = new AlertDialog.Builder(SetupActivity.this);
                 builder.setMessage(R.string.setupwizard_error_permission_missing_text)
@@ -169,7 +184,7 @@ public class SetupActivity extends FragmentActivity {
                     DemoMode.setConfigurationToDemoModeInYourThread(context);
                 }
 
-                // inizialize App
+                // initialize App
                 if (context instanceof DiaBEATitApp) {
                     ((DiaBEATitApp) context).initializeApp(context);
                     startActivity(new Intent(SetupActivity.this, HomeActivity.class));
@@ -185,6 +200,29 @@ public class SetupActivity extends FragmentActivity {
     public void previousButtonListener(View view) {
         int pageNo = viewPager.getCurrentItem() - 1;
         viewPager.setCurrentItem(pageNo, true);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case SETUP_PAGE_STORAGE:
+            case SETUP_PAGE_LOCATION:
+            case SETUP_PAGE_CAMERA:
+                if (grantResults.length > 0 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission is granted. Continue the action or workflow
+                    // in your app.
+                }  else {
+                    // reset slider of request
+                    Fragment wizardPage = fragmentStorage.get(requestCode);
+                    if (wizardPage instanceof SetupWelcomeFragment){
+                        ((SetupWelcomeFragment) wizardPage).resetSwitch();
+                    }
+                }
+                return;
+            default:
+                super.onRequestPermissionsResult(requestCode,permissions,grantResults);
+        }
     }
 
     /**
@@ -205,12 +243,12 @@ public class SetupActivity extends FragmentActivity {
             //Log.e(TAG, "called");
             Fragment returnFragment = null;
             switch (position) {
-                case 0: // welcome
+                case SETUP_PAGE_WELCOME: // welcome
                     returnFragment = new SetupWelcomeFragment(
                             R.string.setupwizard_welcome_text,
                             false, 0, null, false);
                     break;
-                case 1: // License
+                case SETUP_PAGE_LICENSE: // License
                     returnFragment = new SetupWelcomeFragment(
                             R.string.setupwizard_licenseagreement_text,
                             true,
@@ -222,7 +260,7 @@ public class SetupActivity extends FragmentActivity {
                             },
                             prefs.getBoolean(SETUP_LICENCE_AGEED_KEY, false));
                     break;
-                case 2: // User data contribution
+                case SETUP_PAGE_CONTRIBUTION: // User data contribution
                     returnFragment = new SetupWelcomeFragment(
                             R.string.setupwizard_datacontribution_text,
                             true,
@@ -234,7 +272,7 @@ public class SetupActivity extends FragmentActivity {
                             },
                             prefs.getBoolean(SETUP_DATACONTRIBUTION_AGEED_KEY, false));
                     break;
-                case 3: // Ask for storage permission
+                case SETUP_PAGE_STORAGE: // Ask for storage permission
                     boolean storagePermission = applicationContext.checkSelfPermission(
                             Manifest.permission.WRITE_EXTERNAL_STORAGE)
                             == PackageManager.PERMISSION_GRANTED;
@@ -253,12 +291,12 @@ public class SetupActivity extends FragmentActivity {
                                             != PackageManager.PERMISSION_GRANTED)) {
                                         // ask for permission, rationale already shown
                                         requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                                45);
+                                                SETUP_PAGE_STORAGE);
                                     }
                                 }
                             }, storagePermission);
                     break;
-                case 4: // Ask for Location permission
+                case SETUP_PAGE_LOCATION: // Ask for Location permission
                     boolean locationPermission = applicationContext.checkSelfPermission(
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED;
@@ -275,43 +313,78 @@ public class SetupActivity extends FragmentActivity {
                                                     != PackageManager.PERMISSION_GRANTED)) {
                                         // ask for permission, rationale already shown
                                         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                                44);
+                                                SETUP_PAGE_LOCATION);
                                     }
                                 }
                             }, locationPermission);
                     break;
-                case 5: // Ask for Demo Mode
-                    returnFragment = new SetupWelcomeFragment(
-                            R.string.setupwizard_demomode_text,
-                            true,
-                            R.string.activate,
-                            (compoundButton, b) -> {
+//                case 5: // Ask for Demo Mode
+//                    returnFragment = new SetupWelcomeFragment(
+//                            R.string.setupwizard_camera_text,
+//                            true,
+//                            R.string.activate,
+//                            (compoundButton, b) -> {
+//
+//                                if (wasDemoModeActiveInitially
+//                                        && !b) {
+//                                    // when user wants to deactive demo mode after app was running in demo mode
+//                                    AlertDialog.Builder builder = new AlertDialog.Builder(SetupActivity.this);
+//                                    builder.setMessage(R.string.setupwizard_demomode_warning_text)
+//                                            .setTitle(R.string.setupwizard_demomode_warning_title)
+//                                            .setPositiveButton(R.string.ok_button, null);
+//                                    builder.create().show();
+//                                    compoundButton.setChecked(true);
+//                                } else {
+//                                    // setup app for demo mode
+//                                    prefs.edit().putBoolean(SETUP_DEMO_MODE_KEY, b).apply();
+//                                }
+//                            },
+//                            prefs.getBoolean(SETUP_DEMO_MODE_KEY, false));
+//                    break;
 
-                                if (wasDemoModeActiveInitially
-                                        && !b) {
-                                    // when user wants to deactive demo mode after app was running in demo mode
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(SetupActivity.this);
-                                    builder.setMessage(R.string.setupwizard_demomode_warning_text)
-                                            .setTitle(R.string.setupwizard_demomode_warning_title)
-                                            .setPositiveButton(R.string.ok_button, null);
-                                    builder.create().show();
-                                    compoundButton.setChecked(true);
-                                } else {
-                                    // setup app for demo mode
-                                    prefs.edit().putBoolean(SETUP_DEMO_MODE_KEY, b).apply();
+                case SETUP_PAGE_CAMERA: // Ask for Camera Permission
+                    boolean cameraPermission = applicationContext.checkSelfPermission(
+                            Manifest.permission.CAMERA)
+                            == PackageManager.PERMISSION_GRANTED;
+                    returnFragment = new SetupWelcomeFragment(
+                            R.string.setupwizard_camera_text,
+                            true,
+                            R.string.permission,
+                            (compoundButton, b) -> {
+                                // ask for permission and reset if failed
+                                if (b) {
+                                    // check for permission
+                                    if (applicationContext != null && (
+                                            applicationContext.checkSelfPermission(Manifest.permission.CAMERA)
+                                                    != PackageManager.PERMISSION_GRANTED)) {
+                                        // ask for permission, rationale already shown
+                                        requestPermissions(new String[]{Manifest.permission.CAMERA},
+                                                SETUP_PAGE_CAMERA);
+                                    }
                                 }
-                            },
-                            prefs.getBoolean(SETUP_DEMO_MODE_KEY, false));
+                            }, cameraPermission);
                     break;
-                case 6: // thank you
+                case SETUP_PAGE_PROFILE:
+                    //TODO implement
+                    returnFragment = new SetupWelcomeFragment(
+                            R.string.setupwizard_thankyou_text,
+                            false, 0, null, true);
+                    break;
+                case SETUP_PAGE_DONE: // thank you
                     returnFragment = new SetupWelcomeFragment(
                             R.string.setupwizard_thankyou_text,
                             false, 0, null, false);
                     break;
 
             }
+            if (returnFragment != null){
+                fragmentStorage.put(position,returnFragment);
+            }
             return returnFragment;
+
         }
+
+
 
         @Override
         public int getItemCount() {

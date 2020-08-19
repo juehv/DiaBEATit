@@ -63,4 +63,8 @@ public class SetupWelcomeFragment extends Fragment {
 
         return root;
     }
+
+    void resetSwitch(){
+        aggreeSwitch.setChecked(false);
+    }
 }
