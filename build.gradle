@@ -9,7 +9,7 @@ buildscript {
         maven { url "https://chaquo.com/maven" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.3'
+        classpath 'com.android.tools.build:gradle:4.0.1'
 
         // Open Source Licenses
         classpath 'com.google.android.gms:oss-licenses-plugin:0.10.2'

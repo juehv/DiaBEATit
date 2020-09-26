@@ -366,9 +366,7 @@ public class SetupActivity extends FragmentActivity {
                     break;
                 case SETUP_PAGE_PROFILE:
                     //TODO implement
-                    returnFragment = new SetupWelcomeFragment(
-                            R.string.setupwizard_thankyou_text,
-                            false, 0, null, true);
+                    returnFragment = new SetupProfileFragment();
                     break;
                 case SETUP_PAGE_DONE: // thank you
                     returnFragment = new SetupWelcomeFragment(
