@@ -122,6 +122,9 @@ dependencies {
     // round corner image view
     implementation 'com.makeramen:roundedimageview:2.3.0'
 
+    // permission management with ease
+    implementation 'com.karumi:dexter:6.2.1'
+
     //################################################
     implementation "com.google.guava:guava:28.2-jre"
 

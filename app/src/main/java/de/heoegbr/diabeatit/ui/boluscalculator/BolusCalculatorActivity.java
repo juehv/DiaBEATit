@@ -1,5 +1,6 @@
 package de.heoegbr.diabeatit.ui.boluscalculator;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -24,7 +25,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
@@ -39,6 +39,9 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.EntryXComparator;
+import com.google.android.material.snackbar.Snackbar;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.listener.single.SnackbarOnDeniedPermissionListener;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.io.File;
@@ -220,7 +223,28 @@ public class BolusCalculatorActivity extends AppCompatActivity {
             }
         });
 
+
         cameraButton = findViewById(R.id.bc_camera_button);
+        Dexter.withContext(this)
+                .withPermission(Manifest.permission.CAMERA)
+                .withListener(
+                        SnackbarOnDeniedPermissionListener.Builder
+                                .with(bolusResultText, "Camera access is needed to take pictures of your food")
+                                .withOpenSettingsButton("Settings")
+                                .withCallback(new Snackbar.Callback() {
+                                    @Override
+                                    public void onShown(Snackbar snackbar) {
+                                        cameraButton.setVisibility(View.GONE);
+                                    }
+
+//                                    @Override
+//                                    public void onDismissed(Snackbar snackbar, int event) {
+//                                        // Event handler for when the given Snackbar has been dismissed
+//                                    }
+                                })
+                                .withDuration(15000) //milliseconds
+                                .build()
+                ).check();
         cameraButton.setOnClickListener(view -> {
             // copied from: https://developer.android.com/training/camera/photobasics
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
