@@ -287,7 +287,7 @@ public class NightscoutDownloader extends Worker {
         Call<List<NsBgEntry>> getEntries(@Header("api-secret") String secret, @Query("count") int count);
 
         @GET("/api/v1/treatments")
-        Call<ResponseBody> getTreatments(@Header("api-secret") String secret, @Query("find[timestamp][$gte]") String dateString);
+        Call<ResponseBody> getTreatments(@Header("api-secret") String secret, @Query("find[created_at][$gte]") String dateString);
     }
 
 
