@@ -59,6 +59,7 @@ import de.heoegbr.diabeatit.R;
 import de.heoegbr.diabeatit.assistant.boluscalculator.BolusCalculatorResult;
 import de.heoegbr.diabeatit.assistant.boluscalculator.SimpleBolusCalculator;
 import de.heoegbr.diabeatit.assistant.prediction.ModelGlucodyn;
+import de.heoegbr.diabeatit.data.container.Profil;
 import de.heoegbr.diabeatit.data.container.event.BolusEvent;
 import de.heoegbr.diabeatit.data.container.event.DiaryEvent;
 import de.heoegbr.diabeatit.data.container.event.MealEvent;
@@ -73,8 +74,13 @@ public class BolusCalculatorActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     // fixme is this business logic?
     // todo get propper patient information
-    SimpleBolusCalculator bCalc = new SimpleBolusCalculator(100, 30, 7);
-    ModelGlucodyn predictModel = new ModelGlucodyn(90, 30, 180, 7);
+    SimpleBolusCalculator bCalc = new SimpleBolusCalculator(Profil.BG_TARGET,
+            Profil.INSULIN_SENSITIVITY_FACTOR,
+            Profil.INSULIN_CARB_RATIO);
+    ModelGlucodyn predictModel = new ModelGlucodyn(90,
+            Profil.INSULIN_SENSITIVITY_FACTOR,
+            Profil.DURATION_OF_INSULIN_ACTIVITY,
+            Profil.INSULIN_CARB_RATIO);
     BolusCalculatorResult bolusCalculatorResult = null;
     List<DiaryEvent> bolusPreviewEvents = null;
     private double carbsDouble = 0;
@@ -629,11 +635,13 @@ public class BolusCalculatorActivity extends AppCompatActivity {
             correctionDouble = Double.parseDouble(correctionInput.getText().toString());
         } catch (Exception ignored) {
         }
+        iob = DiaryRepository.getRepository(this).getIOB(Profil.DURATION_OF_INSULIN_ACTIVITY,
+                Profil.INSULIN_PEEK_ACTIVITY);
 
         if (bg > 0) {
-            bolusCalculatorResult = bCalc.calculateBolus(bg, 100, iob, carbsDouble, correctionDouble);
+            bolusCalculatorResult = bCalc.calculateBolus(bg, Profil.BG_TARGET, iob, carbsDouble, correctionDouble);
             // TODO respect localized format (, or .)
-            bolusResultText.setText(String.format("%.2f", bolusCalculatorResult.bolus) + " I.E.");
+            bolusResultText.setText(bolusCalculatorResult.resultAsText);
             bolusDouble = bolusCalculatorResult.bolus;
         } else {
             bolusResultText.setText(R.string.bolus_calculator_nobolus);
@@ -661,8 +669,10 @@ public class BolusCalculatorActivity extends AppCompatActivity {
                 bolusPreviewEventsTmp.add(event);
 
                 //TODO use actual therapy constants
+                double iob = DiaryRepository.getRepository(this).getIOB(Profil.DURATION_OF_INSULIN_ACTIVITY,
+                        Profil.INSULIN_PEEK_ACTIVITY);
                 double[] prediction = predictModel.calculateBgProgression(bg,
-                        bolusCalculatorResult.bolus, carbsDouble, 48);
+                        bolusCalculatorResult.bolus + iob, carbsDouble, 48);
                 PredictionEvent bolusPrediction = new PredictionEvent(DiaryEvent.SOURCE_USER,
                         Instant.now(), null, NativeArrayConverter.toArrayList(prediction),
                         null, null, null);

@@ -15,6 +15,15 @@ public class SimpleBolusCalculator {
     public BolusCalculatorResult calculateBolus(double bg, double target, double iob, double carb, double correction) {
         BolusCalculatorResult result = new BolusCalculatorResult();
         result.bolus = (bg - target) / mIsf + carb / mIcr + correction - iob;
+        result.resultAsText = convertBolusValueToText(result.bolus);
         return result;
+    }
+
+    public String convertBolusValueToText(double value) {
+        if (value >= 0.0) {
+            return String.format("%.2f", value) + " I.E.";
+        } else {
+            return String.format("%.2f", mIcr * value * -1) + " g";
+        }
     }
 }

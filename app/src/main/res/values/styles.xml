@@ -27,6 +27,7 @@
         <item name="android:textSize">45sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">#444444</item>
+        <item name="android:textAllCaps">false</item>
         <item name="android:background">#00000000</item>
         <item name="android:backgroundTint">#00000000</item>
     </style>

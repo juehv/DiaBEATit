@@ -43,8 +43,10 @@ import java.util.List;
 import de.heoegbr.diabeatit.R;
 import de.heoegbr.diabeatit.assistant.boluscalculator.BolusCalculatorResult;
 import de.heoegbr.diabeatit.assistant.boluscalculator.SimpleBolusCalculator;
+import de.heoegbr.diabeatit.data.container.Profil;
 import de.heoegbr.diabeatit.data.container.event.DiaryEvent;
 import de.heoegbr.diabeatit.data.container.event.PredictionEvent;
+import de.heoegbr.diabeatit.data.repository.DiaryRepository;
 import de.heoegbr.diabeatit.ui.boluscalculator.BolusCalculatorActivity;
 
 
@@ -74,7 +76,9 @@ public class HomeFragment extends Fragment {
     // Fixme implement model view pattern correctly
     private HomeViewModel homeViewModel;
     // todo get propper patient information
-    SimpleBolusCalculator bCalc = new SimpleBolusCalculator(100, 30, 7);
+    SimpleBolusCalculator bCalc = new SimpleBolusCalculator(Profil.BG_TARGET,
+            Profil.INSULIN_SENSITIVITY_FACTOR,
+            Profil.INSULIN_CARB_RATIO);
 
     @Nullable
     public static HomeFragment getInstance() {
@@ -407,12 +411,15 @@ public class HomeFragment extends Fragment {
     }
 
     private void runBolusCalculation(double bg) {
-        double iob = 0;
+        double iob = DiaryRepository.getRepository(getContext())
+                .getIOB(Profil.DURATION_OF_INSULIN_ACTIVITY,
+                        Profil.INSULIN_PEEK_ACTIVITY);
 
         if (bg > 0) {
-            BolusCalculatorResult bolusCalculatorResult = bCalc.calculateBolus(bg, 100, iob, 0, 0);
+            BolusCalculatorResult bolusCalculatorResult = bCalc.calculateBolus(bg,
+                    Profil.BG_TARGET, iob, 0, 0);
             // TODO respect localized format (, or .)
-            bolusSuggestionButton.setText(String.format("%.2f", bolusCalculatorResult.bolus) + " I.E.");
+            bolusSuggestionButton.setText(bolusCalculatorResult.resultAsText);
         } else {
             bolusSuggestionButton.setText(R.string.bolus_calculator_nobolus);
         }

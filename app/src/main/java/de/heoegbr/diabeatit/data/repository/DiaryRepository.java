@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import de.heoegbr.diabeatit.assistant.boluscalculator.IobCalculator;
 import de.heoegbr.diabeatit.data.container.event.BasalEvent;
 import de.heoegbr.diabeatit.data.container.event.BgReadingEvent;
 import de.heoegbr.diabeatit.data.container.event.BolusEvent;
@@ -248,6 +249,36 @@ public class DiaryRepository {
         events.sort((a, b) -> b.timestamp.compareTo(a.timestamp));
 
         return events;
+    }
+
+    /**
+     * Returns most recent bolus events
+     *
+     * @return
+     */
+    public List<BolusEvent> getBolusEventsStatic() {
+        return mBolusEventsStatic;
+    }
+
+    /**
+     * Returns Insulin-On-Board, calculated from static Bosuls Events data.
+     *
+     * @param dia duration of insulin activity in minutes (usually 300 to 360 min)
+     * @return
+     */
+    public double getIOB(double dia, double peek) {
+        Instant oldestInterestingBolus = Instant.now().minusSeconds(Math.round(dia * 60) + 1);
+        double iob = 0;
+        if (mBolusEventsStatic != null) {
+            synchronized (mBolusEventsStatic) {
+                for (BolusEvent item : mBolusEventsStatic) {
+                    if (item.timestamp.isAfter(oldestInterestingBolus)) {
+                        iob += IobCalculator.getActiveIobFromBolus(item, dia, peek);
+                    }
+                }
+            }
+        }
+        return iob;
     }
 
     /**
