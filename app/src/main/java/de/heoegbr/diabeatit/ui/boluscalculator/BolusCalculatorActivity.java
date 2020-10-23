@@ -641,8 +641,8 @@ public class BolusCalculatorActivity extends AppCompatActivity {
         if (bg > 0) {
             bolusCalculatorResult = bCalc.calculateBolus(bg, Profil.BG_TARGET, iob, carbsDouble, correctionDouble);
             // TODO respect localized format (, or .)
-            bolusResultText.setText(bolusCalculatorResult.resultAsText);
-            bolusDouble = bolusCalculatorResult.bolus;
+            bolusResultText.setText(bolusCalculatorResult.getResultAsText());
+            bolusDouble = bolusCalculatorResult.getBolus();
         } else {
             bolusResultText.setText(R.string.bolus_calculator_nobolus);
         }
@@ -664,7 +664,7 @@ public class BolusCalculatorActivity extends AppCompatActivity {
             if (bolusCalculatorResult != null) {
                 DiaryEvent event = new BolusEvent(DiaryEvent.SOURCE_USER,
                         Instant.now(),
-                        bolusCalculatorResult.bolus,
+                        bolusCalculatorResult.getBolus(),
                         null);
                 bolusPreviewEventsTmp.add(event);
 
@@ -672,7 +672,7 @@ public class BolusCalculatorActivity extends AppCompatActivity {
                 double iob = DiaryRepository.getRepository(this).getIOB(Profil.DURATION_OF_INSULIN_ACTIVITY,
                         Profil.INSULIN_PEEK_ACTIVITY);
                 double[] prediction = predictModel.calculateBgProgression(bg,
-                        bolusCalculatorResult.bolus + iob, carbsDouble, 48);
+                        bolusCalculatorResult.getBolus() + iob, carbsDouble, 48);
                 PredictionEvent bolusPrediction = new PredictionEvent(DiaryEvent.SOURCE_USER,
                         Instant.now(), null, NativeArrayConverter.toArrayList(prediction),
                         null, null, null);

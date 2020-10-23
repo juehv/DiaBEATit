@@ -419,7 +419,7 @@ public class HomeFragment extends Fragment {
             BolusCalculatorResult bolusCalculatorResult = bCalc.calculateBolus(bg,
                     Profil.BG_TARGET, iob, 0, 0);
             // TODO respect localized format (, or .)
-            bolusSuggestionButton.setText(bolusCalculatorResult.resultAsText);
+            bolusSuggestionButton.setText(bolusCalculatorResult.getResultAsText());
         } else {
             bolusSuggestionButton.setText(R.string.bolus_calculator_nobolus);
         }
