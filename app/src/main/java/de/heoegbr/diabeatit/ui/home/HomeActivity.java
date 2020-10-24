@@ -38,6 +38,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.navigation.NavigationView;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 
 import de.heoegbr.diabeatit.DiaBEATitApp;
 import de.heoegbr.diabeatit.R;
@@ -94,8 +95,18 @@ public class HomeActivity extends AppCompatActivity {
             setupDrawer();
 
             Intent intent = getIntent();
-            if (intent != null && intent.getAction() != null && intent.getAction().equals(StaticData.ASSISTANT_INTENT_CODE))
-                expandAssistant();
+            if (intent != null
+                    && intent.getAction() != null
+                    && intent.getAction().equals(StaticData.ASSISTANT_INTENT_CODE)) {
+                List<Alert> alerts = mAlertStore.getActiveAlerts();
+                if (alerts != null && !alerts.isEmpty())
+                    expandAssistant();
+                else
+                    mAlertStore.newAlert(
+                            new Alert(Alert.URGENCY.INFO, R.drawable.ic_cake,
+                                    "Diabeatit running",
+                                    "The diabeatit service is online.")); // TODO killme
+            }
         }
 
         instance = new WeakReference<>(this);
