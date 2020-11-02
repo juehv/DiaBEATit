@@ -101,11 +101,11 @@ public class HomeActivity extends AppCompatActivity {
                 List<Alert> alerts = mAlertStore.getActiveAlerts();
                 if (alerts != null && !alerts.isEmpty())
                     expandAssistant();
-                else
-                    mAlertStore.newAlert(
-                            new Alert(Alert.URGENCY.INFO, R.drawable.ic_cake,
-                                    "Diabeatit running",
-                                    "The diabeatit service is online.")); // TODO killme
+//                else
+//                    mAlertStore.newAlert(
+//                            new Alert(Alert.URGENCY.INFO, R.drawable.ic_cake,
+//                                    "Diabeatit running",
+//                                    "The diabeatit service is online.")); // TODO killme
             }
         }
 
