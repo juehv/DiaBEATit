@@ -232,7 +232,7 @@ public class DiaryRepository {
     }
 
     /**
-     * Get a list of all stored events. This might not be an exhaustive list, since there is a limit
+     * Get a list of all stored events. This isn't an exhaustive list, since there is a limit
      * on how many events get loaded from the database on start up.
      *
      * @return A list containing all stored {@link DiaryEvent}s
