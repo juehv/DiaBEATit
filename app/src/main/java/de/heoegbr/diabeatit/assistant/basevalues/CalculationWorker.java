@@ -1,4 +1,4 @@
-package de.heoegbr.diabeatit.assistant.base;
+package de.heoegbr.diabeatit.assistant.basevalues;
 
 import android.content.Context;
 
@@ -6,26 +6,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.heoegbr.diabeatit.data.container.event.DiaryEvent;
-import de.heoegbr.diabeatit.data.repository.BaseCalcRepository;
+import de.heoegbr.diabeatit.data.repository.CalculationsRepository;
 import de.heoegbr.diabeatit.data.repository.DiaryRepository;
 
-public class BaseCalculationManager {
-    private static BaseCalculationManager INSTANCE = null;
+public class CalculationWorker {
+    private static CalculationWorker INSTANCE = null;
 
     private final List<BaseCalc> calculations = new ArrayList<BaseCalc>();
-    private final BaseCalcRepository repo;
+    private final CalculationsRepository repo;
     private final DiaryRepository diaryRepository;
 
-    private BaseCalculationManager(Context context){
-        repo = BaseCalcRepository.getInstance(context);
+    private CalculationWorker(Context context){
+        repo = CalculationsRepository.getInstance(context);
         diaryRepository = DiaryRepository.getRepository(context);
-        registerStandardServices();
+
+        calculations.add(new IobCobSlopBolusCalc(repo));
     }
 
-    public static BaseCalculationManager getInstance(Context context){
+    public static CalculationWorker getInstance(Context context){
         synchronized (INSTANCE) {
             if (INSTANCE == null) {
-                INSTANCE = new BaseCalculationManager(context);
+                INSTANCE = new CalculationWorker(context);
             }
         }
         return  INSTANCE;
@@ -35,12 +36,6 @@ public class BaseCalculationManager {
         calculations.add(calculation);
     }
 
-    private void registerStandardServices(){
-        calculations.add(new IobCalc(repo));
-        calculations.add(new CobCalc(repo));
-        calculations.add(new SlopeCalc(repo));
-        calculations.add(new BolusCalc(repo));
-    }
 
     public void run(){
         List<DiaryEvent> events = diaryRepository.getEvents();

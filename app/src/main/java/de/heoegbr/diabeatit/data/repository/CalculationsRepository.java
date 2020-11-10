@@ -4,21 +4,21 @@ import android.content.Context;
 
 import java.util.List;
 
-import de.heoegbr.diabeatit.assistant.base.BaseCalc;
+import de.heoegbr.diabeatit.assistant.basevalues.BaseCalc;
 
-public class BaseCalcRepository {
+public class CalculationsRepository {
     public static final String TAG = "BASE_CALC_REPOSITORY";
 
-    private static BaseCalcRepository INSTANCE = null;
+    private static CalculationsRepository INSTANCE = null;
 
-    private BaseCalcRepository(Context context){
+    private CalculationsRepository(Context context){
 
     }
 
-    public static BaseCalcRepository getInstance(Context context){
+    public static CalculationsRepository getInstance(Context context){
         synchronized (INSTANCE){
             if (INSTANCE == null){
-                INSTANCE = new BaseCalcRepository(context);
+                INSTANCE = new CalculationsRepository(context);
             }
         }
         return INSTANCE;

@@ -82,11 +82,13 @@ public class DiaBEATitApp extends Application {
         }
     }
 
-    private void scheduleBackgroundPredicitons(Context context) {
+    private void scheduleBackgroundCalculations(Context context) {
         PythonPredictionWorker.init(context);
 
         mDataChangeTrigger = DiaryRepository.getRepository(context).getDataTriggerForPredictions();
         mDataChangeTrigger.observeForever(diaryEvents -> {
+            // schedule simple base calculations
+
             // check if cooldown is over
             if (Instant.now().minusSeconds(PREDICTION_COOLDOWN_SECONDS).isAfter(mLastPrediction)) {
                 // schedule prediction
@@ -109,7 +111,7 @@ public class DiaBEATitApp extends Application {
             scheduleEnabledBackgroundSync(context);
         }
 
-        scheduleBackgroundPredicitons(context);
+        scheduleBackgroundCalculations(context);
 
         // start "don't die" service
         createNotificationChannel();

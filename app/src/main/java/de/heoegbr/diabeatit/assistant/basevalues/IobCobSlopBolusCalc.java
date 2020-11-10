@@ -1,16 +1,13 @@
-package de.heoegbr.diabeatit.assistant.base;
+package de.heoegbr.diabeatit.assistant.basevalues;
 
 import java.util.List;
 
-import de.heoegbr.diabeatit.data.repository.BaseCalcRepository;
+import de.heoegbr.diabeatit.data.repository.CalculationsRepository;
 
-/**
- * Container class to run a bolus calculator
- */
-public class BolusCalc  extends BaseCalc{
+public class IobCobSlopBolusCalc extends BaseCalc {
     public static final String TAG = "IOB_CALC";
 
-    public BolusCalc(BaseCalcRepository repo) {
+    public IobCobSlopBolusCalc(CalculationsRepository repo) {
         super(TAG,repo);
     }
 
